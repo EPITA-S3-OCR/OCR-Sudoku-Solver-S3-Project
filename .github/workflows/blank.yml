@@ -1,0 +1,14 @@
+name: C CI
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["main"]
+jobs:
+  build:
+    runs-on: self-hosted
+    container: ghcr.io/titouv/epita-c-cpp:git-main
+    steps:
+      - uses: actions/checkout@v3
+      - name: make
+        run: make
