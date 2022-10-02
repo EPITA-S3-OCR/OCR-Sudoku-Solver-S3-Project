@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+void rotate(SDL_Surface* surface, int angle);
+
 // Return the 32 bit value of a pixel from a surface at x, y coordinates
 Uint32 get_pixel(SDL_Surface* surface, int x, int y);
 

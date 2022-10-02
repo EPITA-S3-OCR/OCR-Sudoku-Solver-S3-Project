@@ -50,7 +50,7 @@ int main(int argv, char** argc)
   contrast(surface);
   grayscale(surface);
   blur(surface, 1);
-
+  rotate(surface, 45);
   // Intialize a texture by converting the imported surface
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (texture == NULL)
