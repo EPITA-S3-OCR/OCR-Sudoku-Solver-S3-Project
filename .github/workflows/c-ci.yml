@@ -2,9 +2,11 @@ name: C CI
 on:
   push:
     branches:
-      - "image-processing"
+      - '*'
+      - '**'
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
