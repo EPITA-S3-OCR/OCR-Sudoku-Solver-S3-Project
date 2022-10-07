@@ -4,6 +4,8 @@
 #include "blur.h"
 #include "contrast.h"
 #include "grayscale.h"
+#include "hough_transform.h"
+#include "sobel.h"
 #include "utils.h"
 
 int main(int argv, char** argc)
@@ -50,19 +52,16 @@ int main(int argv, char** argc)
   contrast(surface);
   grayscale(surface);
   blur(surface, 1);
-  rotate(surface, 45);
+  // rotate(surface, 45);
+  sobel_edge_detection(surface);
+  hough_transform(surface);
+
   // Intialize a texture by converting the imported surface
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (texture == NULL)
     {
       errx(1, "SDL_CreateTextureFromSurface: %s", SDL_GetError());
     }
-
-  SDL_Rect rect;
-  rect.x = 0;
-  rect.y = 0;
-  rect.w = surface->w;
-  rect.h = surface->h;
 
   SDL_Event event;
   int quit = 0;
@@ -78,7 +77,7 @@ int main(int argv, char** argc)
         }
 
       SDL_RenderClear(renderer);
-      SDL_RenderCopy(renderer, texture, NULL, &rect);
+      SDL_RenderCopy(renderer, texture, NULL, NULL);
       SDL_RenderPresent(renderer);
     }
 
