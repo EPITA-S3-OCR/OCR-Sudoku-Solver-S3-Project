@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "err.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -82,3 +83,78 @@ int Solve(char grid[SIZE][SIZE]){
 
     return -1;
 }
+
+int createFile(char grid[SIZE][SIZE], char* path){
+
+    size_t DATA_SIZE = 200; // Dimensions look like 12 * 11, but Just
+                            // to be sure.
+
+
+    char data[DATA_SIZE];
+    // Looks like 123 456 789\n ...
+
+    /* File pointer to hold reference to our file */
+    FILE * fPtr;
+
+
+    /* Just where to create it  */
+
+    fPtr = fopen(path, "w");
+
+
+    /* fopen() return NULL if last operation was unsuccessful */
+    if(fPtr == NULL)
+    {
+        /* File not created hence exit */
+        errx(EXIT_FAILURE, "Unable to open file");   
+    }
+
+    size_t data_curr_iter = 0;
+
+    for (size_t i = 0; i <SIZE ; i++) {     
+        if(i%3 == 0){
+            data[data_curr_iter] = '\n';
+            data_curr_iter += 1;
+            continue; // Helps us avoid some iterations of j.
+        }
+        for (size_t j = 0; j <SIZE ; j++) {
+            if(j%3 == 0)
+                data[data_curr_iter] = ' ';
+            else {
+                data[data_curr_iter] = grid[i][j];  
+            }
+
+            data_curr_iter += 1;
+
+        }
+    }
+
+    // Add extra two bottom lines.
+
+    for (size_t i = 0; i < 2; i++) {
+        data[data_curr_iter] = '\n';
+        data_curr_iter += 1;
+    }
+
+    //We can symbolize the end of sentence by placing a one.
+
+    data[data_curr_iter] = 0;
+
+    /* Write data to file */
+    fputs(data, fPtr);
+
+
+    /* Close file to save file data */
+    fclose(fPtr);
+
+
+    /* Success message */
+    printf("File created and saved successfully. :) \n");
+
+
+    return 0;
+}
+        
+
+
+
