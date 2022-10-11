@@ -190,7 +190,7 @@ char** loadSudoku(char path[], size_t s) {
         //printf("%c -> i = %zu, j = %zu\n",ch,i,j);
 
         if(ch == '\n'){
-            ch = fgetc(file); // Remvoe as much \n as you need.
+            ch = fgetc(file); // Remove as much \n as you need.
             continue;
         }
 
