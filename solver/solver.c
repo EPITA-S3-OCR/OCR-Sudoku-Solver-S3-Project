@@ -166,7 +166,6 @@ char** loadSudoku(char path[], size_t s) {
         sudoku[i] = malloc(sizeof(char*) * s);
     }
 
-    printf("2\n");
 
     size_t i = 0;
     size_t j = 0;
@@ -184,26 +183,40 @@ char** loadSudoku(char path[], size_t s) {
         exit(1);
     }
 
-    do {
+    ch = fgetc(file); //Grab the first character
 
-        ch = fgetc(file);
-        printf("%c",ch);
+    while (ch != EOF) {
 
-        if (ch == '.')
+        //printf("%c -> i = %zu, j = %zu\n",ch,i,j);
+
+        if(ch == '\n'){
+            ch = fgetc(file); // Remvoe as much \n as you need.
+            continue;
+        }
+
+        if (ch == '.') {
             sudoku[i][j] = '0';
-        else if (ch != ' ' && ch != EOF)
+            j += 1;
+        }
+
+        else if (ch != ' ' && ch != EOF){
             sudoku[i][j] = ch;
+            j += 1;
+        }
+
         counter += 1;
-        j += 1;
 
         if (counter == 11) {
             counter = 0;
+            //printf("\n%i------\n",i);
             i += 1;
             j = 0;
         }
 
-    } while (ch != EOF);
-
+        ch = fgetc(file);
+    }
+    
+    
 
     // close file
     fclose(file);
