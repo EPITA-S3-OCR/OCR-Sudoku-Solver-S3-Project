@@ -23,8 +23,10 @@ int possiblePlacement(int row, int col, char num, char grid[S][S]){
 
     //Little trick to find which subsquare we are on.
 
-    int subrow = (row/3)*3;
-    int subcol = (col/3)*3;
+    int subrow = row - row % 3;
+    int subcol = col - col % 3;
+
+    printf("%i and %i",subrow,subcol);
 
     for (size_t i = 0; i < 3; i++) {
         for (size_t j = 0; j < 3; j++) {
@@ -57,7 +59,7 @@ int Solve(char grid[S][S]){
             }
         } 
     }
-
+ 
     if(row_current == 'a') // Sudoku is full
         return 1;
 
@@ -66,17 +68,18 @@ int Solve(char grid[S][S]){
         // If you cant place the value continue
 
         if(possiblePlacement(row_current, coll_current, 
-                    grid[row_current][coll_current],grid) == -1)
-            continue;
+                    grid[row_current][coll_current],grid) == 1){
 
-        //Now we try the possbile value
 
-        grid[row_current][coll_current] = '0' + i;
-
-        if(Solve(grid))
-            return 1;
+            grid[row_current][coll_current] = '0' + i;
+            if(Solve(grid) == 1)
+                return 1;
+        }
 
         //Getting here means the value sucked, so we try another one.
+
+
+        //Now we try the possbile value
 
         grid[row_current][coll_current] = '0';
     }
@@ -155,17 +158,9 @@ int createFile(char grid[S][S], char* path){
     return 0;
 }
         
-char** loadSudoku(char path[], size_t s) {
+int loadSudoku(char sudoku[S][S],char path[], size_t s) {
 
     // initialize a 2 dimensional matrix
-    char** sudoku;
-
-    sudoku = malloc(sizeof(char*) * s);
-
-    for (size_t i = 0; i < s; i++) {
-        sudoku[i] = malloc(sizeof(char*) * s);
-    }
-
 
     size_t i = 0;
     size_t j = 0;
@@ -221,7 +216,7 @@ char** loadSudoku(char path[], size_t s) {
     // close file
     fclose(file);
 
-    return sudoku;
+    return 0;
 }
 
 
