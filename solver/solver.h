@@ -3,7 +3,7 @@
 #include "stddef.h"
 
 // File handling stuff
-int loadSudoku(char sudoku[9][9], char path[], size_t s);
+char* loadSudoku(char sudoku[9][9], char path[], size_t s);
 int createFile(char grid[9][9], char* path);
 
 //Solving sudoku algortihms.

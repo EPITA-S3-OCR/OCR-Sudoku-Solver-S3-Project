@@ -1,45 +1,44 @@
 #include <stdio.h>
+#include "stdlib.h"
+#include "libgen.h"
+#include "string.h"
 #include "solver.h"
 #include "err.h"
 
 int main(int argc, char *argv[]){
-  // declare and initialize an array
+    // declare and initialize an array
 
-  if(argc != 2)
-          errx(1,"bad");
+    if(argc != 2)
+        errx(1,"bad");
 
-  const size_t SI = 9;
-    
- 
+    const size_t SI = 9;
 
-  char sudoku[SI][SI];
-  loadSudoku(sudoku, argv[1], 9);
+    char sudoku[SI][SI];
 
+    loadSudoku(sudoku, argv[1], 9);
 
-  // display 2D array using for loop
-  printf("The Array elements are:\n");
-
-  // outer loop for row
-  for(int i=0; i<9; i++) {
-    // inner loop for column
-    for(int j=0; j<9; j++) {
-      printf("%c", sudoku[i][j]);
+    if (Solve(sudoku) == -1){
+        errx(1,"Could not be solved :(");
     }
-    printf("\n"); // new line
-  }
 
-  Solve(sudoku);
+    else{
 
-  printf("----------------\n");
-  // outer loop for row
-  for(int i=0; i<9; i++) {
-    // inner loop for column
-    for(int j=0; j<9; j++) {
-      printf("%c", sudoku[i][j]);
+        char trailing[] = ".result";
+        char where_to_save[] = "results";
+
+        char *path = strdup(argv[1]);
+        char* whoami;
+        (whoami = strrchr(path, '/')) ? ++path : (whoami = path);
+
+
+
+
+        strcat(where_to_save, whoami);
+        strcat(where_to_save, trailing);
+
+        createFile(sudoku,where_to_save);
+
     }
-    printf("\n"); // new line
-  }
 
-
-  return 0;
+    return 0;
 }

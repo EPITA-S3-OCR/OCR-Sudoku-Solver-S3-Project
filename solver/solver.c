@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "libgen.h"
 #include "solver.h"
 #include "err.h"
 #include "string.h"
@@ -9,24 +10,22 @@ int const S = 9;
 int possiblePlacement(int row, int col, char num, char grid[S][S]){
 
     //Lets check if there is a possible placement on a row
+    //
+    //Lets check if there is a possible placement on a col
+    
     for (size_t i = 0; i < S; i++) {
         if(grid[row][i] == num)
             return -1;
-    }
 
-    //Lets check if there is a possible placement on a col
-
-    for (size_t i = 0; i < S; i++) {
         if(grid[i][col] == num)
             return -1;
     }
 
     //Little trick to find which subsquare we are on.
 
-    int subrow = row - row % 3;
-    int subcol = col - col % 3;
+    int subrow = (row/3)*3;
+    int subcol = (col/3)*3;
 
-    printf("%i and %i",subrow,subcol);
 
     for (size_t i = 0; i < 3; i++) {
         for (size_t j = 0; j < 3; j++) {
@@ -41,47 +40,48 @@ int possiblePlacement(int row, int col, char num, char grid[S][S]){
 }
 
 
+int findEmpty(char grid[9][9], int *row, int *column) {
+    for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 9; y++) {
+            if (grid[x][y] == '0'){
+                *row = x;
+                *column = y;
+
+                return 1;
+            }
+        }
+    }
+    return -1;
+}
+
 int Solve(char grid[S][S]){
 
     //Find empty position to place a number
 
-    //By default 'a', if its still 'a' after loop then
-    //there must be no empty positions.
+    int row_current;
+    int coll_current;
 
-    char row_current = 'a';
-    char coll_current;
-
-    for (size_t i = 0; i < S; i++) {
-        for (size_t j = 0; j < S; j++) {
-            if(grid[i][j] == '0'){
-                row_current = i;
-                coll_current = j;
-            }
-        } 
-    }
- 
-    if(row_current == 'a') // Sudoku is full
+    if(findEmpty(grid, &row_current, &coll_current) == -1)
         return 1;
 
-    for (size_t i = 1; i < S+1; i++) {
+    for (size_t i = 1; i <= S; i++) {
 
         // If you cant place the value continue
 
+
         if(possiblePlacement(row_current, coll_current, 
-                    grid[row_current][coll_current],grid) == 1){
+                    '0' + i,grid) == 1){
 
 
             grid[row_current][coll_current] = '0' + i;
+
             if(Solve(grid) == 1)
                 return 1;
+
+            grid[row_current][coll_current] = '0';
         }
 
-        //Getting here means the value sucked, so we try another one.
 
-
-        //Now we try the possbile value
-
-        grid[row_current][coll_current] = '0';
     }
 
     return -1;
@@ -89,63 +89,39 @@ int Solve(char grid[S][S]){
 
 int createFile(char grid[S][S], char* path){
 
-    size_t DATA_S = 200; // Dimensions look like 12 * 11, but Just
-                            // to be sure.
 
 
-    char data[DATA_S];
     // Looks like 123 456 789\n ...
 
     /* File pointer to hold reference to our file */
     FILE * fPtr;
 
 
-    /* Just where to create it  */
+    /* Where to create it  */
 
     fPtr = fopen(path, "w");
 
 
     /* fopen() return NULL if last operation was unsuccessful */
+
     if(fPtr == NULL)
     {
         /* File not created hence exit */
         errx(EXIT_FAILURE, "Unable to open file");   
     }
 
-    size_t data_curr_iter = 0;
 
     for (size_t i = 0; i <S ; i++) {     
-        if(i%3 == 0){
-            data[data_curr_iter] = '\n';
-            data_curr_iter += 1;
-            continue; // Helps us avoid some iterations of j.
-        }
+        if(i == 3 || i == 6)
+            fputc('\n', fPtr); 
         for (size_t j = 0; j <S ; j++) {
-            if(j%3 == 0)
-                data[data_curr_iter] = ' ';
-            else {
-                data[data_curr_iter] = grid[i][j];  
+            fputc(grid[i][j],fPtr);  
+            if(j == 2 || j == 5)
+                fputc(' ',fPtr);
             }
-
-            data_curr_iter += 1;
-
+        fputc('\n', fPtr);
         }
-    }
-
-    // Add extra two bottom lines.
-
-    for (size_t i = 0; i < 2; i++) {
-        data[data_curr_iter] = '\n';
-        data_curr_iter += 1;
-    }
-
-    //We can symbolize the end of sentence by placing a one.
-
-    data[data_curr_iter] = 0;
-
-    /* Write data to file */
-    fputs(data, fPtr);
-
+    
 
     /* Close file to save file data */
     fclose(fPtr);
@@ -158,7 +134,7 @@ int createFile(char grid[S][S], char* path){
     return 0;
 }
         
-int loadSudoku(char sudoku[S][S],char path[], size_t s) {
+char* loadSudoku(char sudoku[S][S],char path[], size_t s) {
 
     // initialize a 2 dimensional matrix
 
@@ -216,7 +192,7 @@ int loadSudoku(char sudoku[S][S],char path[], size_t s) {
     // close file
     fclose(file);
 
-    return 0;
+    return basename(path);
 }
 
 
