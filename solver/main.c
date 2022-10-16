@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "stdlib.h"
-#include "libgen.h"
 #include "string.h"
 #include "solver.h"
 #include "err.h"
@@ -23,22 +22,42 @@ int main(int argc, char *argv[]){
 
     else{
 
-        char trailing[] = ".result";
-        char where_to_save[] = "results";
-
-        char *path = strdup(argv[1]);
-        char* whoami;
-        (whoami = strrchr(path, '/')) ? ++path : (whoami = path);
+        // If we dont get the full path it could lead to problems
+        // This lets us call the executable from anywhere.
 
 
+        char actual_path[2048];
+        char* full_path = realpath(argv[1], actual_path);
+
+        // Grab filename.
+
+        char* ptr_to_filename = strrchr(full_path, '/');
+
+        // Get path until /solver.
+
+        char* ptr_to_rest = strstr(full_path, "/examples");
 
 
-        strcat(where_to_save, whoami);
-        strcat(where_to_save, trailing);
+        // Index until /solver
 
-        createFile(sudoku,where_to_save);
+        int pos = ptr_to_rest - full_path;
+
+        char path_for_newfile[2048];
+        strncpy(path_for_newfile, full_path, pos);
+
+
+        // Now we put everything together!
+
+        strcat(path_for_newfile, "/results");
+        strcat(path_for_newfile, ptr_to_filename);
+        strcat(path_for_newfile, ".result");
+
+        createFile(sudoku, path_for_newfile);
 
     }
 
     return 0;
+
 }
+
+

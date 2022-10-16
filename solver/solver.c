@@ -126,11 +126,6 @@ int createFile(char grid[S][S], char* path){
     /* Close file to save file data */
     fclose(fPtr);
 
-
-    /* Success message */
-    printf("File created and saved successfully. :) \n");
-
-
     return 0;
 }
         

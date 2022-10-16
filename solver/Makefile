@@ -2,7 +2,7 @@
 
 # Compilers vars
 CC=gcc
-CPPFLAGS=
+CPPFLAGS= -MMD
 CFLAGS= -Wall -Wextra -std=c99 -O2
 LDFLAGS=
 LDLIBS=
@@ -21,4 +21,3 @@ clean:
 	rm -f ${PRG}
 
 # END Makefile
-
