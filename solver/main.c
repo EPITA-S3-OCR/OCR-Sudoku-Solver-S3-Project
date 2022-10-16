@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include "stdlib.h"
 #include "string.h"
@@ -14,7 +15,7 @@ int main(int argc, char *argv[]){
 
     char sudoku[SI][SI];
 
-    loadSudoku(sudoku, argv[1], 9);
+    loadSudoku(sudoku, argv[1]);
 
     if (Solve(sudoku) == -1){
         errx(1,"Could not be solved :(");

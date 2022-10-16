@@ -1,23 +1,5 @@
-# Simple Makefile
-
-# Compilers vars
-CC=gcc
-CPPFLAGS= -MMD
-CFLAGS= -Wall -Wextra -std=c99 -O2
-LDFLAGS=
-LDLIBS=
-
-SRC= main.c solver.c
-DEP= ${SRC:.c=.d}
-PRG= ${SRC:.c=}
-
-all: ${PRG}
-
--include ${DEP}
+solver:		main.c solver.c
+	gcc -o solver main.c solver.c -Wall -Wextra -std=c99 -O2
 
 clean:
-	rm -f *.o
-	rm -f ${DEP}
-	rm -f ${PRG}
-
-# END Makefile
+	rm ./solver

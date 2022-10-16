@@ -7,7 +7,7 @@
 
 int const S = 9;
 
-int possiblePlacement(int row, int col, char num, char grid[S][S]){
+int possiblePlacement(int row, int col, char num, char grid[][9]){
 
     //Lets check if there is a possible placement on a row
     //
@@ -40,7 +40,7 @@ int possiblePlacement(int row, int col, char num, char grid[S][S]){
 }
 
 
-int findEmpty(char grid[9][9], int *row, int *column) {
+int findEmpty(char grid[][9], int *row, int *column) {
     for (int x = 0; x < 9; x++) {
         for (int y = 0; y < 9; y++) {
             if (grid[x][y] == '0'){
@@ -54,7 +54,7 @@ int findEmpty(char grid[9][9], int *row, int *column) {
     return -1;
 }
 
-int Solve(char grid[S][S]){
+int Solve(char grid[][9]){
 
     //Find empty position to place a number
 
@@ -87,7 +87,7 @@ int Solve(char grid[S][S]){
     return -1;
 }
 
-int createFile(char grid[S][S], char* path){
+int createFile(char grid[][9], char* path){
 
 
 
@@ -129,7 +129,7 @@ int createFile(char grid[S][S], char* path){
     return 0;
 }
         
-char* loadSudoku(char sudoku[S][S],char path[], size_t s) {
+char* loadSudoku(char sudoku[][9],char path[]) {
 
     // initialize a 2 dimensional matrix
 
