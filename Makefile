@@ -1,5 +1,5 @@
 all :
-	make -C neural-network
+	make -C XOR_Neural_Network
 
 clean :
-	make -C neural-network clean
+	make -C XOR_Neural_Network clean

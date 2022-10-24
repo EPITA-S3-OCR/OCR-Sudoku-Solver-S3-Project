@@ -41,9 +41,9 @@ void print1dArray(double *array, size_t len)
   for (size_t i = 0; i < len; i++)
   {
     if (i < len - 1)
-      printf("%f, ", array[i]);
+      printf("%lf, ", array[i]);
     else
-      printf("%f", array[i]);
+      printf("%lf", array[i]);
   }
   printf("]\n");
 }
@@ -57,9 +57,9 @@ void print2dArray(double **array, size_t len1, size_t len2)
     for (size_t j = 0; j < len2; j++)
     {
       if (j < len2 - 1)
-        printf("%f, ", array[i][j]);
+        printf("%lf, ", array[i][j]);
       else
-        printf("%f", array[i][j]);
+        printf("%lf", array[i][j]);
     }
 
     if (i < len1 - 1)
