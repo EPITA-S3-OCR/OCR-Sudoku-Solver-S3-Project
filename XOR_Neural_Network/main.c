@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
       errx(1, "Usage: %s --comp-xor relPath a b\n", argv[0]);
 
     // Load the neural network weights & biases from a file
-    const char   *xorFN = ;
+    const char   *xorFN = argv[2];
     NeuralNetwork nn;
     neuralNetworkLoadXOR(&nn, xorFN);
 
