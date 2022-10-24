@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -std=c99
 all: main
 
 main: main.o neural_network.o math_nn.o helpers.o
-	$(CC) $(CFLAGS) -o main main.o neural_network.o math_nn.o helpers.o
+	$(CC) $(CFLAGS) -o main main.o neural_network.o math_nn.o helpers.o -lm
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
