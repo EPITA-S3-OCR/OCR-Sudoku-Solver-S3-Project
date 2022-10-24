@@ -1,8 +1,0 @@
-{
-    "C_Cpp.errorSquiggles": "Disabled",
-    "files.associations": {
-        "helpers.h": "c",
-        "math_nn.h": "c",
-        "neural_network.h": "c"
-    }
-}
