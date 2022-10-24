@@ -299,5 +299,4 @@ void neuralNetworkFree(NeuralNetwork *nn)
   free2dArray(nn->outputWeights, nn->nbHiddenNeurons);
   free(nn->hiddenBiases);
   free(nn->outputBiases);
-  free(nn);
 }
