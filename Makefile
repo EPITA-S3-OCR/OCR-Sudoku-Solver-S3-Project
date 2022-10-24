@@ -1,5 +1,5 @@
 all :
-    make -C neural-network
+	make -C neural-network
 
 clean :
-    make -C neural-network clean
+	make -C neural-network clean

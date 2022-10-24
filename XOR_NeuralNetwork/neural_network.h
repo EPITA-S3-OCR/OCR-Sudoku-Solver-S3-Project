@@ -2,7 +2,7 @@
 #define NEURAL_NETWORK_H
 #include <stdlib.h>
 
-struct NeuralNetwork
+typedef struct NeuralNetwork
 {
     size_t nbInputNeurons;
     size_t nbHiddenNeurons;
@@ -15,7 +15,7 @@ struct NeuralNetwork
     double *outputWeights[2]; // find a way
     double *hiddenBiases;
     double *outputBiases;
-} typedef NeuralNetwork;
+} NeuralNetwork;
 
 void neuralNetworkInit(
     NeuralNetwork *nn,

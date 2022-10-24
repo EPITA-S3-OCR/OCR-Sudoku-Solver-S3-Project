@@ -7,23 +7,24 @@
 #include "math_nn.h"
 #include "helpers.h"
 
-// Layers' sizes
-#define sizeInput = 2;
-#define sizeHidden = 2;
-#define sizeOutput = 1;
-#define sizeTraining = 4;
+#define INPUT_SIZE 2
+#define HIDDEN_SIZE 2
+#define OUTPUT_SIZE 1
+#define TRAINING_SIZE 4
 
-int main(int argc, char *argv[])
+int main()
 {
 	// Generate random seed from current time
 	srand(time(NULL));
 
 	// Create & initialize a new neural network instance
 	NeuralNetwork nn;
-	neuralNetworkInit(&nn, sizeInput, sizeHidden, sizeOutput, sizeTraining);
+	neuralNetworkInit(&nn, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, TRAINING_SIZE);
+
+
 
 	// Initialize the training inputs array
-	double trainingInputs[sizeTraining][sizeInput] = {
+	double trainingInputs[TRAINING_SIZE][INPUT_SIZE] = {
 		{0, 0},
 		{0, 1},
 		{1, 0},
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
 	};
 
 	// Initialize the training ouptuts array
-	double trainingOutputs[sizeTraining][sizeOutput] = {
+	double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE] = {
 		{0},
 		{1},
 		{1},
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
 	};
 
 	const double learningRate = 0.1f;
-	size_t *trainingIndexes = {0, 1, 2, 3};
+	size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3};
 	unsigned long maxEpochs = 10000;
 
 	// Process to train the neural network
