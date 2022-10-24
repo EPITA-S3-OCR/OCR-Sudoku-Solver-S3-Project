@@ -2,16 +2,18 @@ name: C CI
 on:
   push:
     branches:
-      - '*'
-      - '**'
+      - "*"
+      - "**"
   pull_request:
     branches: ["main"]
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container: ghcr.io/titouv/epita-c-cpp:git-main
     steps:
       - uses: actions/checkout@v3
       - name: make
         run: make
+      - name: tests
+        run: image-processing/tests.sh
