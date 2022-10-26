@@ -5,26 +5,29 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-void split_image(SDL_Surface* sfcSudoku, int orgX, int orgY, int w, int h, int sides)
+int max(int a, int b) { return a > b ? a : b; }
+
+void splitImage(SDL_Surface* sfcSudoku, int orgX, int orgY, int w, int h)
 {
 	// Define the size of each sudoku tile
-	int tileX = w/sides, tileY = h/sides;
+	int tileX = w/9, tileY = h/9;
+	int sizeTile = max(tileX, tileY);
 
 	// Loop through each sudoku tiles
-	for (int i = 0; i < sides; i++)
+	for (int i = 0; i < 9; i++)
 	{
-		for (int j = 0; j < sides; j++)
+		for (int j = 0; j < 9; j++)
 		{
 			// Create a new surface for the current tile
-			SDL_Surface* sfcTile = SDL_CreateRGBSurface(0, tileX, tileY, 32, 0, 0, 0, 0);
+			SDL_Surface* sfcTile = SDL_CreateRGBSurface(0, sizeTile, sizeTile, 32, 0, 0, 0, 0);
 
 			// Create the rectangle at the correct coordinates
 			SDL_Rect currTile;
-			int threshold = 0; // to set if needed, debug feature mostly
-			currTile.x = j*tileX + orgX + threshold;
-			currTile.y = i*tileY + orgY;
-			currTile.w = tileX;
-			currTile.h = tileY;
+			int threshold = 5;
+			currTile.x = j*sizeTile + orgX + threshold;
+			currTile.y = i*sizeTile + orgY;
+			currTile.w = sizeTile;
+			currTile.h = sizeTile;
 
 			// Copy the tile from the sudoku surface into the tile surface juste created 
 			SDL_BlitSurface(sfcSudoku, &currTile, sfcTile, NULL);
@@ -53,12 +56,12 @@ int main(int argc, char** argv)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
 
 	// Split the image into 81 tiles to feed to the AI
-	int ORGX = 0, ORGY = 0, W = 1000, H = 1000;		// sudoku1
+	int ORGX = 0, ORGY = 0, W = 1000, H = 1000;				// sudoku1
 	//int ORGX = 342, ORGY = 216, W = 830, H = 821;		// sudoku2
 	//int ORGX = 130, ORGY = 89, W = 520, H = 520;		// sudoku3
 	//int ORGX = 415, ORGY = 162, W = 1132, H = 1147;	// sudoku4
-	split_image(surface, ORGX, ORGY, W, H, 9); // can be changed to 16 for hexadoku
-	
+	splitImage(surface, ORGX, ORGY, W, H);
+
 	// Free the main surface
 	SDL_FreeSurface(surface);
 
