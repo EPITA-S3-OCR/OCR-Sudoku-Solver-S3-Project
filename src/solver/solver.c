@@ -1,6 +1,6 @@
 #include "solver.h"
 
-int const S = 9;
+size_t const S = 9;
 
 int possiblePlacement(int row, int col, char num, char grid[][9])
 {
@@ -119,6 +119,7 @@ int createFile(char grid[][9], char *path)
   }
 
   /* Close file to save file data */
+
   fclose(fPtr);
 
   return 0;

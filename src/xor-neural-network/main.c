@@ -49,7 +49,7 @@ int xorNeuralNetworkMain(int argc, char *argv[])
   }
   else if (!strcmp(argv[1], "--comp-xor"))
   {
-    if (strlen(argv[3]) != strlen(argv[4]) || strlen(argv[4]) > 8)
+    if (strlen(argv[4]) > 8 || strlen(argv[3]) > 8)
       errx(1, "Usage: %s --comp-xor relPath a b\n", argv[0]);
     // Prevent wrong number of arguments
     if (argc != 5)
@@ -76,8 +76,8 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     // int output = (int)round(neuralNetworkCompute(&nn, inputs));
 
     printf("\n=================\nNeural network yields: %s ^ %s = %s ⇒  ",
-           getBinaryString(nb1), getBinaryString(nb1),
-           getBinaryString(output));
+           getBinaryString(getDecimalInt(nb1)),
+           getBinaryString(getDecimalInt(nb2)), getBinaryString(output));
     if (output == ((int)inputs[0] ^ (int)inputs[1]))
       printf("✅\n");
     else

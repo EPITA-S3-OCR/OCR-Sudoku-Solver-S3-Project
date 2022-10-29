@@ -9,6 +9,8 @@
 #include "pretreatment/noise_reduction.h"
 #include "utils/lines.h"
 #include "utils/linked_list.h"
+#include "utils/splitting.h"
 #include "utils/utils.h"
 
+int imageRotateMain(int argv, char **argc);
 int imageProcessingMain(int argv, char **argc);

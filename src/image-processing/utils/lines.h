@@ -5,10 +5,10 @@
 #include "../utils/linked_list.h"
 #include "../utils/utils.h"
 
-struct Line
+typedef struct Line
 {
   int x1, y1, x2, y2;
-} typedef Line;
+} Line;
 
 /**
  * @brief Rotate lines from the list by the given angle.
@@ -68,7 +68,7 @@ void highlight(SDL_Surface *surface, LinkedList *lines);
 
 LinkedList squareDetection(LinkedList *lines, int width, int height);
 
-void       drawSquares(SDL_Surface *surface, LinkedList *squares, int width,
-                       int height);
+void drawSquares(SDL_Surface *surface, LinkedList *squares, SDL_Color color);
 LinkedList squareFilter(LinkedList *squares);
 SudokuCell selectLeftMostCell(LinkedList *squares);
+SudokuCell selectRightMostCell(LinkedList *squares);

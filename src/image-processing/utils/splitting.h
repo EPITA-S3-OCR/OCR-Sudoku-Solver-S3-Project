@@ -5,4 +5,5 @@
 #include <stdlib.h>
 #include <string.h>
 
-int splitMain(int argc, char **argv);
+void splitImage(SDL_Surface *sfcSudoku, int orgX, int orgY, int w, int h);
+int  splitMain(int argc, char **argv);

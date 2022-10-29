@@ -18,6 +18,10 @@ int main(int argc, char **argv)
     {
       solverMain(argc - 1, argv + 1);
     }
+    else if (strcmp(argv[1], "image-rotate") == 0)
+    {
+      imageRotateMain(argc - 1, argv + 1);
+    }
     else if (strcmp(argv[1], "xor-neural-network") == 0)
     {
       xorNeuralNetworkMain(argc - 1, argv + 1);

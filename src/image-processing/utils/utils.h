@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <err.h>
+#include <math.h>
 
 /**
  * @brief Rotate the surface by the given angle.
@@ -90,10 +91,10 @@ double radiansToDegrees(double radian);
 void convertPoints(int i, int j, int *x, int *y, int width, int height,
                    double cos_angle, double sin_angle);
 
-struct SudokuCell
+typedef struct SudokuCell
 {
   int xTopLeft, yTopLeft;
   int xTopRight, yTopRight;
   int xBottomLeft, yBottomLeft;
   int xBottomRight, yBottomRight;
-} typedef SudokuCell;
+} SudokuCell;

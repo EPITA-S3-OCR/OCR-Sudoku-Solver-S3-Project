@@ -28,11 +28,13 @@ void printAcc(unsigned int *acc, int width, int height)
 
 void houghTransform(SDL_Surface *surface, LinkedList *list)
 {
+  // const float threshold = 0.55;
   const float threshold = 0.5;
+  // const float threshold = 0.25;
   // Save the image dimensions
   const double width = surface->w, height = surface->h;
   // Calculate the diagonal of the image
-  const double diagonal = sqrt(width * width + height * height);
+  const double diagonal = sqrt(height * height + width * width);
 
   // Initialize the constant values for theta and rho
   const double maxTheta = 180.0, minTheta = 0.0;
@@ -109,9 +111,9 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
   free(saveCos);
   free(saveSin);
 
-  double       tempMaxTheta   = 0.0;
-  unsigned int histogram[181] = {0};
-  unsigned int rounded_angle;
+  double tempMaxTheta = 0.0;
+  // unsigned int histogram[181] = {0};
+  // unsigned int rounded_angle;
 
   LinkedList *lines = list;
 
@@ -150,9 +152,9 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
 
         if (t > tempMaxTheta)
         {
-          tempMaxTheta  = t;
-          rounded_angle = (unsigned int)radiansToDegrees(t);
-          histogram[rounded_angle]++;
+          tempMaxTheta = t;
+          // rounded_angle = (unsigned int)radiansToDegrees(t);
+          // histogram[rounded_angle]++;
         }
 
         double c = cos(t), s = sin(t);
