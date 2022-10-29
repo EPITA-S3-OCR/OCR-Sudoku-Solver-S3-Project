@@ -24,12 +24,8 @@ int solverMain(int argc, char *argv[])
     // If we dont get the full path it could lead to problems
     // This lets us call the executable from anywhere.
 
-    char  actual_path[2048];
-    char *full_path = realpath(argv[1], actual_path);
-
     // Grab filename.
-
-    char *ptr_to_filename = strrchr(full_path, '/');
+    char *ptr_to_filename = strrchr(argv[1], '/');
 
     char *basepath  = "./output/results";
     char *extension = ".result";
