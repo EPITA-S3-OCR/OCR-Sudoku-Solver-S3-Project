@@ -75,13 +75,25 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     int output = neuralNetworkComputeMultiple(&nn, inputs);
     // int output = (int)round(neuralNetworkCompute(&nn, inputs));
 
-    printf("\n=================\nNeural network yields: %s ^ %s = %s ⇒  ",
+    printf("\n=================\nNeural network yields: %s ^ %s = %s ",
            getBinaryString(getDecimalInt(nb1)),
            getBinaryString(getDecimalInt(nb2)), getBinaryString(output));
     if (output == ((int)inputs[0] ^ (int)inputs[1]))
-      printf("✅\n");
+    {
+      printf("\033[0;32m");
+      printf("OK\n");
+      printf("\033[0m");
+    }
     else
-      printf("❌\n");
+    {
+      printf("\033[0;31m");
+      printf("KO\n");
+      printf("\033[0m");
+    }
+
+    printf("\033[0m");
+    printf("\033[0m");
+
 
     // Free the neural network & its arrays
     neuralNetworkFree(&nn);

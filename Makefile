@@ -42,12 +42,12 @@ $(BUILD)/%.o : %.c
 clean :
 	rm -rf $(BUILD) $(TARGET)
 
-cleantest : 
-	rm output/results/*
-	rm output/steps/*
-	rm output/tiles/*
-	rm output/output.jpg
-	rm output/*
+cleanoutput : 
+	rm -rf output/results/*
+	rm -rf output/steps/*
+	rm -rf output/tiles/*
+	rm -rf output/train/*
+	rm -rf output/output*
 
 # To tell make that all and clean are not files rules
 .PHONY: all clean

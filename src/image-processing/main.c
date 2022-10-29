@@ -1,6 +1,6 @@
 #include "main.h"
 
-SDL_Surface *apply_image_processing(SDL_Surface *surface)
+SDL_Surface *applyImageProcessing(SDL_Surface *surface)
 {
   printf("Applying image processing...\n");
   // Apply the image processing
@@ -32,9 +32,11 @@ SDL_Surface *apply_image_processing(SDL_Surface *surface)
   houghTransform(copy, lines);
   printf("  - lines: %zu\n", lkLen(lines));
 
-  printf("- Applying line average...\n");
-  lineAverage(lines);
-  printf("  - lines: %zu\n", lkLen(lines));
+  SDL_Color color = {255, 0, 0, 255};
+
+  SDL_Surface *surfacelines = copySurface(copy);
+  drawLines(surfacelines, lines->next, color);
+  saveSurface(surfacelines, "output/steps/6-lines.jpg");
 
   printf("- Getting the angle...\n");
   double angle = getRotationAngle(lines);
@@ -51,8 +53,6 @@ SDL_Surface *apply_image_processing(SDL_Surface *surface)
   LinkedList squares = squareDetection(lines, surface->w, surface->h);
   // size_t     nbSquares = lkLen(&squares);
   // LinkedList filteredSquares   = squareFilter(&squares);
-
-  SDL_Color color = {255, 0, 0, 255};
 
   printf("- Drawing the squares...\n");
   SDL_Surface *drawSquareSurface = copySurface(copy);
@@ -75,6 +75,7 @@ SDL_Surface *apply_image_processing(SDL_Surface *surface)
   drawLine(copy, leftMostCell.xBottomLeft, leftMostCell.yBottomLeft,
            rightMostCell.xTopRight, rightMostCell.yTopRight, color);
 
+  saveSurface(copy, "output/output2.png");
   int distX = rightMostCell.xTopRight - leftMostCell.xBottomLeft;
   int distY = rightMostCell.xTopRight - leftMostCell.xBottomLeft;
 
@@ -223,7 +224,7 @@ int imageProcessingMain(int argv, char **argc)
   // functions later
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
 
-  surface = apply_image_processing(surface);
+  surface = applyImageProcessing(surface);
   // Intialize a texture by converting the imported surface
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (texture == NULL)

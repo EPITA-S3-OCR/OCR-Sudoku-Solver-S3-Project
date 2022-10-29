@@ -52,13 +52,6 @@ void drawLines(SDL_Surface *surface, LinkedList *lines, SDL_Color color);
 double getRotationAngle(LinkedList *lines);
 
 /**
- * @brief Simplify lines by removing the ones that are too close to each other.
- *
- * @param lines
- */
-void lineAverage(LinkedList *lines);
-
-/**
  * @brief Highlight the intersections of the lines.
  *
  * @param surface
@@ -69,6 +62,7 @@ void highlight(SDL_Surface *surface, LinkedList *lines);
 LinkedList squareDetection(LinkedList *lines, int width, int height);
 
 void drawSquares(SDL_Surface *surface, LinkedList *squares, SDL_Color color);
-LinkedList squareFilter(LinkedList *squares);
-SudokuCell selectLeftMostCell(LinkedList *squares);
-SudokuCell selectRightMostCell(LinkedList *squares);
+LinkedList  squareFilter(LinkedList *squares);
+LinkedList *lineInsert(LinkedList *start, LinkedList *lines, Line *line);
+SudokuCell  selectLeftMostCell(LinkedList *squares);
+SudokuCell  selectRightMostCell(LinkedList *squares);

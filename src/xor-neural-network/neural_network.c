@@ -137,11 +137,17 @@ void neuralNetworkPrintAssertXOR(NeuralNetwork *nn, unsigned long epoch, int a,
   nn->totalTries++;
   if (round(nn->outputLayer[0]) == expected)
   {
-    printf("✅\n");
+    printf("\033[0;32m");
+    printf("OK\n");
+    printf("\033[0m");
     nn->successCount++;
   }
   else
-    printf("❌\n");
+  {
+    printf("\033[0;31m");
+    printf("KO\n");
+    printf("\033[0m");
+  }
 }
 
 void neuralNetworkPrintResults(NeuralNetwork *nn, size_t maxEpochs)

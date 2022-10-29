@@ -472,46 +472,25 @@ void drawSquares(SDL_Surface *surface, LinkedList *squares, SDL_Color color)
   }
 }
 
-void lineAverage(LinkedList *lines)
+LinkedList *lineInsert(LinkedList *start, LinkedList *lines, Line *line)
 {
-  int threshold = 10;
-
-  LinkedList *line1 = lines;
-  LinkedList *line2 = lines;
-
-  while (line1 == NULL || line1->next != NULL)
+  if (start->next == NULL)
   {
-    line1    = line1->next;
-    Line *l1 = line1->value;
-    line2    = lines;
-    while (line2 == NULL || line2->next != NULL)
+    return lkAppend(lines, line);
+  }
+  int threshold = 15;
+  // insert the line if not line is approximately the same
+  for (LinkedList *n = start->next; n->next != NULL; n = n->next)
+  {
+    Line *l = (Line *)n->value;
+    if (abs(l->x1 - line->x1) < threshold && abs(l->y1 - line->y1) < threshold
+        && abs(l->x2 - line->x2) < threshold
+        && abs(l->y2 - line->y2) < threshold)
     {
-      line2    = line2->next;
-      Line *l2 = line2->value;
-      if (l1 != l2)
-      {
-        if (abs(l1->x1 - l2->x1) < threshold
-            && abs(l1->y1 - l2->y1) < threshold
-            && abs(l1->x2 - l2->x2) < threshold
-            && abs(l1->y2 - l2->y2) < threshold)
-        {
-          l1->x1 = (l1->x1 + l2->x1) / 2;
-          l1->y1 = (l1->y1 + l2->y1) / 2;
-          lkRemove(line2);
-        }
-        if (line2 == NULL)
-        {
-          if (abs(l1->x2 - l2->x2) < threshold
-              && abs(l1->y2 - l2->y2) < threshold)
-          {
-            l1->x2 = (l1->x2 + l2->x2) / 2;
-            l1->y2 = (l1->y2 + l2->y2) / 2;
-            lkRemove(line2);
-          }
-        }
-      }
+      return lines;
     }
   }
+  return lkAppend(lines, line);
 }
 
 void point(SDL_Surface *surface, int x, int y, Uint32 pixel)

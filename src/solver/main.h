@@ -1,4 +1,4 @@
-
+#define _GNU_SOURCE
 #include <err.h>
 #include <limits.h>
 #include <stdio.h>

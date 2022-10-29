@@ -116,6 +116,7 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
   // unsigned int rounded_angle;
 
   LinkedList *lines = list;
+  LinkedList *start = list;
 
   int prev       = accumulator[0];
   int prev_theta = 0, prev_rho = 0;
@@ -173,8 +174,9 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
 
         Line *linePtr = malloc(sizeof(Line));
         *linePtr      = line;
+        lines = lineInsert(start, lines, linePtr);
 
-        lines = lkAppend(lines, linePtr);
+        // lines = lkAppend(lines, linePtr);
       }
     }
   }
