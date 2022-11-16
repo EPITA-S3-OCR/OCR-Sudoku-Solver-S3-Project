@@ -38,11 +38,17 @@ $(TARGET) : $(OFILES)
 $(BUILD)/%.o : %.c
 	$(CC) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
+doc :
+	doxygen doxygen/Doxyfile
+
+clean-doc : 
+	rm -rf doc 
+
 # Cleaning executable and object files
 clean :
 	rm -rf $(BUILD) $(TARGET)
 
-cleanoutput : 
+clean-output : 
 	rm -rf output/results/*
 	rm -rf output/steps/*
 	rm -rf output/tiles/*
@@ -50,7 +56,7 @@ cleanoutput :
 	rm -rf output/output*
 
 # To tell make that all and clean are not files rules
-.PHONY: all clean
+.PHONY: all clean doc clean-doc clean-output
 
 # Include dependency files
 -include $(DFILES)

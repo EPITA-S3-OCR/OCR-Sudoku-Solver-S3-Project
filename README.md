@@ -56,5 +56,29 @@ To execute the project, you need to run the following command:
 To clean the project, you need to run the following command:
 
 ```bash
+# To clean the project
 make clean
+# To clean the output folder
+make clean-output
 ```
+
+### Create documentation
+
+You will need the doxygen package to create the documentation.
+
+For example on Linux Debian-based distros install those with :
+
+```bash
+sudo apt-get install doxygen
+```
+
+To create the documentation, you need to run the following command:
+
+```bash
+# To create the documentation
+make doc
+# To clean the documentation
+make clean-doc
+```
+
+Open the [`doc/html/index.html`](doc/html/index.html) file in your browser to see the documentation.
