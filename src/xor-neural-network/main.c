@@ -92,7 +92,6 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     printf("\033[0m");
     printf("\033[0m");
 
-
     // Free the neural network & its arrays
     neuralNetworkFree(&nn);
   }
