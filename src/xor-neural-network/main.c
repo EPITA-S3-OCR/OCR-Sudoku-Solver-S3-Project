@@ -49,8 +49,10 @@ int xorNeuralNetworkMain(int argc, char *argv[])
   }
   else if (!strcmp(argv[1], "--comp-xor"))
   {
-    if (strlen(argv[4]) > 8 || strlen(argv[3]) > 8)
+    // Prevent larger than 8 bit words
+    if (strlen(argv[3]) > 8 || strlen(argv[4]) > 8)
       errx(1, "Usage: %s --comp-xor relPath a b\n", argv[0]);
+
     // Prevent wrong number of arguments
     if (argc != 5)
       errx(1, "Usage: %s --comp-xor relPath a b\n", argv[0]);
@@ -60,10 +62,7 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     NeuralNetwork nn;
     neuralNetworkLoadXOR(&nn, xorFN);
 
-    // Initialize the inputs array
-    // double inputs[INPUT_SIZE] = {strtod(argv[3], NULL), strtod(argv[4],
-    // NULL)};
-
+    // Retrieve the two numbers to compute the XOR
     int nb1 = atoi(argv[3]), nb2 = atoi(argv[4]);
 
     // Convert the inputs to binary
@@ -73,7 +72,6 @@ int xorNeuralNetworkMain(int argc, char *argv[])
 
     // Compute the neural network output & print it
     int output = neuralNetworkComputeMultiple(&nn, inputs);
-    // int output = (int)round(neuralNetworkCompute(&nn, inputs));
 
     printf("\n=================\nNeural network yields: %s ^ %s = %s ",
            getBinaryString(getDecimalInt(nb1)),
@@ -94,6 +92,48 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     printf("\033[0m");
     printf("\033[0m");
 
+
+    // Free the neural network & its arrays
+    neuralNetworkFree(&nn);
+  }
+  else if (!strcmp(argv[1], "--train-from"))
+  {
+    // Prevent wrong number of arguments
+    if (argc != 5)
+      errx(1, "Usage: %s --train-from nbEpochs relPath1 relPath2\n", argv[0]);
+
+    // Load the neural network weights & biases from the first given file
+    const char   *xorFN = argv[3];
+    NeuralNetwork nn;
+    neuralNetworkLoadXOR(&nn, xorFN);
+
+    // Generate random seed from current time
+    srand(time(NULL));
+
+    // Initialize the training inputs/outputs arrays
+    double trainingInputs[TRAINING_SIZE][INPUT_SIZE]
+        = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE] = {{0}, {1}, {1}, {0}};
+
+    // Initialize the training indexes array
+    size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3};
+
+    // Initialize constant neural network parameters
+    const double  learningRate = 0.1f;
+    unsigned long maxEpochs    = strtoul(argv[2], NULL, 10);
+
+    // Train the neural network loaded from the first given file
+    neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
+                       learningRate, maxEpochs);
+
+    printf("finished loading & setting up\n");
+
+    // Save the neural network weights & biases to the second given file
+    const char *xorFN2 = argv[4];
+    neuralNetworkSaveXOR(&nn, xorFN2);
+
+    // Print weights & biases values after 'maxEpochs' trains
+    neuralNetworkPrintResults(&nn, maxEpochs);
 
     // Free the neural network & its arrays
     neuralNetworkFree(&nn);

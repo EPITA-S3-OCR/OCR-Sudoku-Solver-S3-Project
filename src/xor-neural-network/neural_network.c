@@ -48,6 +48,7 @@ void neuralNetworkTrain(
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
     unsigned long nbEpochs)
 {
+
   // Process to train the neural network
   for (size_t epoch = 0; epoch < nbEpochs; epoch++)
   {
@@ -173,8 +174,8 @@ void neuralNetworkSaveXOR(NeuralNetwork *nn, const char *filename)
   FILE *file = fopen(filename, "w");
 
   // Write the layers sizes
-  fprintf(file, "%lu %lu %lu\n", nn->nbInputNeurons, nn->nbHiddenNeurons,
-          nn->nbOutputNeurons);
+  fprintf(file, "%lu %lu %lu %lu\n", nn->nbInputNeurons, nn->nbHiddenNeurons,
+          nn->nbOutputNeurons, nn->nbTraining);
 
   // Write the hidden layer weights
   for (size_t i = 0; i < nn->nbInputNeurons; i++)
@@ -209,11 +210,11 @@ void neuralNetworkLoadXOR(NeuralNetwork *nn, const char *filename)
          filename);
 
   // Read the layers sizes
-  fscanf(file, "%lu %lu %lu\n", &nn->nbInputNeurons, &nn->nbHiddenNeurons,
-         &nn->nbOutputNeurons);
+  fscanf(file, "%lu %lu %lu %lu\n", &nn->nbInputNeurons, &nn->nbHiddenNeurons,
+         &nn->nbOutputNeurons, &nn->nbTraining);
   printf("Loading XOR neural network with %lu input neurons, %lu hidden "
-         "neurons and %lu output neurons\n",
-         nn->nbInputNeurons, nn->nbHiddenNeurons, nn->nbOutputNeurons);
+         "neurons, %lu output neurons and %lu training batch size\n",
+         nn->nbInputNeurons, nn->nbHiddenNeurons, nn->nbOutputNeurons, nn->nbTraining);
 
   // Allocate the memory spaces for the layers
   printf("Allocating memory for the layers...\n");
@@ -263,6 +264,7 @@ void neuralNetworkLoadXOR(NeuralNetwork *nn, const char *filename)
     printf("Loading output bias [%lu] with value %lf\n", i,
            nn->outputBiases[i]);
   }
+
   // Close the file
   fclose(file);
 }
