@@ -96,7 +96,7 @@ int xorNeuralNetworkMain(int argc, char *argv[])
     // Free the neural network & its arrays
     neuralNetworkFree(&nn);
   }
-  else if (!strcmp(argv[1], "--train-from"))
+  else if (!strcmp(argv[1], "--train-xor-from"))
   {
     // Prevent wrong number of arguments
     if (argc != 5)
