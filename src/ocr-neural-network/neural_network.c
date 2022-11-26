@@ -133,12 +133,18 @@ void neuralNetworkTrain(
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
                                  size_t expected)
 {
-  size_t maxIndex = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
-  printf("Epoch %lu: image of a %zu interpreted it as an image of a %zu ",
-         epoch, expected, maxIndex);
+  // print the output layer
+  printf("Epoch %lu: [", epoch);
+  for (size_t i = 0; i < nn->nbOutputNeurons-1; i++)
+    printf("%zu=%f,", i+1, nn->outputLayer[i]);
+  printf("9=%f] ", nn->outputLayer[nn->nbOutputNeurons-1]);
+
+  size_t interpretation = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
+  printf("Epoch %lu: image of a %zu interpreted as an image of a %zu ",
+         epoch, expected, interpretation);
 
   nn->totalTries++;
-  if (maxIndex == expected)
+  if (interpretation == expected)
   {
     printf("\033[0;32m");
     printf("OK\n");
@@ -155,19 +161,19 @@ void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
 
 void neuralNetworkPrintResults(NeuralNetwork *nn, size_t maxEpochs)
 {
-  printf("\n==== Hidden layers infos after %lu epochs ====\n", maxEpochs);
-  printf("Hidden layer weights:\t");
-  print2dArray(nn->hiddenWeights, nn->nbInputNeurons, nn->nbHiddenNeurons);
-  printf("Hidden layer biases:\t");
-  print1dArray(nn->hiddenBiases, nn->nbHiddenNeurons);
+  // printf("\n==== Hidden layers infos after %lu epochs ====\n", maxEpochs);
+  // printf("Hidden layer weights:\t");
+  // print2dArray(nn->hiddenWeights, nn->nbInputNeurons, nn->nbHiddenNeurons);
+  // printf("Hidden layer biases:\t");
+  // print1dArray(nn->hiddenBiases, nn->nbHiddenNeurons);
 
-  printf("\n==== Output layers infos after %lu epochs ====\n", maxEpochs);
-  printf("Output layer weights:\t");
-  print2dArray(nn->outputWeights, nn->nbHiddenNeurons, nn->nbOutputNeurons);
-  printf("Output layer biases:\t");
-  print1dArray(nn->outputBiases, nn->nbOutputNeurons);
+  // printf("\n==== Output layers infos after %lu epochs ====\n", maxEpochs);
+  // printf("Output layer weights:\t");
+  // print2dArray(nn->outputWeights, nn->nbHiddenNeurons, nn->nbOutputNeurons);
+  // printf("Output layer biases:\t");
+  // print1dArray(nn->outputBiases, nn->nbOutputNeurons);
 
-  printf("Success rate: %lf\n", (nn->successCount / nn->totalTries) * 100);
+  printf("Success rate for %zu epochs: %lf\n", maxEpochs, (nn->successCount / nn->totalTries) * 100);
 }
 
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename)

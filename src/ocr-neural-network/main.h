@@ -13,5 +13,6 @@
 #define HIDDEN_SIZE 16
 #define OUTPUT_SIZE 9
 #define TRAINING_SIZE 9
+#define MAX_PATH_LENGTH 100
 
 int ocrNeuralNetworkMain(int argc, char *argv[]);
