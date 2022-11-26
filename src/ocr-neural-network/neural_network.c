@@ -18,6 +18,9 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
   nn->hiddenLayer = calloc(nbHiddenNeurons, sizeof(double));
   nn->outputLayer = calloc(nbOutputNeurons, sizeof(double));
 
+  nn->hiddenWeights = malloc(nbInputNeurons * sizeof(double *));
+  nn->outputWeights = malloc(nbHiddenNeurons * sizeof(double *));
+
   // Allocate memory & fill the hidden layers weights array
   for (size_t i = 0; i < nbInputNeurons; i++)
   {
@@ -131,8 +134,8 @@ void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
                                  size_t expected)
 {
   size_t maxIndex = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
-  printf("Epoch %lu: image of a %zu interpreted it as an image of a %d ", epoch,
-         expected, maxIndex);
+  printf("Epoch %lu: image of a %zu interpreted it as an image of a %zu ",
+         epoch, expected, maxIndex);
 
   nn->totalTries++;
   if (maxIndex == expected)

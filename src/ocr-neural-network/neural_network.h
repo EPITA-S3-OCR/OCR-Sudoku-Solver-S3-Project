@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "helpers.h"
+#include "image.h"
 #include "math_nn.h"
 
 #ifndef NEURAL_NETWORK_H
@@ -17,12 +18,12 @@ typedef struct NeuralNetwork
   double successCount;
   double totalTries;
 
-  double *hiddenLayer;
-  double *outputLayer;
-  double *hiddenWeights[2]; // find a way + fix in xor
-  double *outputWeights[2]; // find a way + fix in xor
-  double *hiddenBiases;
-  double *outputBiases;
+  double  *hiddenLayer;
+  double  *outputLayer;
+  double **hiddenWeights;
+  double **outputWeights;
+  double  *hiddenBiases;
+  double  *outputBiases;
 } NeuralNetwork;
 
 void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
@@ -36,7 +37,8 @@ void neuralNetworkTrain(
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
     unsigned long nbEpochs);
 
-void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch, size_t expected);
+void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
+                                 size_t expected);
 void neuralNetworkPrintResults(NeuralNetwork *nn, unsigned long maxEpochs);
 
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename);

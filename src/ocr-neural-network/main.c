@@ -2,6 +2,10 @@
 
 int ocrNeuralNetworkMain(int argc, char *argv[])
 {
+  printf("%s", argv[1]);
+  float *pixels = loadImage(argv[1]);
+  printPixels(pixels);
+  return 0;
   // Prevent wrong number of arguments
   if (argc < 2)
     errx(1, "Usage: %s --option [...]\n", argv[0]);
@@ -11,7 +15,8 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
   {
     // Prevent wrong number of arguments
     if (argc != 4)
-      errx(1, "Usage: %s --train-ocr nbEpochs numbersFolderPath outputPath\n", argv[0]); // for now, have to be scaled
+      errx(1, "Usage: %s --train-ocr nbEpochs numbersFolderPath outputPath\n",
+           argv[0]); // for now, have to be scaled
 
     // Generate random seed from current time
     srand(time(NULL));
@@ -22,8 +27,11 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Initialize the training inputs/outputs arrays
 
-    double trainingInputs[TRAINING_SIZE][INPUT_SIZE]; // titouan's function will be used here
-    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE]; // maybe 10 for empty tile if not dectected using image processing
+    double trainingInputs[TRAINING_SIZE]
+                         [INPUT_SIZE]; // titouan's function will be used here
+    double trainingOutputs[TRAINING_SIZE]
+                          [OUTPUT_SIZE]; // maybe 10 for empty tile if not
+                                         // dectected using image processing
 
     // Initialize the training indexes array
     size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8};

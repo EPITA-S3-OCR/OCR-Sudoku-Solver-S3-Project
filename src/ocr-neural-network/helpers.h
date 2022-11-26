@@ -6,6 +6,7 @@
 #ifndef HELPERS_H
 #  define HELPERS_H
 
+size_t arrayMaxIndex(double *array, size_t len);
 void   free2dArray(double **array, size_t len);
 void   arrayFillUniform(double *array, size_t len, double max);
 void   arrayShuffle(size_t *array, size_t len);

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include "helpers.h"
+#include "image.h"
 #include "neural_network.h"
 
 #define INPUT_SIZE 784
