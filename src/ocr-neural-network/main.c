@@ -6,6 +6,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
   float *pixels = loadImage(argv[1]);
   printPixels(pixels);
   return 0;
+
   // Prevent wrong number of arguments
   if (argc < 2)
     errx(1, "Usage: %s --option [...]\n", argv[0]);
