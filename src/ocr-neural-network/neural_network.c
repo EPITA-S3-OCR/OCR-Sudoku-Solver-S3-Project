@@ -68,7 +68,7 @@ void neuralNetworkTrain(
       // Hidden layer activation
       for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
       {
-        double acvn = nn->hiddenBiases[j];
+        double acvn = 0.0; // nn->hiddenBiases[j];
 
         for (size_t k = 0; k < nn->nbInputNeurons; k++)
           acvn += trainingInputs[i][k] * nn->hiddenWeights[k][j];
@@ -78,7 +78,7 @@ void neuralNetworkTrain(
       // Output layer activation
       for (size_t j = 0; j < nn->nbOutputNeurons; j++)
       {
-        double acvn = nn->outputBiases[j];
+        double acvn = 0.0; // n->outputBiases[j];
 
         for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
           acvn += nn->hiddenLayer[k] * nn->outputWeights[k][j];
@@ -107,24 +107,29 @@ void neuralNetworkTrain(
         deltaHidden[j] = error * sigmoidDerivative(nn->hiddenLayer[j]);
       }
 
+      /* ---- DESCENT ---- */
       // Apply the changes to the output layers weights
       for (size_t j = 0; j < nn->nbOutputNeurons; j++)
       {
-        nn->outputBiases[j] += deltaOutput[j] * learningRate;
-
         for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
+        {
           nn->outputWeights[k][j]
               += nn->hiddenLayer[k] * deltaOutput[j] * learningRate;
+          nn->outputBiases[j]
+              += deltaOutput[k] * learningRate * nn->hiddenLayer[k];
+        }
       }
 
       // Apply the changes to the hidden layers weights
       for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
       {
-        nn->hiddenBiases[j] += deltaHidden[j] * learningRate;
-
         for (size_t k = 0; k < nn->nbInputNeurons; k++)
+        {
           nn->hiddenWeights[k][j]
               += trainingInputs[i][k] * deltaHidden[j] * learningRate;
+          nn->hiddenBiases[j]
+              += deltaHidden[k] * learningRate * trainingInputs[i][k];
+        }
       }
     }
   }
@@ -187,31 +192,45 @@ void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename)
   fprintf(file, "%lu %lu %lu %lu\n", nn->nbInputNeurons, nn->nbHiddenNeurons,
           nn->nbOutputNeurons, nn->nbTraining);
 
+  printf("SAVING SAVING SAVING SAVING\n");
+
+  print2dArray(nn->hiddenWeights, nn->nbInputNeurons, nn->nbHiddenNeurons);
+  printf("\n\n");
+
   // Write the hidden layer weights
   for (size_t i = 0; i < nn->nbInputNeurons; i++)
   {
     for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
-      fprintf(file, "%lf\n", nn->hiddenWeights[i][j]);
+      fprintf(file, "hw[%zu][%zu] : %lf\n", i, j, nn->hiddenWeights[i][j]);
   }
+
+  print1dArray(nn->hiddenBiases, nn->nbHiddenNeurons);
+  printf("\n\n");
+
   // Write the hidden layer biases
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
-    fprintf(file, "%lf\n", nn->hiddenBiases[i]);
+    fprintf(file, "hb[%zu] : %lf\n", i, nn->hiddenBiases[i]);
+
+  print2dArray(nn->outputWeights, nn->nbHiddenNeurons, nn->nbOutputNeurons);
+  printf("\n\n");
 
   // Write the output layer weights
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
   {
     for (size_t j = 0; j < nn->nbOutputNeurons; j++)
-      fprintf(file, "%lf\n", nn->outputWeights[i][j]);
+      fprintf(file, "ow[%zu][%zu] : %lf\n", i, j, nn->outputWeights[i][j]);
   }
+
+  print1dArray(nn->outputBiases, nn->nbOutputNeurons);
+  printf("\n\n");
 
   // Write the output layer biases
   for (size_t i = 0; i < nn->nbOutputNeurons; i++)
-    fprintf(file, "%lf\n", nn->outputBiases[i]);
+    fprintf(file, "ob[%zu] : %lf\n", i, nn->outputBiases[i]);
 
   // Close the file
   fclose(file);
 }
-
 void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
 {
   // Open the file
@@ -239,6 +258,9 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
 
   // Allocate memory & load the hidden weights & biases arrays
   printf("\nAllocating memory for the hidden layer weights & biases...\n");
+
+  nn->hiddenWeights = calloc(nn->nbInputNeurons, sizeof(double *));
+
   for (size_t i = 0; i < nn->nbInputNeurons; i++)
   {
     nn->hiddenWeights[i]
@@ -247,38 +269,70 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
     for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
     {
       fscanf(file, "%lf\n", &nn->hiddenWeights[i][j]);
-      printf("Loading hidden weight [%lu, %lu] with value %lf\n", i, j,
-             nn->hiddenWeights[i][j]);
+      // printf("Loading hidden weight [%lu, %lu] with value %lf\n", i, j,
+      //  nn->hiddenWeights[i][j]);
     }
+  }
+
+  for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
+  {
     fscanf(file, "%lf\n", &nn->hiddenBiases[i]);
-    printf("Loading hidden bias [%lu] with value %lf\n", i,
-           nn->hiddenBiases[i]);
+    // printf("Loading hidden bias [%lu] with value %lf\n", i,
+    //  nn->hiddenBiases[i]);
   }
 
   // Allocate memory & load the hidden weights & biases arrays
   printf("\nAllocating memory for the ouptut layer weights & biases...\n");
+
+  nn->outputWeights = calloc(nn->nbHiddenNeurons, sizeof(double *));
+
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
   {
     nn->outputWeights[i]
         = (double *)calloc(nn->nbOutputNeurons, sizeof(double));
 
+    printf("here\n");
+
     for (size_t j = 0; j < nn->nbOutputNeurons; j++)
     {
       fscanf(file, "%lf\n", &nn->outputWeights[i][j]);
-      printf("Loading output weight [%lu, %lu] with value %lf\n", i, j,
-             nn->outputWeights[i][j]);
+      // printf("Loading output weight [%lu, %lu] with value %lf\n", i, j,
+      //  nn->outputWeights[i][j]);
     }
   }
 
   for (size_t i = 0; i < nn->nbOutputNeurons; i++)
   {
     fscanf(file, "%lf\n", &nn->outputBiases[i]);
-    printf("Loading output bias [%lu] with value %lf\n", i,
-           nn->outputBiases[i]);
+    // printf("Loading output bias [%lu] with value %lf\n", i,
+    //        nn->outputBiases[i]);
   }
 
   // Close the file
   fclose(file);
+}
+int neuralNetworkCompute(NeuralNetwork *nn, float *pixels)
+
+{
+  // Compute the hidden layer
+  for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
+  {
+    double acvn = 0.0; // nn->hiddenBiases[j];
+    for (size_t k = 0; k < nn->nbInputNeurons; k++)
+      acvn += pixels[k] * nn->hiddenWeights[k][j];
+    nn->hiddenLayer[j] = sigmoid(acvn);
+  }
+
+  // Compute the output layer
+  for (size_t j = 0; j < nn->nbOutputNeurons; j++)
+  {
+    double acvn = 0.0; // nn->outputBiases[j];
+    for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
+      acvn += nn->hiddenLayer[k] * nn->outputWeights[k][j];
+    nn->outputLayer[j] = sigmoid(acvn);
+  }
+  int max = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons);
+  return max + 1;
 }
 
 void neuralNetworkFree(NeuralNetwork *nn)

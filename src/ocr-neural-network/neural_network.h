@@ -44,9 +44,6 @@ void neuralNetworkPrintResults(NeuralNetwork *nn, unsigned long maxEpochs);
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename);
 void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename);
 
-int neuralNetworkComputeMultiple(NeuralNetwork *nn, double *inputs);
-
-double neuralNetworkCompute(NeuralNetwork *nn, double *inputs);
-
+int  neuralNetworkCompute(NeuralNetwork *nn, float *pixels);
 void neuralNetworkFree(NeuralNetwork *nn);
 #endif

@@ -35,7 +35,7 @@ all: $(TARGET)
 $(TARGET) : $(OFILES)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) 
 # Compiling
-$(BUILD)/%.o : %.c
+$(BUILD)/%.o : %.c %.h
 	$(CC) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 doc :
