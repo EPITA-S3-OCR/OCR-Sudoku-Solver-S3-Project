@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "solver/main.h"
-#include "image-processing/main.h"
-#include "image-processing/utils/splitting.h"
-#include "ocr-neural-network/main.h"
+#include "main.h"
 
 int main(int argc, char **argv)
 {
