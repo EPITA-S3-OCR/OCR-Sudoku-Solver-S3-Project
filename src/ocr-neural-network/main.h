@@ -9,10 +9,10 @@
 #include "image.h"
 #include "neural_network.h"
 
-#define INPUT_SIZE 200 // 784
+#define INPUT_SIZE 784 // 784
 #define HIDDEN_SIZE 16
-#define OUTPUT_SIZE 3   // 9
-#define TRAINING_SIZE 3 // 9
+#define OUTPUT_SIZE 9
+#define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
 
 int ocrNeuralNetworkMain(int argc, char *argv[]);

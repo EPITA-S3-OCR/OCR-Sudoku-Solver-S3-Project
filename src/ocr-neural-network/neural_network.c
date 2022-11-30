@@ -192,41 +192,27 @@ void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename)
   fprintf(file, "%lu %lu %lu %lu\n", nn->nbInputNeurons, nn->nbHiddenNeurons,
           nn->nbOutputNeurons, nn->nbTraining);
 
-  printf("SAVING SAVING SAVING SAVING\n");
-
-  print2dArray(nn->hiddenWeights, nn->nbInputNeurons, nn->nbHiddenNeurons);
-  printf("\n\n");
-
   // Write the hidden layer weights
   for (size_t i = 0; i < nn->nbInputNeurons; i++)
   {
     for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
-      fprintf(file, "hw[%zu][%zu] : %lf\n", i, j, nn->hiddenWeights[i][j]);
+      fprintf(file, "%lf\n", nn->hiddenWeights[i][j]);
   }
-
-  print1dArray(nn->hiddenBiases, nn->nbHiddenNeurons);
-  printf("\n\n");
 
   // Write the hidden layer biases
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
-    fprintf(file, "hb[%zu] : %lf\n", i, nn->hiddenBiases[i]);
-
-  print2dArray(nn->outputWeights, nn->nbHiddenNeurons, nn->nbOutputNeurons);
-  printf("\n\n");
+    fprintf(file, "%lf\n", nn->hiddenBiases[i]);
 
   // Write the output layer weights
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
   {
     for (size_t j = 0; j < nn->nbOutputNeurons; j++)
-      fprintf(file, "ow[%zu][%zu] : %lf\n", i, j, nn->outputWeights[i][j]);
+      fprintf(file, "%lf\n", nn->outputWeights[i][j]);
   }
-
-  print1dArray(nn->outputBiases, nn->nbOutputNeurons);
-  printf("\n\n");
 
   // Write the output layer biases
   for (size_t i = 0; i < nn->nbOutputNeurons; i++)
-    fprintf(file, "ob[%zu] : %lf\n", i, nn->outputBiases[i]);
+    fprintf(file, "%lf\n", nn->outputBiases[i]);
 
   // Close the file
   fclose(file);
@@ -290,8 +276,6 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
   {
     nn->outputWeights[i]
         = (double *)calloc(nn->nbOutputNeurons, sizeof(double));
-
-    printf("here\n");
 
     for (size_t j = 0; j < nn->nbOutputNeurons; j++)
     {

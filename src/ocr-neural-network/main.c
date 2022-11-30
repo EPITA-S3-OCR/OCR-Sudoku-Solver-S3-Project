@@ -1,5 +1,33 @@
 #include "main.h"
 
+float *loadRandomImage(char *folder_path, int *digit)
+{
+  int random_number = rand() % 9;
+
+  char path[MAX_PATH_LENGTH];
+  sprintf(path, "%s/%d/%d.png", folder_path, digit, random_number);
+
+  return loadImage(path);
+}
+
+void loadAllInputs(double trainingInputs[TRAINING_SIZE][INPUT_SIZE],
+                   int *expected, char *folder_path)
+
+{
+
+  for (int i = 0; i < TRAINING_SIZE; i++)
+  {
+    // generate a random number
+    int    random_number = rand() % 9;
+    float *image         = loadRandomImage(folder_path, random_number);
+    for (int j = 0; j < INPUT_SIZE; j++)
+    {
+      trainingInputs[i][j] = image[j];
+    }
+    expected[i] = random_number;
+  }
+}
+
 int ocrNeuralNetworkMain(int argc, char *argv[])
 {
   // Prevent wrong number of arguments
@@ -55,7 +83,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     }
 
     // Initialize the training indexes array
-    size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2}; //, 3, 4, 5, 6, 7, 8};
+    size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     // Initialize constant neural network parameters
     const double  learningRate = .8f; //.1f;
@@ -104,10 +132,6 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     // Load the neural network weights & biases from a file
     NeuralNetwork nn;
     neuralNetworkLoadOCR(&nn, argv[2]);
-
-    // printf("here\n");
-    // printf("argv[0] : %s\n", argv[0]);
-    // printf("argv[3] : %s\n", argv[3]);
 
     char *imagePath = malloc(sizeof(char) * MAX_PATH_LENGTH);
     sprintf(imagePath, "%s", argv[3]);
