@@ -57,3 +57,4 @@ dkms.conf
 main
 doc/
 .DS_Store
+tests/ocr/tiles/**/*

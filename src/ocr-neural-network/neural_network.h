@@ -35,8 +35,9 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 
 void neuralNetworkTrain(
     NeuralNetwork *nn,
-    double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
-                         [nn->nbInputNeurons],
+    double***         trainingInputs,
+    // double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
+    //                      [nn->nbInputNeurons],
     double trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
     unsigned long nbEpochs);

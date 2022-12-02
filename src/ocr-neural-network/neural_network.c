@@ -68,9 +68,10 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 
 void neuralNetworkTrain(
     NeuralNetwork *nn,
-    double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
-                         [nn->nbInputNeurons],
-    double trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
+    // double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
+    //                      [nn->nbInputNeurons],
+    double ***trainingInputs,
+    double    trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
     unsigned long nbEpochs)
 {
@@ -212,8 +213,9 @@ void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename)
   FILE *file = fopen(filename, "w");
 
   // Write the layers sizes
-  fprintf(file, "%lu %lu %lu %lu %lu\n", nn->nbInputNeurons, nn->nbHiddenNeurons,
-          nn->nbOutputNeurons, nn->nbTraining, nn->nbTrainingSets);
+  fprintf(file, "%lu %lu %lu %lu %lu\n", nn->nbInputNeurons,
+          nn->nbHiddenNeurons, nn->nbOutputNeurons, nn->nbTraining,
+          nn->nbTrainingSets);
 
   // Write the hidden layer weights
   for (size_t i = 0; i < nn->nbInputNeurons; i++)
@@ -250,8 +252,9 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
          filename);
 
   // Read the layers sizes
-  fscanf(file, "%lu %lu %lu %lu %lu\n", &nn->nbInputNeurons, &nn->nbHiddenNeurons,
-         &nn->nbOutputNeurons, &nn->nbTraining, &nn->nbTrainingSets);
+  fscanf(file, "%lu %lu %lu %lu %lu\n", &nn->nbInputNeurons,
+         &nn->nbHiddenNeurons, &nn->nbOutputNeurons, &nn->nbTraining,
+         &nn->nbTrainingSets);
   printf("Loading OCR neural network (inp=%lu, hid=%lu, out=%lu, train=%lu)\n",
          nn->nbInputNeurons, nn->nbHiddenNeurons, nn->nbOutputNeurons,
          nn->nbTraining);

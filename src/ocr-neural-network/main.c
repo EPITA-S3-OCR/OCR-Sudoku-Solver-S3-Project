@@ -53,6 +53,44 @@ size_t countTrainingSets(char *folderRoot)
   return count;
 }
 
+double ***initTrainingInputs(size_t trainingSets, size_t trainingSize,
+                             size_t inputSize)
+{
+  // malloc triple array
+  double ***trainingInputs = malloc(trainingSets * sizeof(double **));
+  if (trainingInputs == NULL)
+    errx(1,
+         "initTrainingInputs: Could not allocate memory for trainingInputs");
+
+  // malloc double array
+  for (size_t i = 0; i < trainingSets; i++)
+  {
+    trainingInputs[i] = malloc(trainingSize * sizeof(double *));
+    if (trainingInputs[i] == NULL)
+      errx(1,
+           "initTrainingInputs: Could not allocate memory for "
+           "trainingInputs[%zu]",
+           i);
+  }
+
+  // malloc single array
+
+  for (size_t i = 0; i < trainingSets; i++)
+  {
+    for (size_t j = 0; j < trainingSize; j++)
+    {
+      trainingInputs[i][j] = malloc(inputSize * sizeof(double));
+      if (trainingInputs[i][j] == NULL)
+        errx(1,
+             "initTrainingInputs: Could not allocate memory for "
+             "trainingInputs[%zu][%zu]",
+             i, j);
+    }
+  }
+
+  return trainingInputs;
+}
+
 int ocrNeuralNetworkMain(int argc, char *argv[])
 {
   // Generate random seed
@@ -77,16 +115,23 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     size_t TRAINING_SETS = countTrainingSets(subfolderPath);
 
     // Initialize the training inputs
-    double trainingInputs[TRAINING_SETS][TRAINING_SIZE][INPUT_SIZE];
+    double ***trainingInputs
+        = initTrainingInputs(TRAINING_SETS, TRAINING_SIZE, INPUT_SIZE);
+    if (trainingInputs == NULL)
+      errx(1, "ocrNeuralNetworkMain: Could not allocate memory for training "
+              "inputs");
     for (size_t i = 0; i < TRAINING_SETS; i++)
     {
+      printf("%zu\n", i);
       for (size_t j = 1; j <= TRAINING_SIZE; j++)
       {
+        printf("%zu\n", j);
         char path[MAX_PATH_LENGTH];
         sprintf(path, "%s/%zu/%zu.png", subfolderPath, i, j);
         double *image = loadImage(path);
         for (int k = 0; k < INPUT_SIZE; k++)
           trainingInputs[i][j - 1][k] = image[k];
+        free(image);
       }
     }
 
@@ -123,8 +168,8 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Initialize the neural network
     NeuralNetwork nn;
-    neuralNetworkInit(&nn, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE,
-                      TRAINING_SIZE, TRAINING_SETS);
+    neuralNetworkInit(&nn, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, TRAINING_SIZE,
+                      TRAINING_SETS);
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
