@@ -38,7 +38,7 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         const double learningRate, unsigned long nbEpochs);
 
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
-                                 size_t expected, size_t currentSet);
+                                 size_t expected);
 void neuralNetworkPrintResults(NeuralNetwork *nn, unsigned long maxEpochs);
 
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename);
