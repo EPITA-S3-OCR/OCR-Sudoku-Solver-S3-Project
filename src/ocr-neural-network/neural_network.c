@@ -66,14 +66,78 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
   arrayFillUniform(nn->outputBiases, nbOutputNeurons, 1);
 }
 
-void neuralNetworkTrain(
-    NeuralNetwork *nn,
-    // double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
-    //                      [nn->nbInputNeurons],
-    double ***trainingInputs,
-    double    trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
-    size_t trainingIndexes[nn->nbTraining], const double learningRate,
-    unsigned long nbEpochs)
+void forwardPropagation(NeuralNetwork *nn, double *input)
+{
+  /* ---- FORWARD PASS ---- */
+  // Hidden layer activation
+  for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
+  {
+    double acvn = 0.0; // nn->hiddenBiases[j];
+    for (size_t k = 0; k < nn->nbInputNeurons; k++)
+      acvn += input[k] * nn->hiddenWeights[k][j];
+    nn->hiddenLayer[j] = sigmoid(acvn);
+  }
+
+  // Output layer activation
+  for (size_t j = 0; j < nn->nbOutputNeurons; j++)
+  {
+    double acvn = 0.0; // n->outputBiases[j];
+    for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
+      acvn += nn->hiddenLayer[k] * nn->outputWeights[k][j];
+    nn->outputLayer[j] = sigmoid(acvn);
+  }
+}
+
+void backPropagation(NeuralNetwork *nn, double *expectedOutput,
+                     double *deltaOutput, double *deltaHidden)
+{
+  /* ---- BACKPROPAGATION ---- */
+  // Change in output weights
+  for (size_t j = 0; j < nn->nbOutputNeurons; j++)
+  {
+    double error   = expectedOutput[j] - nn->outputLayer[j];
+    deltaOutput[j] = error * sigmoidDerivative(nn->outputLayer[j]);
+  }
+
+  // Change in hidden weights
+  for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
+  {
+    double error = 0;
+    for (size_t k = 0; k < nn->nbOutputNeurons; k++)
+      error += deltaOutput[k] * (nn->outputWeights[j][k]);
+    deltaHidden[j] = error * sigmoidDerivative(nn->hiddenLayer[j]);
+  }
+}
+
+void descent(NeuralNetwork *nn, double *input, double *deltaOutput,
+             double *deltaHidden, double learningRate)
+{
+  /* ---- DESCENT ---- */
+  // Apply the changes to the output layers weights
+  for (size_t j = 0; j < nn->nbOutputNeurons; j++)
+  {
+    for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
+    {
+      nn->outputWeights[k][j]
+          += nn->hiddenLayer[k] * deltaOutput[j] * learningRate;
+      nn->outputBiases[j]
+          += deltaOutput[k] * learningRate * nn->hiddenLayer[k];
+    }
+  }
+  // Apply the changes to the hidden layers weights
+  for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
+  {
+    for (size_t k = 0; k < nn->nbInputNeurons; k++)
+    {
+      nn->hiddenWeights[k][j] += input[k] * deltaHidden[j] * learningRate;
+      nn->hiddenBiases[j] += deltaHidden[k] * learningRate * input[k];
+    }
+  }
+}
+
+void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
+                        double **trainingOutputs, size_t *trainingIndexes,
+                        const double learningRate, unsigned long nbEpochs)
 {
 
   // Process to train the neural network
@@ -91,77 +155,21 @@ void neuralNetworkTrain(
       // Grab the current shuffled index to activate on
       size_t i = trainingIndexes[x];
 
-      /* ---- FORWARD PASS ---- */
-      // Hidden layer activation
-      for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
-      {
-        double acvn = 0.0; // nn->hiddenBiases[j];
-        for (size_t k = 0; k < nn->nbInputNeurons; k++)
-          acvn += trainingInputs[set][i][k] * nn->hiddenWeights[k][j];
-        nn->hiddenLayer[j] = sigmoid(acvn);
-      }
-
-      // Output layer activation
-      for (size_t j = 0; j < nn->nbOutputNeurons; j++)
-      {
-        double acvn = 0.0; // n->outputBiases[j];
-        for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
-          acvn += nn->hiddenLayer[k] * nn->outputWeights[k][j];
-        nn->outputLayer[j] = sigmoid(acvn);
-      }
+      forwardPropagation(nn, trainingInputs[set][i]);
 
       // Print informations about current activation
-      neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-
-      /* ---- BACKPROPAGATION ---- */
-      // Change in output weights
-      double deltaOutput[nn->nbOutputNeurons];
-      for (size_t j = 0; j < nn->nbOutputNeurons; j++)
-      {
-        double error   = trainingOutputs[i][j] - nn->outputLayer[j];
-        deltaOutput[j] = error * sigmoidDerivative(nn->outputLayer[j]);
-      }
-
-      // Change in hidden weights
-      double deltaHidden[nn->nbHiddenNeurons];
-      for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
-      {
-        double error = 0;
-        for (size_t k = 0; k < nn->nbOutputNeurons; k++)
-          error += deltaOutput[k] * (nn->outputWeights[j][k]);
-        deltaHidden[j] = error * sigmoidDerivative(nn->hiddenLayer[j]);
-      }
-
-      /* ---- DESCENT ---- */
-      // Apply the changes to the output layers weights
-      for (size_t j = 0; j < nn->nbOutputNeurons; j++)
-      {
-        for (size_t k = 0; k < nn->nbHiddenNeurons; k++)
-        {
-          nn->outputWeights[k][j]
-              += nn->hiddenLayer[k] * deltaOutput[j] * learningRate;
-          nn->outputBiases[j]
-              += deltaOutput[k] * learningRate * nn->hiddenLayer[k];
-        }
-      }
-
-      // Apply the changes to the hidden layers weights
-      for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
-      {
-        for (size_t k = 0; k < nn->nbInputNeurons; k++)
-        {
-          nn->hiddenWeights[k][j]
-              += trainingInputs[set][i][k] * deltaHidden[j] * learningRate;
-          nn->hiddenBiases[j]
-              += deltaHidden[k] * learningRate * trainingInputs[set][i][k];
-        }
-      }
+      neuralNetworkPrintAssertOCR(nn, epoch, i + 1, set);
+      double *deltaOutput = calloc(nn->nbOutputNeurons, sizeof(double));
+      double *deltaHidden = calloc(nn->nbHiddenNeurons, sizeof(double));
+      backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
+      descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
+              learningRate);
     }
   }
 }
 
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
-                                 size_t expected)
+                                 size_t expected, size_t currentSet)
 {
   // Print the output layer
   printf("Epoch %lu: Output_Layer=[", epoch);
@@ -183,6 +191,7 @@ void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
   }
   else
   {
+    // printf("Current Set is : %zu, with nb : %zu\n", setCurrent, expected);
     printf("\033[0;31m");
     printf("KO\n");
     printf("\033[0m");
@@ -193,14 +202,14 @@ void neuralNetworkPrintResults(NeuralNetwork *nn, size_t maxEpochs)
 {
   // printf("\n==== Hidden layers infos after %lu epochs ====\n", maxEpochs);
   // printf("Hidden layer weights:\t");
-  // print2dArray(nn->hiddenWeights, nn->nbInputNeurons, nn->nbHiddenNeurons);
-  // printf("Hidden layer biases:\t");
+  // print2dArray(nn->hiddenWeights, nn->nbInputNeurons,
+  // nn->nbHiddenNeurons); printf("Hidden layer biases:\t");
   // print1dArray(nn->hiddenBiases, nn->nbHiddenNeurons);
 
   // printf("\n==== Output layers infos after %lu epochs ====\n", maxEpochs);
   // printf("Output layer weights:\t");
-  // print2dArray(nn->outputWeights, nn->nbHiddenNeurons, nn->nbOutputNeurons);
-  // printf("Output layer biases:\t");
+  // print2dArray(nn->outputWeights, nn->nbHiddenNeurons,
+  // nn->nbOutputNeurons); printf("Output layer biases:\t");
   // print1dArray(nn->outputBiases, nn->nbOutputNeurons);
 
   printf("Success rate for %zu epochs: %lf\n", maxEpochs,
@@ -298,8 +307,6 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
     for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
     {
       fscanf(file, "%lf\n", &nn->hiddenWeights[i][j]);
-      // printf("Loading hidden weight [%lu, %lu] with value %lf\n", i, j,
-      //  nn->hiddenWeights[i][j]);
     }
   }
   printf("DONE\n");
@@ -308,8 +315,6 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
   for (size_t i = 0; i < nn->nbHiddenNeurons; i++)
   {
     fscanf(file, "%lf\n", &nn->hiddenBiases[i]);
-    // printf("Loading hidden bias [%lu] with value %lf\n", i,
-    //  nn->hiddenBiases[i]);
   }
   printf("DONE\n");
 
@@ -331,8 +336,6 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
     for (size_t j = 0; j < nn->nbOutputNeurons; j++)
     {
       fscanf(file, "%lf\n", &nn->outputWeights[i][j]);
-      // printf("Loading output weight [%lu, %lu] with value %lf\n", i, j,
-      //  nn->outputWeights[i][j]);
     }
   }
   printf("DONE\n");
@@ -341,8 +344,6 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename)
   for (size_t i = 0; i < nn->nbOutputNeurons; i++)
   {
     fscanf(file, "%lf\n", &nn->outputBiases[i]);
-    // printf("Loading output bias [%lu] with value %lf\n", i,
-    //        nn->outputBiases[i]);
   }
   printf("DONE\n");
 

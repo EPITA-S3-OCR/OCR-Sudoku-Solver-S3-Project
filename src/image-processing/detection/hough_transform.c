@@ -174,7 +174,7 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
 
         Line *linePtr = malloc(sizeof(Line));
         *linePtr      = line;
-        lines = lineInsert(start, lines, linePtr);
+        lines         = lineInsert(start, lines, linePtr);
 
         // lines = lkAppend(lines, linePtr);
       }

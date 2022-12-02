@@ -31,7 +31,7 @@ int solverMain(int argc, char *argv[])
     char *ptr_to_rest = strstr(full_path, "/tests/solver");
 
     // Index until /solver
-    int pos = ptr_to_rest - full_path;
+    int  pos = ptr_to_rest - full_path;
     char path_for_newfile[2048];
     strncpy(path_for_newfile, full_path, pos);
 

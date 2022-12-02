@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <dirent.h>
 #include "helpers.h"
 #include "image.h"
 #include "neural_network.h"
@@ -15,6 +14,7 @@
 #define OUTPUT_SIZE 9
 #define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
+#define LEARNING_RATE 0.015
 
-size_t countTrainingSets(char *folderRoot);
-int ocrNeuralNetworkMain(int argc, char *argv[]);
+size_t countFolders(char *folderRoot);
+int    ocrNeuralNetworkMain(int argc, char *argv[]);

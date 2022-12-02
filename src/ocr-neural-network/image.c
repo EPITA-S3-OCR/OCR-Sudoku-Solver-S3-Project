@@ -25,7 +25,7 @@ double *loadImage(char *path)
 
   // Allocate memory for the image & pixels array
   Uint32 *surfacePixels = (Uint32 *)surface->pixels;
-  double  *pixels        = malloc(surface->w * surface->h * sizeof(double));
+  double *pixels        = malloc(surface->w * surface->h * sizeof(double));
   Uint8   r, g, b;
 
   // Load every pixel value in the pixels array

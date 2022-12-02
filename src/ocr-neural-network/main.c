@@ -1,96 +1,5 @@
 #include "main.h"
 
-// float *loadRandomImage(char *folder_path, int *digit)
-// {
-//   int random_number = rand() % 9;
-
-//   char path[MAX_PATH_LENGTH];
-//   sprintf(path, "%s/%d/%d.png", folder_path, digit, random_number);
-
-//   return loadImage(path);
-// }
-
-// void loadAllInputs(double trainingInputs[TRAINING_SIZE][INPUT_SIZE],
-//                    int *expected, char *folder_path)
-
-// {
-//   for (int i = 0; i < TRAINING_SIZE; i++)
-//   {
-//     // generate a random number
-//     int    random_number = rand() % 9;
-//     float *image         = loadRandomImage(folder_path, random_number);
-//     for (int j = 0; j < INPUT_SIZE; j++)
-//     {
-//       trainingInputs[i][j] = image[j];
-//     }
-//     expected[i] = random_number;
-//   }
-// }
-
-size_t countTrainingSets(char *folderRoot)
-{
-  // Create a directory stream & initialize the counter
-  struct dirent *entry;
-  size_t         count = 0;
-
-  // Open the given folder path
-  DIR *dir = opendir(folderRoot);
-  if (dir == NULL)
-    errx(1, "countFolder: Could not open folder %s", folderRoot);
-
-  // Count the number of files in the folder
-  while ((entry = readdir(dir)) != NULL)
-  {
-    // Ignore the current & parent directories
-    if (entry->d_name[0] != '.') // not safe, could also count regular files
-      count++;
-  }
-
-  // Close the directory stream
-  closedir(dir);
-
-  // Return the number of training sets (folders) contained within the folder
-  return count;
-}
-
-double ***initTrainingInputs(size_t trainingSets, size_t trainingSize,
-                             size_t inputSize)
-{
-  // malloc triple array
-  double ***trainingInputs = malloc(trainingSets * sizeof(double **));
-  if (trainingInputs == NULL)
-    errx(1,
-         "initTrainingInputs: Could not allocate memory for trainingInputs");
-
-  // malloc double array
-  for (size_t i = 0; i < trainingSets; i++)
-  {
-    trainingInputs[i] = malloc(trainingSize * sizeof(double *));
-    if (trainingInputs[i] == NULL)
-      errx(1,
-           "initTrainingInputs: Could not allocate memory for "
-           "trainingInputs[%zu]",
-           i);
-  }
-
-  // malloc single array
-
-  for (size_t i = 0; i < trainingSets; i++)
-  {
-    for (size_t j = 0; j < trainingSize; j++)
-    {
-      trainingInputs[i][j] = malloc(inputSize * sizeof(double));
-      if (trainingInputs[i][j] == NULL)
-        errx(1,
-             "initTrainingInputs: Could not allocate memory for "
-             "trainingInputs[%zu][%zu]",
-             i, j);
-    }
-  }
-
-  return trainingInputs;
-}
-
 int ocrNeuralNetworkMain(int argc, char *argv[])
 {
   // Generate random seed
@@ -101,31 +10,28 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     errx(1, "Usage: %s --option [...]\n", argv[0]);
 
   // Select the type of neural network to train
-  if (!strcmp(argv[1], "--train-ocr"))
+  if (!strcmp(argv[1], "--train"))
   {
     // Prevent wrong number of arguments
     if (argc != 5)
-      errx(1,
-           "Usage: %s --train-ocr nbEpochs imagesFoldersPath saveOutputPath\n",
+      errx(1, "Usage: %s --train nbEpochs imagesFoldersPath saveOutputPath\n",
            argv[0]);
 
     // Count the number of epochs to be imported in the given root folder
     char *subfolderPath = malloc(MAX_PATH_LENGTH);
     sprintf(subfolderPath, "%s", argv[3]);
-    size_t TRAINING_SETS = countTrainingSets(subfolderPath);
+    size_t TRAINING_SETS = countFolders(subfolderPath);
 
     // Initialize the training inputs
     double ***trainingInputs
-        = initTrainingInputs(TRAINING_SETS, TRAINING_SIZE, INPUT_SIZE);
+        = init3dArray(TRAINING_SETS, TRAINING_SIZE, INPUT_SIZE);
     if (trainingInputs == NULL)
       errx(1, "ocrNeuralNetworkMain: Could not allocate memory for training "
               "inputs");
     for (size_t i = 0; i < TRAINING_SETS; i++)
     {
-      printf("%zu\n", i);
       for (size_t j = 1; j <= TRAINING_SIZE; j++)
       {
-        printf("%zu\n", j);
         char path[MAX_PATH_LENGTH];
         sprintf(path, "%s/%zu/%zu.png", subfolderPath, i, j);
         double *image = loadImage(path);
@@ -138,28 +44,16 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     // Free the subfolder path
     free(subfolderPath);
 
-    // Initialize the training outputs
-    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE];
-    for (size_t i = 0; i < TRAINING_SIZE; i++)
-    {
-      // Initialize the current training output
-      for (size_t j = 0; j < OUTPUT_SIZE; j++)
-      {
-        // Everything should be 0 except the current number
-        if (j == i)
-          trainingOutputs[i][j] = 1;
-        else
-          trainingOutputs[i][j] = 0;
-      }
-    }
+    // Initialize the training outputs as an identity matrix
+    double **trainingOutputs = createIdentityMatrix(OUTPUT_SIZE);
 
     // Initialize the training indexes array
-    size_t trainingIndexes[TRAINING_SIZE];
+    size_t *trainingIndexes = calloc(TRAINING_SIZE, sizeof(size_t));
     for (size_t i = 0; i < TRAINING_SIZE; i++)
       trainingIndexes[i] = i;
 
     // Initialize constant neural network parameters
-    const double  learningRate = .015f;
+    const double  learningRate = LEARNING_RATE;
     unsigned long maxEpochs    = strtoul(argv[2], NULL, 10);
 
     // Initialize the neural network
@@ -181,11 +75,11 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     // Free the neural network
     neuralNetworkFree(&nn);
   }
-  else if (!strcmp(argv[1], "--comp-ocr"))
+  else if (!strcmp(argv[1], "--comp"))
   {
     // Prevent wrong number of arguments
     if (argc != 5)
-      errx(1, "Usage: %s --comp-ocr brainPath imagePath expected\n", argv[0]);
+      errx(1, "Usage: %s --comp savePath imagePath expectedValue\n", argv[0]);
 
     // Load the neural network weights & biases from a file
     NeuralNetwork nn;
@@ -221,6 +115,73 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     // Free the neural network structure, its arrays & the image pixels / path
     free(pixels);
     free(imagePath);
+    neuralNetworkFree(&nn);
+  }
+  else if (!strcmp(argv[1], "--train-from"))
+  {
+    // Prevent wrong number of arguments
+    if (argc != 6)
+      errx(1,
+           "Usage: %s --train-from nbEpochs trainingFolder brainPath "
+           "newBrainPath\n",
+           argv[0]);
+
+    // Load the neural network weights & biases from a file
+    const char   *ocrFN = argv[4];
+    NeuralNetwork nn;
+    neuralNetworkLoadOCR(&nn, ocrFN);
+
+    // Count the number of epochs to be imported in the given root folder
+    char *subfolderPath = malloc(MAX_PATH_LENGTH);
+    sprintf(subfolderPath, "%s", argv[3]);
+    size_t TRAINING_SETS = countFolders(subfolderPath);
+
+    // Initialize the training inputs
+    double ***trainingInputs
+        = init3dArray(TRAINING_SETS, TRAINING_SIZE, INPUT_SIZE);
+    if (trainingInputs == NULL)
+      errx(1, "ocrNeuralNetworkMain: Could not allocate memory for training "
+              "inputs");
+    for (size_t i = 0; i < TRAINING_SETS; i++)
+    {
+      for (size_t j = 1; j <= TRAINING_SIZE; j++)
+      {
+        char path[MAX_PATH_LENGTH];
+        sprintf(path, "%s/%zu/%zu.png", subfolderPath, i, j);
+        double *image = loadImage(path);
+        for (int k = 0; k < INPUT_SIZE; k++)
+          trainingInputs[i][j - 1][k] = image[k];
+        free(image);
+      }
+    }
+
+    // Free the subfolder path
+    free(subfolderPath);
+
+    // Initialize the training outputs as an identity matrix
+    double **trainingOutputs = createIdentityMatrix(OUTPUT_SIZE);
+
+    // Initialize the training indexes array
+    size_t *trainingIndexes = calloc(TRAINING_SIZE, sizeof(size_t));
+    for (size_t i = 0; i < TRAINING_SIZE; i++)
+      trainingIndexes[i] = i;
+
+    // Initialize constant neural network parameters
+    const double  learningRate = LEARNING_RATE;
+    unsigned long maxEpochs    = strtoul(argv[2], NULL, 10);
+
+    // Train the neural network
+    neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
+                       learningRate, maxEpochs);
+
+    // Print weights & biases values after 'maxEpochs' trains
+    neuralNetworkPrintResults(&nn, maxEpochs);
+
+    // Save the neural network weights & biases to a file
+    const char *saveOcrFN = argv[5];
+    neuralNetworkSaveOCR(&nn, saveOcrFN);
+
+    // Free the neural network
     neuralNetworkFree(&nn);
   }
   else

@@ -33,17 +33,12 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
                        size_t nbHiddenNeurons, size_t nbOutputNeurons,
                        size_t nbTraining, size_t nbTrainingSets);
 
-void neuralNetworkTrain(
-    NeuralNetwork *nn,
-    double***         trainingInputs,
-    // double         trainingInputs[nn->nbTrainingSets][nn->nbTraining]
-    //                      [nn->nbInputNeurons],
-    double trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
-    size_t trainingIndexes[nn->nbTraining], const double learningRate,
-    unsigned long nbEpochs);
+void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
+                        double **trainingOutputs, size_t *trainingIndexes,
+                        const double learningRate, unsigned long nbEpochs);
 
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
-                                 size_t expected);
+                                 size_t expected, size_t currentSet);
 void neuralNetworkPrintResults(NeuralNetwork *nn, unsigned long maxEpochs);
 
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename);
