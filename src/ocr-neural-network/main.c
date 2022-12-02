@@ -87,17 +87,12 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
         double *image = loadImage(path);
         for (int k = 0; k < INPUT_SIZE; k++)
           trainingInputs[i][j - 1][k] = image[k];
+        free(image);
       }
     }
 
-    // for (size_t i = 0; i < TRAINING_SETS; i++)
-    // {
-    //   for (size_t j = 0; j < TRAINING_SIZE; j++)
-    //   {
-    //     printPixels(trainingInputs[i][j]);
-    //     printf("\n");
-    //   }
-    // }
+    // Free the subfolder path
+    free(subfolderPath);
 
     // Initialize the training outputs
     double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE];
@@ -115,10 +110,12 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     }
 
     // Initialize the training indexes array
-    size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    size_t trainingIndexes[TRAINING_SIZE];
+    for (size_t i = 0; i < TRAINING_SIZE; i++)
+      trainingIndexes[i] = i;
 
     // Initialize constant neural network parameters
-    const double  learningRate = .1f;
+    const double  learningRate = .015f;
     unsigned long maxEpochs    = strtoul(argv[2], NULL, 10);
 
     // Initialize the neural network
