@@ -1,35 +1,63 @@
 #include "main.h"
 
-float *loadRandomImage(char *folder_path, int *digit)
+// float *loadRandomImage(char *folder_path, int *digit)
+// {
+//   int random_number = rand() % 9;
+
+//   char path[MAX_PATH_LENGTH];
+//   sprintf(path, "%s/%d/%d.png", folder_path, digit, random_number);
+
+//   return loadImage(path);
+// }
+
+// void loadAllInputs(double trainingInputs[TRAINING_SIZE][INPUT_SIZE],
+//                    int *expected, char *folder_path)
+
+// {
+//   for (int i = 0; i < TRAINING_SIZE; i++)
+//   {
+//     // generate a random number
+//     int    random_number = rand() % 9;
+//     float *image         = loadRandomImage(folder_path, random_number);
+//     for (int j = 0; j < INPUT_SIZE; j++)
+//     {
+//       trainingInputs[i][j] = image[j];
+//     }
+//     expected[i] = random_number;
+//   }
+// }
+
+size_t countTrainingSets(char *folderRoot)
 {
-  int random_number = rand() % 9;
+  // Create a directory stream & initialize the counter
+  struct dirent *entry;
+  size_t         count = 0;
 
-  char path[MAX_PATH_LENGTH];
-  sprintf(path, "%s/%d/%d.png", folder_path, digit, random_number);
+  // Open the given folder path
+  DIR *dir = opendir(folderRoot);
+  if (dir == NULL)
+    errx(1, "countFolder: Could not open folder %s", folderRoot);
 
-  return loadImage(path);
-}
-
-void loadAllInputs(double trainingInputs[TRAINING_SIZE][INPUT_SIZE],
-                   int *expected, char *folder_path)
-
-{
-
-  for (int i = 0; i < TRAINING_SIZE; i++)
+  // Count the number of files in the folder
+  while ((entry = readdir(dir)) != NULL)
   {
-    // generate a random number
-    int    random_number = rand() % 9;
-    float *image         = loadRandomImage(folder_path, random_number);
-    for (int j = 0; j < INPUT_SIZE; j++)
-    {
-      trainingInputs[i][j] = image[j];
-    }
-    expected[i] = random_number;
+    // Ignore the current & parent directories
+    if (entry->d_name[0] != '.') // not safe, could also count regular files
+      count++;
   }
+
+  // Close the directory stream
+  closedir(dir);
+
+  // Return the number of training sets (folders) contained within the folder
+  return count;
 }
 
 int ocrNeuralNetworkMain(int argc, char *argv[])
 {
+  // Generate random seed
+  srand(time(NULL));
+
   // Prevent wrong number of arguments
   if (argc < 2)
     errx(1, "Usage: %s --option [...]\n", argv[0]);
@@ -39,36 +67,40 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
   {
     // Prevent wrong number of arguments
     if (argc != 5)
-      errx(1, "Usage: %s --train-ocr nbEpochs numbersFolderPath outputPath\n",
-           argv[0]); // for now, have to be scaled
+      errx(1,
+           "Usage: %s --train-ocr nbEpochs imagesFoldersPath saveOutputPath\n",
+           argv[0]);
 
-    // Generate random seed from current time
-    srand(time(NULL));
-
-    // shuffle the array originally
-
-    double trainingInputs[TRAINING_SIZE][INPUT_SIZE];
+    // Count the number of epochs to be imported in the given root folder
+    char *subfolderPath = malloc(MAX_PATH_LENGTH);
+    sprintf(subfolderPath, "%s", argv[3]);
+    size_t TRAINING_SETS = countTrainingSets(subfolderPath);
 
     // Initialize the training inputs
-    for (size_t i = 0; i < TRAINING_SIZE; i++)
+    double trainingInputs[TRAINING_SETS][TRAINING_SIZE][INPUT_SIZE];
+    for (size_t i = 0; i < TRAINING_SETS; i++)
     {
-      // Load the matrix of pixels from the given images
-      char *path = malloc(sizeof(char) * MAX_PATH_LENGTH);
-      sprintf(path, "%s/%zu.png", argv[3], i + 1);
-      float *pixels = loadImage(path);
-
-      // Load every pixel value in the current training input
-      for (size_t j = 0; j < INPUT_SIZE; j++)
-        trainingInputs[i][j] = pixels[j];
-
-      // Free the memory allocated for the pixels & path
-      free(pixels);
-      free(path);
+      for (size_t j = 1; j <= TRAINING_SIZE; j++)
+      {
+        char path[MAX_PATH_LENGTH];
+        sprintf(path, "%s/%zu/%zu.png", subfolderPath, i, j);
+        double *image = loadImage(path);
+        for (int k = 0; k < INPUT_SIZE; k++)
+          trainingInputs[i][j - 1][k] = image[k];
+      }
     }
 
-    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE];
+    // for (size_t i = 0; i < TRAINING_SETS; i++)
+    // {
+    //   for (size_t j = 0; j < TRAINING_SIZE; j++)
+    //   {
+    //     printPixels(trainingInputs[i][j]);
+    //     printf("\n");
+    //   }
+    // }
 
     // Initialize the training outputs
+    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE];
     for (size_t i = 0; i < TRAINING_SIZE; i++)
     {
       // Initialize the current training output
@@ -86,41 +118,26 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     size_t trainingIndexes[TRAINING_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     // Initialize constant neural network parameters
-    const double  learningRate = .8f; //.1f;
+    const double  learningRate = .1f;
     unsigned long maxEpochs    = strtoul(argv[2], NULL, 10);
 
     // Initialize the neural network
     NeuralNetwork nn;
     neuralNetworkInit(&nn, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE,
-                      TRAINING_SIZE);
+                      TRAINING_SIZE, TRAINING_SETS);
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
                        learningRate, maxEpochs);
-    print1dArray(nn.outputLayer, nn.nbOutputNeurons);
+
     // Print weights & biases values after 'maxEpochs' trains
     neuralNetworkPrintResults(&nn, maxEpochs);
 
-    print1dArray(nn.outputLayer, nn.nbOutputNeurons);
     // Save the neural network weights & biases to a file
     const char *ocrFN = argv[4];
-
     neuralNetworkSaveOCR(&nn, ocrFN);
 
-    // // Test with a random image
-    // char  *path        = malloc(sizeof(char) * MAX_PATH_LENGTH);
-    // size_t randomIndex = rand() % TRAINING_SIZE;
-    // sprintf(path, "tests/ocr/tiles/3/2.png");
-    // // sprintf(path, "tests/ocr/tiles/simple_epoch/%zu.png", randomIndex +
-    // 1);
-    // // sprintf(path, "%s/%zu.png", argv[3], randomIndex + 1);
-    // printf("Testing with a random image (%zu)...\n", randomIndex + 1);
-    // float *pixels = loadImage(path);
-    // print1dArray(nn.outputLayer, nn.nbOutputNeurons);
-    // neuralNetworkCompute(&nn, pixels, 3);
-    // free(pixels);
-    // free(path);
-    // Free the neural network & its arrays
+    // Free the neural network
     neuralNetworkFree(&nn);
   }
   else if (!strcmp(argv[1], "--comp-ocr"))
@@ -133,16 +150,20 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     NeuralNetwork nn;
     neuralNetworkLoadOCR(&nn, argv[2]);
 
+    // Load the image to test
     char *imagePath = malloc(sizeof(char) * MAX_PATH_LENGTH);
+    if (imagePath == NULL)
+      errx(1, "%s: malloc failed\n", __func__);
+
     sprintf(imagePath, "%s", argv[3]);
+    double *pixels = loadImage(imagePath);
 
-    printf("Testing with a random image (%s)...\n", imagePath);
-    float *pixels   = loadImage(imagePath);
-    int    output   = neuralNetworkCompute(&nn, pixels);
-    int    expected = atoi(argv[4]);
-    print1dArray(nn.outputLayer, nn.nbOutputNeurons);
+    // Compute the neural network output & get expected output
+    int output   = neuralNetworkCompute(&nn, pixels);
+    int expected = atoi(argv[4]);
 
-    printf("\n=================\nNeural network yields %d", output);
+    // Print the result
+    printf("\n=================\nNeural network yields %d ", output);
     if (output == expected)
     {
       printf("\033[0;32m");
@@ -156,13 +177,9 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
       printf("\033[0m");
     }
 
-    printf("\033[0m");
-    printf("\033[0m");
-
-    // Free the neural network & its arrays
+    // Free the neural network structure, its arrays & the image pixels / path
     free(pixels);
     free(imagePath);
-    // free(ocrFN);
     neuralNetworkFree(&nn);
   }
   else
