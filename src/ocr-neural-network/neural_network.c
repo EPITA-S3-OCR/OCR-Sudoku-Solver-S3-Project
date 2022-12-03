@@ -89,7 +89,7 @@ void forwardPropagation(NeuralNetwork *nn, double *input)
 }
 
 void backPropagation(NeuralNetwork *nn, double *expectedOutput,
-                     double *deltaOutput, double *deltaHidden)
+                     double deltaOutput[nn->nbOutputNeurons], double deltaHidden[nn->nbHiddenNeurons])
 {
   /* ---- BACKPROPAGATION ---- */
   // Change in output weights
@@ -109,8 +109,7 @@ void backPropagation(NeuralNetwork *nn, double *expectedOutput,
   }
 }
 
-void descent(NeuralNetwork *nn, double *input, double *deltaOutput,
-             double *deltaHidden, double learningRate)
+void descent(NeuralNetwork *nn, double *input, double deltaOutput[nn->nbOutputNeurons], double deltaHidden[nn->nbHiddenNeurons],double learningRate)
 {
   /* ---- DESCENT ---- */
   // Apply the changes to the output layers weights
@@ -159,8 +158,8 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
 
       // Print informations about current activation
       neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-      double *deltaOutput = calloc(nn->nbOutputNeurons, sizeof(double));
-      double *deltaHidden = calloc(nn->nbHiddenNeurons, sizeof(double));
+      double  deltaOutput[nn->nbOutputNeurons];// = calloc(nn->nbOutputNeurons, sizeof(double));
+      double  deltaHidden[nn->nbHiddenNeurons];// = calloc(nn->nbHiddenNeurons, sizeof(double));
       backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
       descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
               learningRate);

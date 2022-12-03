@@ -29,21 +29,57 @@ typedef struct NeuralNetwork
   double  *outputBiases;
 } NeuralNetwork;
 
+/// @brief Initializes a neural network & allocates memory for it.
+/// @param nn The neural network to create.
+/// @param nbInputNeurons The number of input neurons.
+/// @param nbHiddenNeurons The number of hidden neurons.
+/// @param nbOutputNeurons The number of output neurons.
+/// @param nbTraining The number of training iterations.
+/// @param nbTrainingSets The number of training sets.
 void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
                        size_t nbHiddenNeurons, size_t nbOutputNeurons,
                        size_t nbTraining, size_t nbTrainingSets);
 
+/// @brief Trains a neural network with a set of training data.
+/// @param nn The neural network to train.
+/// @param trainingInputs The training inputs.
+/// @param trainingOutputs The training outputs.
+/// @param trainingIndexes The training indexes.
+/// @param learningRate The learning rate.
+/// @param nbEpochs The number of epochs.
 void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         double **trainingOutputs, size_t *trainingIndexes,
                         const double learningRate, unsigned long nbEpochs);
 
+/// @brief Asserts the accuracy of a neural network.
+/// @param nn The neural network to assert.
+/// @param epoch The current epoch.
+/// @param expected The expected output.
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
                                  size_t expected);
+
+/// @brief Prints the accuracy of a neural network.
+/// @param nn The neural network to print.
+/// @param maxEpochs The maximum number of epochs.
 void neuralNetworkPrintResults(NeuralNetwork *nn, unsigned long maxEpochs);
 
+/// @brief Saves the weights & biases of a neural network.
+/// @param nn The neural network to save.
+/// @param filename The filename to save to.
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename);
+
+/// @brief Loads the weights & biases of a neural network.
+/// @param nn The neural network to load.
+/// @param filename The filename to load from.
 void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename);
 
+/// @brief Computes the output of a neural network.
+/// @param nn The neural network to compute the output of.
+/// @param pixels The pixels of the image to compute the output of.
+/// @return The output of the neural network.
 int  neuralNetworkCompute(NeuralNetwork *nn, double *pixels);
+
+/// @brief Frees a neural network.
+/// @param nn The neural network to free.
 void neuralNetworkFree(NeuralNetwork *nn);
 #endif
