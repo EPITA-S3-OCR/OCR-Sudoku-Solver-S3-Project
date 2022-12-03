@@ -19,7 +19,7 @@
           </object>
           <packing>
             <property name="x">102</property>
-            <property name="y">284</property>
+            <property name="y">500</property>
           </packing>
         </child>
         <child>
@@ -36,7 +36,7 @@
           </object>
           <packing>
             <property name="x">101</property>
-            <property name="y">95</property>
+            <property name="y">297</property>
           </packing>
         </child>
         <child>
@@ -52,7 +52,7 @@
           </object>
           <packing>
             <property name="x">105</property>
-            <property name="y">167</property>
+            <property name="y">371</property>
           </packing>
         </child>
         <child>
@@ -67,7 +67,7 @@
           </object>
           <packing>
             <property name="x">107</property>
-            <property name="y">241</property>
+            <property name="y">457</property>
           </packing>
         </child>
         <child>
@@ -81,7 +81,7 @@
           </object>
           <packing>
             <property name="x">224</property>
-            <property name="y">284</property>
+            <property name="y">501</property>
           </packing>
         </child>
         <child>
@@ -94,7 +94,7 @@
           </object>
           <packing>
             <property name="x">102</property>
-            <property name="y">331</property>
+            <property name="y">546</property>
           </packing>
         </child>
         <child>
@@ -107,7 +107,7 @@
           </object>
           <packing>
             <property name="x">254</property>
-            <property name="y">331</property>
+            <property name="y">549</property>
           </packing>
         </child>
         <child>
@@ -123,7 +123,7 @@
           </object>
           <packing>
             <property name="x">107</property>
-            <property name="y">400</property>
+            <property name="y">602</property>
           </packing>
         </child>
         <child>
@@ -136,7 +136,7 @@
           </object>
           <packing>
             <property name="x">240</property>
-            <property name="y">445</property>
+            <property name="y">645</property>
           </packing>
         </child>
         <child>
@@ -149,7 +149,20 @@
           </object>
           <packing>
             <property name="x">101</property>
-            <property name="y">444</property>
+            <property name="y">645</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="Sudoku Demo">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="pixbuf">../../../../Downloads/My project.jpg</property>
+          </object>
+          <packing>
+            <property name="x">877</property>
+            <property name="y">201</property>
           </packing>
         </child>
       </object>
