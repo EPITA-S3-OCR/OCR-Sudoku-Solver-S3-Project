@@ -158,7 +158,7 @@
             <property name="height-request">80</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="pixbuf">My project.jpg</property>
+            <property name="pixbuf">../../../../Downloads/My project.jpg</property>
           </object>
           <packing>
             <property name="x">877</property>
