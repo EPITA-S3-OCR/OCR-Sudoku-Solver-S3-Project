@@ -1,0 +1,22 @@
+GtkWindow {
+    background-color: magenta;
+}
+
+GtkButton {
+    background-image: none;
+}
+
+#backGround {
+    background-color: #0B0B0B;
+    background: #0B0B0B;
+}
+
+
+#button-one{
+    background-color: #0B0B0B;
+    background: #0B0B0B;
+    color: white;
+    font-family: "JetBrains";
+    font-size: 20px;
+    border-radius: 5px;
+}
