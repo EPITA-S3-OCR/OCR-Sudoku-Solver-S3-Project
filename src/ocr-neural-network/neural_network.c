@@ -47,6 +47,7 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
   for (size_t i = 0; i < nbHiddenNeurons; i++)
   {
     nn->outputWeights[i] = (double *)calloc(nbOutputNeurons, sizeof(double));
+  /* ---- DESCENT ---- */
     if (nn->outputWeights[i] == NULL)
       errx(1, "neuralNetworkInit: calloc failed for nn->outputWeights[%zu]",
            i);
@@ -68,7 +69,6 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 
 void forwardPropagation(NeuralNetwork *nn, double *input)
 {
-  /* ---- FORWARD PASS ---- */
   // Hidden layer activation
   for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
   {
@@ -89,9 +89,9 @@ void forwardPropagation(NeuralNetwork *nn, double *input)
 }
 
 void backPropagation(NeuralNetwork *nn, double *expectedOutput,
-                     double deltaOutput[nn->nbOutputNeurons], double deltaHidden[nn->nbHiddenNeurons])
+                     double deltaOutput[nn->nbOutputNeurons],
+                     double deltaHidden[nn->nbHiddenNeurons])
 {
-  /* ---- BACKPROPAGATION ---- */
   // Change in output weights
   for (size_t j = 0; j < nn->nbOutputNeurons; j++)
   {
@@ -109,9 +109,10 @@ void backPropagation(NeuralNetwork *nn, double *expectedOutput,
   }
 }
 
-void descent(NeuralNetwork *nn, double *input, double deltaOutput[nn->nbOutputNeurons], double deltaHidden[nn->nbHiddenNeurons],double learningRate)
+void descent(NeuralNetwork *nn, double *input,
+             double deltaOutput[nn->nbOutputNeurons],
+             double deltaHidden[nn->nbHiddenNeurons], double learningRate)
 {
-  /* ---- DESCENT ---- */
   // Apply the changes to the output layers weights
   for (size_t j = 0; j < nn->nbOutputNeurons; j++)
   {
@@ -123,6 +124,7 @@ void descent(NeuralNetwork *nn, double *input, double deltaOutput[nn->nbOutputNe
           += deltaOutput[k] * learningRate * nn->hiddenLayer[k];
     }
   }
+
   // Apply the changes to the hidden layers weights
   for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
   {
@@ -158,8 +160,10 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
 
       // Print informations about current activation
       neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-      double  deltaOutput[nn->nbOutputNeurons];// = calloc(nn->nbOutputNeurons, sizeof(double));
-      double  deltaHidden[nn->nbHiddenNeurons];// = calloc(nn->nbHiddenNeurons, sizeof(double));
+      double deltaOutput[nn->nbOutputNeurons]; // = calloc(nn->nbOutputNeurons,
+                                               // sizeof(double));
+      double deltaHidden[nn->nbHiddenNeurons]; // = calloc(nn->nbHiddenNeurons,
+                                               // sizeof(double));
       backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
       descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
               learningRate);

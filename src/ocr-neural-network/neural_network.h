@@ -29,6 +29,30 @@ typedef struct NeuralNetwork
   double  *outputBiases;
 } NeuralNetwork;
 
+/// @brief Forward propagate the given input through the neural network
+/// @param nn The neural network
+/// @param input The input to forward propagate
+void forwardPropagation(NeuralNetwork *nn, double *input);
+
+/// @brief Backpropagation algorithm for training a neural network
+/// @param nn The neural network to train
+/// @param expectedOutput The expected output of the neural network
+/// @param deltaOutput The delta of the output layer
+/// @param deltaHidden The delta of the hidden layer
+void backPropagation(NeuralNetwork *nn, double *expectedOutput,
+                     double deltaOutput[nn->nbOutputNeurons],
+                     double deltaHidden[nn->nbHiddenNeurons]);
+
+/// @brief Stochastic gradient descent
+/// @param nn The neural network
+/// @param input The input to forward propagate
+/// @param deltaOutput The delta of the output layer
+/// @param deltaHidden The delta of the hidden layer
+/// @param learningRate The learning rate
+void descent(NeuralNetwork *nn, double *input,
+             double deltaOutput[nn->nbOutputNeurons],
+             double deltaHidden[nn->nbHiddenNeurons], double learningRate);
+
 /// @brief Initializes a neural network & allocates memory for it.
 /// @param nn The neural network to create.
 /// @param nbInputNeurons The number of input neurons.
@@ -77,7 +101,7 @@ void neuralNetworkLoadOCR(NeuralNetwork *nn, const char *filename);
 /// @param nn The neural network to compute the output of.
 /// @param pixels The pixels of the image to compute the output of.
 /// @return The output of the neural network.
-int  neuralNetworkCompute(NeuralNetwork *nn, double *pixels);
+int neuralNetworkCompute(NeuralNetwork *nn, double *pixels);
 
 /// @brief Frees a neural network.
 /// @param nn The neural network to free.
