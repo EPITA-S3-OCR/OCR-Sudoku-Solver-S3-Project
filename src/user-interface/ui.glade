@@ -32,6 +32,7 @@
               <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
               <attribute name="style" value="normal"/>
               <attribute name="scale" value="5"/>
+              <attribute name="foreground" value="#ffffffffffff"/>
             </attributes>
           </object>
           <packing>
@@ -46,8 +47,10 @@
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">ASM Lovers</property>
             <attributes>
-              <attribute name="font-desc" value="JetBrains Mono Bold 10"/>
+              <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+              <attribute name="style" value="normal"/>
               <attribute name="scale" value="2.5"/>
+              <attribute name="foreground" value="#ffffffffffff"/>
             </attributes>
           </object>
           <packing>
@@ -61,8 +64,10 @@
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">IMAGE SOLVER</property>
             <attributes>
-              <attribute name="font-desc" value="JetBrains Mono NL Bold 10"/>
+              <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+              <attribute name="style" value="normal"/>
               <attribute name="scale" value="2.5"/>
+              <attribute name="foreground" value="#ffffffffffff"/>
             </attributes>
           </object>
           <packing>
@@ -117,8 +122,10 @@
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">NEURAL NETWORK</property>
             <attributes>
-              <attribute name="font-desc" value="JetBrains Mono NL Bold 10"/>
+              <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+              <attribute name="style" value="normal"/>
               <attribute name="scale" value="2.5"/>
+              <attribute name="foreground" value="#ffffffffffff"/>
             </attributes>
           </object>
           <packing>
