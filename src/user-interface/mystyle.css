@@ -1,22 +1,23 @@
-GtkWindow {
-    background-color: magenta;
+window {
+  background-color: #0b0b0b;
+  background: #0b0b0b;
 }
 
-GtkButton {
-    background-image: none;
+button {
+  background-image: none;
+  background-color: #0b0b0b;
+  background: #0b0b0b;
 }
 
-#backGround {
-    background-color: #0B0B0B;
-    background: #0B0B0B;
+button label {
+  color: white;
+  text-shadow: none;
 }
 
+#main-button {
+  background-color: white;
+}
 
-#button-one{
-    background-color: #0B0B0B;
-    background: #0B0B0B;
-    color: white;
-    font-family: "JetBrains";
-    font-size: 20px;
-    border-radius: 5px;
+#main-button label {
+  color: black;
 }

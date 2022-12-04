@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "solver/main.h"
-#include "image-processing/main.h"
-#include "image-processing/utils/splitting.h"
-#include "ocr-neural-network/main.h"
+#include "main.h"
 
 int main(int argc, char **argv)
 {
@@ -29,6 +24,10 @@ int main(int argc, char **argv)
     else if (strcmp(argv[1], "image-splitting") == 0)
     {
       splitMain(argc - 1, argv + 1);
+    }
+    else if (strcmp(argv[1], "ui") == 0)
+    {
+      uiMain(argc - 1, argv + 1);
     }
     else
     {

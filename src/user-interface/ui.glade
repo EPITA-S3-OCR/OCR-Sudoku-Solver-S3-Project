@@ -11,6 +11,7 @@
         <child>
           <object class="GtkButton" id="ImportButton">
             <property name="label" translatable="yes">Import a file</property>
+            <property name="name">main-button</property>
             <property name="width-request">100</property>
             <property name="height-request">37</property>
             <property name="visible">True</property>
