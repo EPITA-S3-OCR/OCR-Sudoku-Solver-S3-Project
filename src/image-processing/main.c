@@ -175,6 +175,18 @@ int imageRotateMain(int argv, char **argc)
   return 0;
 }
 
+void imageProcessingUi(char *filename)
+{
+  SDL_Surface *surface = IMG_Load(filename);
+  if (surface == NULL)
+  {
+    errx(1, "IMG_Load: %s", SDL_GetError());
+  }
+  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
+  surface = applyImageProcessing(surface);
+  IMG_SaveJPG(surface, filename, 100);
+}
+
 int imageProcessingMain(int argv, char **argc)
 {
   // Check arguments

@@ -57,3 +57,7 @@ dkms.conf
 main
 doc/
 *~w
+
+output/**/*
+**/.keep
+# !output/**/.*

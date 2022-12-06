@@ -3,11 +3,22 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="window">
+    <property name="name">mainWindow</property>
+    <property name="visible">True</property>
     <property name="can-focus">False</property>
+    <property name="title" translatable="yes">OCR S3 Sudoku Project</property>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <property name="margin-start">100</property>
+        <property name="margin-end">100</property>
+        <property name="margin-top">100</property>
+        <property name="margin-bottom">100</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
         <child>
           <object class="GtkButton" id="ImportButton">
             <property name="label" translatable="yes">Import a file</property>
@@ -19,8 +30,7 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">102</property>
-            <property name="y">500</property>
+            <property name="y">200</property>
           </packing>
         </child>
         <child>
@@ -36,10 +46,6 @@
               <attribute name="foreground" value="#ffffffffffff"/>
             </attributes>
           </object>
-          <packing>
-            <property name="x">101</property>
-            <property name="y">297</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel" id="ASM Lovers">
@@ -55,8 +61,7 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">105</property>
-            <property name="y">371</property>
+            <property name="y">50</property>
           </packing>
         </child>
         <child>
@@ -72,13 +77,12 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">107</property>
-            <property name="y">457</property>
+            <property name="y">150</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="Demo Image">
-            <property name="label" translatable="yes">Demo Image</property>
+          <object class="GtkButton" id="LaunchProcess">
+            <property name="label" translatable="yes">Launch Process</property>
             <property name="width-request">100</property>
             <property name="height-request">37</property>
             <property name="visible">True</property>
@@ -86,8 +90,8 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">224</property>
-            <property name="y">501</property>
+            <property name="x">120</property>
+            <property name="y">200</property>
           </packing>
         </child>
         <child>
@@ -99,8 +103,7 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">102</property>
-            <property name="y">546</property>
+            <property name="y">250</property>
           </packing>
         </child>
         <child>
@@ -112,8 +115,8 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">254</property>
-            <property name="y">549</property>
+            <property name="x">140</property>
+            <property name="y">250</property>
           </packing>
         </child>
         <child>
@@ -130,12 +133,11 @@
             </attributes>
           </object>
           <packing>
-            <property name="x">107</property>
-            <property name="y">602</property>
+            <property name="y">300</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="Digit">
+          <object class="GtkButton" id="DigitDetection">
             <property name="label" translatable="yes">Digit Detection</property>
             <property name="width-request">100</property>
             <property name="visible">True</property>
@@ -143,8 +145,8 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">240</property>
-            <property name="y">645</property>
+            <property name="x">120</property>
+            <property name="y">350</property>
           </packing>
         </child>
         <child>
@@ -156,21 +158,18 @@
             <property name="receives-default">True</property>
           </object>
           <packing>
-            <property name="x">101</property>
-            <property name="y">645</property>
+            <property name="y">350</property>
           </packing>
         </child>
         <child>
-          <object class="GtkImage" id="Sudoku Demo">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+          <object class="GtkImage" id="SudokuImage">
+            <property name="width-request">400</property>
+            <property name="height-request">400</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="pixbuf">My project.jpg</property>
           </object>
           <packing>
-            <property name="x">877</property>
-            <property name="y">201</property>
+            <property name="x">600</property>
           </packing>
         </child>
       </object>

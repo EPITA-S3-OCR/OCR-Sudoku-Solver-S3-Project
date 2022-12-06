@@ -12,5 +12,6 @@
 #include "utils/splitting.h"
 #include "utils/utils.h"
 
-int imageRotateMain(int argv, char **argc);
-int imageProcessingMain(int argv, char **argc);
+void imageProcessingUi(char *filename);
+int  imageRotateMain(int argv, char **argc);
+int  imageProcessingMain(int argv, char **argc);

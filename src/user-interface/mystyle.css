@@ -1,23 +1,23 @@
-window {
+#mainWindow {
   background-color: #0b0b0b;
   background: #0b0b0b;
 }
 
-button {
+#mainWindow button {
   background-image: none;
-  background-color: #0b0b0b;
+  background-color: red;
   background: #0b0b0b;
 }
 
-button label {
+#mainWindow button label {
   color: white;
   text-shadow: none;
 }
 
-#main-button {
+#mainWindow #main-button {
   background-color: white;
 }
 
-#main-button label {
+#mainWindow #main-button label {
   color: black;
 }
