@@ -1,6 +1,6 @@
 #include "main.h"
 
-SDL_Surface *applyImageProcessing(SDL_Surface *surface)
+SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
 {
   printf("Applying image processing...\n");
   // Apply the image processing
@@ -33,8 +33,9 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface)
   printf("  - lines: %zu\n", lkLen(lines));
 
   SDL_Color color = {255, 0, 0, 255};
-
+  printf("- Drawing the lines...\n");
   SDL_Surface *surfacelines = copySurface(copy);
+  printf("here\n");
   drawLines(surfacelines, lines->next, color);
   saveSurface(surfacelines, "output/steps/6-lines.jpg");
 
@@ -132,7 +133,7 @@ int imageRotateMain(int argv, char **argc)
 
   // Convert the format to be in 32bits every time to be able to use same
   // functions later
-  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
+  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
   // get the angle from the second argument
   double angle = degreesToRadians(atof(argc[2]));
@@ -175,15 +176,15 @@ int imageRotateMain(int argv, char **argc)
   return 0;
 }
 
-void imageProcessingUi(char *filename)
+void imageProcessingUi(char *filename, bool verbose)
 {
   SDL_Surface *surface = IMG_Load(filename);
   if (surface == NULL)
   {
     errx(1, "IMG_Load: %s", SDL_GetError());
   }
-  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
-  surface = applyImageProcessing(surface);
+  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
+  surface = applyImageProcessing(surface, verbose);
   IMG_SaveJPG(surface, filename, 100);
 }
 
@@ -234,9 +235,9 @@ int imageProcessingMain(int argv, char **argc)
 
   // Convert the format to be in 32bits every time to be able to use same
   // functions later
-  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
+  surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
-  surface = applyImageProcessing(surface);
+  surface = applyImageProcessing(surface, true);
   // Intialize a texture by converting the imported surface
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (texture == NULL)

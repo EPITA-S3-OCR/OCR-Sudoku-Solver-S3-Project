@@ -1,12 +1,11 @@
 #mainWindow {
-  background-color: #0b0b0b;
-  background: #0b0b0b;
+  background-color: #1d1d1d;
+  background: #1d1d1d;
 }
 
 #mainWindow button {
   background-image: none;
-  background-color: red;
-  background: #0b0b0b;
+  background: #1d1d1d;
 }
 
 #mainWindow button label {
@@ -19,5 +18,13 @@
 }
 
 #mainWindow #main-button label {
-  color: black;
+  color: #1d1d1d;
+}
+
+#RotateSlider {
+  color: white;
+}
+
+label {
+  color: white;
 }

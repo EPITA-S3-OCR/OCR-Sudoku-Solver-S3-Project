@@ -19,8 +19,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // shuffle the array originally
 
-    double trainingInputs[TRAINING_SIZE]
-                         [INPUT_SIZE];
+    double trainingInputs[TRAINING_SIZE][INPUT_SIZE];
 
     // Initialize the training inputs
     for (size_t i = 0; i < TRAINING_SIZE; i++)
@@ -39,8 +38,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
       free(path);
     }
 
-    double trainingOutputs[TRAINING_SIZE]
-                          [OUTPUT_SIZE];
+    double trainingOutputs[TRAINING_SIZE][OUTPUT_SIZE];
 
     // Initialize the training outputs
     for (size_t i = 0; i < TRAINING_SIZE; i++)
