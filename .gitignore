@@ -58,6 +58,7 @@ main
 doc/
 *~w
 
-output/**/*
 **/.keep
-# !output/**/.*
+output/**/*
+!output/**/
+!output/**/.gitkeep
