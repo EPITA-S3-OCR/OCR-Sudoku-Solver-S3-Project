@@ -25,3 +25,11 @@
   color: white;
 }
 
+#Console {
+  background: transparent;
+}
+
+#Console text {
+  border-radius: 8px;
+  background-color: #373737;
+}
