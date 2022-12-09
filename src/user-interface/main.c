@@ -55,6 +55,7 @@ int uiMain(int argc, char *argv[])
       .launchProcessButton = launchProcessButton,
       .verboseCheckbox     = verboseCheckbox,
       .sudokuImage         = sudokuImage,
+      .sudokuLive          = NULL,
       .console             = console,
   };
 
@@ -73,19 +74,13 @@ int uiMain(int argc, char *argv[])
   gtk_range_set_range(GTK_RANGE(rotateSlider), -180, 180);
   gtk_range_set_value(GTK_RANGE(rotateSlider), 0);
   gtk_range_set_increments(GTK_RANGE(rotateSlider), 1, 1);
-  // Solve the error for slider "drawing a gadget with negative dimensions"
 
-  // "tests/image-processing-images/sudoku1.jpg" as image with pixbuf
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(
-      "tests/image-processing-images/sudoku1.jpg", NULL);
-  // Resize the pixbuf to 500x500
-  pixbuf = gdk_pixbuf_scale_simple(pixbuf, 400, 400, GDK_INTERP_BILINEAR);
-
-  gtk_image_set_from_pixbuf(sudokuImage, pixbuf);
+  loadImageUi(&ui, "tests/image-processing-images/sudoku1.jpg");
 
   // Runs the main loop.
   gtk_main();
 
   // Exits.
+
   return 0;
 }
