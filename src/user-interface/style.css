@@ -7,10 +7,6 @@
   background-image: none;
   background: #1d1d1d;
 }
-#mainWindow button:active {
-  background-image: none;
-  background: red;
-}
 
 #mainWindow button label {
   color: white;

@@ -41,6 +41,81 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
   // Destroy the file picker
   gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
+
+void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
+{
+
+  char sudoku[16][16];
+
+  int M[16][16] = {0};
+
+  for (size_t i = 0; i < 9; i++)
+  {
+    for (size_t j = 0; j < 9; j++)
+      M[i][j] = '0';
+  }
+
+  loadSudoku(sudoku, "tests/solver/grid00", 9);
+
+  // Solve it bro
+  //
+  //
+
+  system("rm src/user-interface/jeje.png");
+  system("cp src/user-interface/defgrid.png src/user-interface/jeje.png");
+
+  int x = 27;
+  int y = 60;
+
+  int dis = 67;
+
+  char s[1000] = {0};
+
+  for (size_t i = 0; i < 9; i++)
+  {
+    for (size_t j = 0; j < 9; j++)
+    {
+      if (sudoku[i][j] != '0')
+      {
+        sprintf(s, "convert -font unifont -pointsize 60 -fill black \
+                        -draw 'text %i,%i \"%c\"' \"src/user-interface/jeje.png\" \
+                        \"src/user-interface/jeje.png\"",
+                x, y, sudoku[i][j]);
+        system(s);
+        M[i][j] = 1;
+      }
+      x += dis;
+    }
+
+    x = 27;
+    y += dis;
+  }
+
+  Solve(sudoku, 9);
+
+  x = 27;
+  y = 60;
+
+  for (size_t i = 0; i < 9; i++)
+  {
+    for (size_t j = 0; j < 9; j++)
+    {
+      if (M[i][j] != 1)
+      {
+        sprintf(s, "convert -font unifont -pointsize 60 -fill red \
+                        -draw 'text %i,%i \"%c\"' \"src/user-interface/jeje.png\" \
+                        \"src/user-interface/jeje.png\"",
+                x, y, sudoku[i][j]);
+        system(s);
+      }
+      x += dis;
+    }
+
+    x = 27;
+    y += dis;
+  }
+}
+
 void onRotateSliderChanged(GtkRange *range, gpointer user_data)
 {
   UserInterface *ui    = (UserInterface *)user_data;

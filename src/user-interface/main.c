@@ -112,6 +112,7 @@ int uiMain(int argc, char *argv[])
 
   GtkEntry *entryEpoch
       = GTK_ENTRY(gtk_builder_get_object(builder, "EntryEpoch"));
+
   // Link object "StackSwitcher", "Page1", "Page2" and "Stack"
 
   // Add titles to the stack
@@ -132,7 +133,7 @@ int uiMain(int argc, char *argv[])
   g_signal_connect(window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
   g_signal_connect(importButton, "clicked", G_CALLBACK(onImportButtonClicked),
                    &ui);
-  //   g_signal_connect(importButton, "clicked",
+  // g_signal_connect(importButton, "clicked",
   //                    G_CALLBACK(run_expensive_function_button), &ui);
   g_signal_connect(rotateSlider, "value-changed",
                    G_CALLBACK(onRotateSliderChanged), &ui);

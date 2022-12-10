@@ -5,7 +5,7 @@ void *threadImageProcessing(void *data)
   printf("running image processing\n");
   UserInterface *ui = (UserInterface *)data;
   imageProcessingUi("output/ui/current.jpg", ui, ui->verbose);
-
+  printf("image processing done\n");
   loadImageUi(ui, "output/ui/current.jpg");
 
   // Display the image
