@@ -1,5 +1,17 @@
 #include "handler.h"
 
+void onTrainButtonClicked(GtkButton *button, gpointer user_data)
+{
+  UserInterface *ui = (UserInterface *)user_data;
+  // Get the number of epochs
+  const char *epochs = gtk_entry_get_text(ui->entryEpoch);
+  printf("Epochs: %s\n", epochs);
+  // Get the number of epochs in int
+  unsigned long maxEpochs = strtoul(epochs, NULL, 10);
+
+  ocrNeuralNetworkUi(maxEpochs, ui, ui->verbose);
+}
+
 void onImportButtonClicked(GtkButton *button, gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;

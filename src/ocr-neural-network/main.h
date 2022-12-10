@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "../user-interface/utils.h"
 #include "helpers.h"
 #include "image.h"
 #include "neural_network.h"
@@ -16,4 +17,5 @@
 #define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
 
-int ocrNeuralNetworkMain(int argc, char *argv[]);
+void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose);
+int  ocrNeuralNetworkMain(int argc, char *argv[]);

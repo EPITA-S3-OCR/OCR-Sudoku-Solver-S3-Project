@@ -14,6 +14,7 @@ typedef struct UserInterface
   GtkTextView     *console;
   cairo_surface_t *sudokuLive;
   gboolean         verbose;
+  GtkEntry        *entryEpoch;
 } UserInterface;
 
 void addConsoleMessage(UserInterface *ui, char *message);

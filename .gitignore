@@ -57,6 +57,7 @@ dkms.conf
 main
 doc/
 *~w
+*.glade~
 .DS_Store
 **/.keep
 output/**/*

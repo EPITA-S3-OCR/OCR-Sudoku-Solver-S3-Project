@@ -91,15 +91,9 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="ImportButton">
-                    <property name="label" translatable="yes">Import a file</property>
-                    <property name="name">main-button</property>
-                    <property name="width-request">100</property>
-                    <property name="height-request">37</property>
+                  <object class="GtkStackSwitcher" id="StackSwitcher">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">start</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -108,62 +102,263 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="width-request">100</property>
-                    <property name="height-request">80</property>
+                  <object class="GtkStack" id="Stack">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="orientation">vertical</property>
+                    <property name="transition-type">crossfade</property>
                     <child>
-                      <object class="GtkLabel" id="PARAMETERS">
+                      <object class="GtkBox" id="Page1">
+                        <property name="name">Page1</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="label" translatable="yes">PARAMETERS</property>
-                        <attributes>
-                          <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
-                          <attribute name="style" value="normal"/>
-                          <attribute name="scale" value="2.5"/>
-                          <attribute name="foreground" value="#ffffffffffff"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">20</property>
                         <child>
-                          <object class="GtkLabel" id="Rotate">
+                          <object class="GtkButton" id="ImportButton">
+                            <property name="label" translatable="yes">Import a file</property>
+                            <property name="name">main-button</property>
+                            <property name="width-request">100</property>
+                            <property name="height-request">37</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Rotate</property>
-                            <attributes>
-                              <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
-                              <attribute name="style" value="normal"/>
-                              <attribute name="scale" value="1.5"/>
-                              <attribute name="foreground" value="#ffffffffffff"/>
-                            </attributes>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">start</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScale" id="RotateSlider">
-                            <property name="name">RotateSlider</property>
-                            <property name="width-request">120</property>
+                          <object class="GtkBox">
+                            <property name="width-request">100</property>
+                            <property name="height-request">80</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel" id="PARAMETERS">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">PARAMETERS</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+                                  <attribute name="style" value="normal"/>
+                                  <attribute name="scale" value="2.5"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="Rotate">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">Rotate</property>
+                                    <attributes>
+                                      <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+                                      <attribute name="style" value="normal"/>
+                                      <attribute name="scale" value="1.5"/>
+                                      <attribute name="foreground" value="#ffffffffffff"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkScale" id="RotateSlider">
+                                    <property name="name">RotateSlider</property>
+                                    <property name="width-request">120</property>
+                                    <property name="height-request">40</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="round-digits">1</property>
+                                    <property name="value-pos">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="ModeVerbose">
+                                    <property name="height-request">40</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">Verbose</property>
+                                    <attributes>
+                                      <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+                                      <attribute name="style" value="normal"/>
+                                      <attribute name="scale" value="1.5"/>
+                                      <attribute name="foreground" value="#ffffffffffff"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="VerboseCheckbox">
+                                    <property name="height-request">40</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="use-stock">True</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="LaunchProcessButton">
+                            <property name="label" translatable="yes">Launch Process</property>
+                            <property name="width-request">100</property>
                             <property name="height-request">40</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="round-digits">1</property>
-                            <property name="value-pos">right</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">start</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="name">page0</property>
+                        <property name="title" translatable="yes">Sudoku OCR</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="Page2">
+                        <property name="name">Page2</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">20</property>
+                        <child>
+                          <object class="GtkButton" id="TrainButton">
+                            <property name="label" translatable="yes">Train Button</property>
+                            <property name="name">main-button</property>
+                            <property name="width-request">100</property>
+                            <property name="height-request">37</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">start</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="width-request">100</property>
+                            <property name="height-request">80</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel" id="PARAMETERS1">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">PARAMETERS</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
+                                  <attribute name="style" value="normal"/>
+                                  <attribute name="scale" value="2.5"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="Rotate1">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">Epoch number</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="EntryEpoch">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -173,54 +368,9 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="name">page1</property>
+                        <property name="title" translatable="yes">Neural Network</property>
                         <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <child>
-                          <object class="GtkLabel" id="ModeVerbose">
-                            <property name="height-request">40</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Verbose</property>
-                            <attributes>
-                              <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
-                              <attribute name="style" value="normal"/>
-                              <attribute name="scale" value="1.5"/>
-                              <attribute name="foreground" value="#ffffffffffff"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="VerboseCheckbox">
-                            <property name="height-request">40</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="use-stock">True</property>
-                            <property name="draw-indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -228,22 +378,6 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="LaunchProcessButton">
-                    <property name="label" translatable="yes">Launch Process</property>
-                    <property name="width-request">100</property>
-                    <property name="height-request">40</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">start</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -295,6 +429,19 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="ToggleImageButton">
+                    <property name="label" translatable="yes">Hide image button</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>

@@ -19,6 +19,7 @@ void loadCSS()
                                             GTK_STYLE_PROVIDER(provider),
                                             GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
+bool toggleImage = false;
 
 gboolean update_label(GtkTextView *console, const char *text, gpointer data)
 {
@@ -30,7 +31,7 @@ gboolean update_label(GtkTextView *console, const char *text, gpointer data)
 
   // if more than 3 lines in the buffer, delete the first line
   int line_count = gtk_text_buffer_get_line_count(buffer);
-  if (line_count > 6)
+  if ((toggleImage == false && line_count > 6) || line_count > 20)
   {
     GtkTextIter start;
     gtk_text_buffer_get_iter_at_line(buffer, &start, 0);
@@ -39,6 +40,30 @@ gboolean update_label(GtkTextView *console, const char *text, gpointer data)
   }
 
   return FALSE;
+}
+void onHideSudokuButtonClicked(GtkButton *button, gpointer data)
+{
+  printf("Hide Sudoku Button Clicked\n");
+  UserInterface *ui = (UserInterface *)data;
+  if (toggleImage == false)
+  {
+
+    gtk_widget_set_visible(GTK_WIDGET(ui->sudokuImage), FALSE);
+    // Resize console to 500x500
+    gtk_widget_set_size_request(GTK_WIDGET(ui->console), 400, 500);
+    toggleImage = true;
+    // set button label to "Show Sudoku"
+    gtk_button_set_label(button, "Show Sudoku");
+  }
+  else
+  {
+    gtk_widget_set_visible(GTK_WIDGET(ui->sudokuImage), TRUE);
+    // Resize console to 500x500
+    gtk_widget_set_size_request(GTK_WIDGET(ui->console), 200, 100);
+    toggleImage = false;
+    // set button label to "Hide Sudoku"
+    gtk_button_set_label(button, "Hide Sudoku");
+  }
 }
 
 int uiMain(int argc, char *argv[])
@@ -75,6 +100,21 @@ int uiMain(int argc, char *argv[])
       = GTK_IMAGE(gtk_builder_get_object(builder, "SudokuImage"));
   GtkTextView *console
       = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "Console"));
+  GtkStackSwitcher *stackSwitcher
+      = GTK_STACK_SWITCHER(gtk_builder_get_object(builder, "StackSwitcher"));
+  GtkStack *stack = GTK_STACK(gtk_builder_get_object(builder, "Stack"));
+  gtk_stack_switcher_set_stack(stackSwitcher, stack);
+
+  GtkButton *trainButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "TrainButton"));
+  GtkButton *toggleImageButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "ToggleImageButton"));
+
+  GtkEntry *entryEpoch
+      = GTK_ENTRY(gtk_builder_get_object(builder, "EntryEpoch"));
+  // Link object "StackSwitcher", "Page1", "Page2" and "Stack"
+
+  // Add titles to the stack
 
   UserInterface ui = {
       .window              = window,
@@ -85,6 +125,7 @@ int uiMain(int argc, char *argv[])
       .sudokuImage         = sudokuImage,
       .sudokuLive          = NULL,
       .console             = console,
+      .entryEpoch          = entryEpoch,
   };
 
   // Connects the signals with handler from handler.c
@@ -99,6 +140,12 @@ int uiMain(int argc, char *argv[])
                    G_CALLBACK(onLaunchProcessButtonClicked), &ui);
   g_signal_connect(verboseCheckbox, "toggled",
                    G_CALLBACK(onVerboseCheckboxToggled), &ui);
+
+  g_signal_connect(toggleImageButton, "clicked",
+                   G_CALLBACK(onHideSudokuButtonClicked), &ui);
+
+  g_signal_connect(trainButton, "clicked", G_CALLBACK(onTrainButtonClicked),
+                   &ui);
 
   update_label_signal_id = g_signal_new(
       "update-label", G_TYPE_FROM_CLASS(GTK_WIDGET_GET_CLASS(console)),
