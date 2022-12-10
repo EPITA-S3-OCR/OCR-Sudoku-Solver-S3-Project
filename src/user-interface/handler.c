@@ -4,12 +4,13 @@ void onTrainButtonClicked(GtkButton *button, gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;
   // Get the number of epochs
-  const char *epochs = gtk_entry_get_text(ui->entryEpoch);
+  const char *epochs = gtk_entry_get_text(ui->nn->entryEpoch);
   printf("Epochs: %s\n", epochs);
   // Get the number of epochs in int
   unsigned long maxEpochs = strtoul(epochs, NULL, 10);
 
-  ocrNeuralNetworkUi(maxEpochs, ui, ui->verbose);
+  // Get status of the verbose checkbox
+  ocrNeuralNetworkUi(maxEpochs, ui, true);
 }
 
 void onImportButtonClicked(GtkButton *button, gpointer user_data)
@@ -44,75 +45,100 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
 
 void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
 {
+  UserInterface *ui = (UserInterface *)user_data;
 
-  char sudoku[16][16];
+  // Create a file picker for an image file
+  GtkFileChooserNative *fileChooser = gtk_file_chooser_native_new(
+      "Import Image", ui->window, GTK_FILE_CHOOSER_ACTION_OPEN, "_Open",
+      "_Cancel");
 
-  int M[16][16] = {0};
+  // Show the file picker
+  gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(fileChooser));
 
-  for (size_t i = 0; i < 9; i++)
+  // If the user selected a file, copy it to the current image path
+  if (response == GTK_RESPONSE_ACCEPT)
   {
-    for (size_t j = 0; j < 9; j++)
-      M[i][j] = '0';
-  }
+    char *path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fileChooser));
+    g_print("Selected file: %s\n", path);
+    // duplicate the image file under currentImagePath
+    // Destroy the file picker
+    gtk_widget_destroy(GTK_WIDGET(fileChooser));
+    printf("Solving sudoku... %s\n", path);
+    // get checkbox status
+    bool isHexa = gtk_toggle_button_get_active(ui->solver->hexaModeCheckbox);
+    printf("Hexa mode: %s\n", isHexa ? "true" : "false");
+    size_t size = 9 ? isHexa == false : 16;
 
-  loadSudoku(sudoku, "tests/solver/grid00", 9);
+    char sudoku[16][16];
+    int  M[16][16] = {0};
 
-  // Solve it bro
-  //
-  //
-
-  system("rm src/user-interface/jeje.png");
-  system("cp src/user-interface/defgrid.png src/user-interface/jeje.png");
-
-  int x = 27;
-  int y = 60;
-
-  int dis = 67;
-
-  char s[1000] = {0};
-
-  for (size_t i = 0; i < 9; i++)
-  {
-    for (size_t j = 0; j < 9; j++)
+    for (size_t i = 0; i < size; i++)
     {
-      if (sudoku[i][j] != '0')
-      {
-        sprintf(s, "convert -font unifont -pointsize 60 -fill black \
-                        -draw 'text %i,%i \"%c\"' \"src/user-interface/jeje.png\" \
-                        \"src/user-interface/jeje.png\"",
-                x, y, sudoku[i][j]);
-        system(s);
-        M[i][j] = 1;
-      }
-      x += dis;
+      for (size_t j = 0; j < size; j++)
+        M[i][j] = '0';
     }
 
-    x = 27;
-    y += dis;
-  }
+    loadSudoku(sudoku, path, size);
 
-  Solve(sudoku, 9);
+    // Solve it bro
 
-  x = 27;
-  y = 60;
+    system("rm src/user-interface/aver.png");
+    system("rm src/user-interface/jeje.png");
+    system("cp src/user-interface/sixbysix.png src/user-interface/aver.png");
+    system("cp src/user-interface/defgrid.png src/user-interface/jeje.png");
 
-  for (size_t i = 0; i < 9; i++)
-  {
-    for (size_t j = 0; j < 9; j++)
+    int   x        = (size == 16 ? 12 : 27);
+    int   y        = (size == 16 ? 35 : 60);
+    int   dis      = (size == 16 ? 38 : 67);
+    int   fontsize = (size == 16 ? 40 : 60);
+    char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
+    char *modif    = (size == 16 ? "aver.png" : "jeje.png");
+
+    char s[1000] = {0};
+
+    for (size_t i = 0; i < size; i++)
     {
-      if (M[i][j] != 1)
+      for (size_t j = 0; j < size; j++)
       {
-        sprintf(s, "convert -font unifont -pointsize 60 -fill red \
-                        -draw 'text %i,%i \"%c\"' \"src/user-interface/jeje.png\" \
-                        \"src/user-interface/jeje.png\"",
-                x, y, sudoku[i][j]);
-        system(s);
+        if (sudoku[i][j] != '0')
+        {
+          sprintf(s, "convert -font unifont -pointsize %i -fill black \
+                        -draw 'text %i,%i \"%c\"' \"src/user-interface/%s\" \
+                        \"src/user-interface/%s\"",
+                  fontsize, x, y, sudoku[i][j], modif, modif);
+          system(s);
+          M[i][j] = 1;
+        }
+        x += dis;
       }
-      x += dis;
+
+      x = (size == 16 ? 12 : 27);
+      y += dis;
     }
 
-    x = 27;
-    y += dis;
+    Solve(sudoku, size);
+
+    x = (size == 16 ? 12 : 27);
+    y = (size == 16 ? 35 : 60);
+
+    for (size_t i = 0; i < size; i++)
+    {
+      for (size_t j = 0; j < size; j++)
+      {
+        if (M[i][j] != 1)
+        {
+          sprintf(s, "convert -font unifont -pointsize %i -fill red \
+                        -draw 'text %i,%i \"%c\"' \"src/user-interface/%s\" \
+                        \"src/user-interface/%s\"",
+                  fontsize, x, y, sudoku[i][j], modif, modif);
+          system(s);
+        }
+        x += dis;
+      }
+
+      x = (size == 16 ? 12 : 27);
+      y += dis;
+    }
   }
 }
 
@@ -132,7 +158,7 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
   UserInterface *ui = (UserInterface *)user_data;
 
   // Rotate it by the angle
-  int              angle = gtk_range_get_value(GTK_RANGE(ui->rotateSlider));
+  int angle = gtk_range_get_value(GTK_RANGE(ui->ocr->rotateSlider));
   cairo_surface_t *image = rotate_surface(ui->sudokuLive, angle);
 
   // Save the cairo surface in "output/ui/current.jpg"
@@ -143,18 +169,12 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
   // Save the pixbuf as a jpeg file
   gdk_pixbuf_save(pixbuf, "output/ui/current.jpg", "jpeg", NULL, NULL);
 
-  ui->verbose
-      = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->verboseCheckbox));
+  ui->verbose = gtk_toggle_button_get_active(
+      GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
 
   printf("Launching imageProcessingUi in a new thread");
   pthread_t thread;
   pthread_create(&thread, NULL, threadImageProcessing, ui);
-}
-
-void onVerboseCheckboxToggled(GtkToggleButton *togglebutton,
-                              gpointer         user_data)
-{
-  g_print("Verbose checkbox toggled\n");
 }
 
 void onWindowDestroy(GtkWidget *widget, gpointer user_data)

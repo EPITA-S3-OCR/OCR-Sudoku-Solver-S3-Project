@@ -9,12 +9,16 @@
 #include "thread.h"
 #include "utils.h"
 
-void  onTrainButtonClicked(GtkButton *button, gpointer user_data);
-void  onImportButtonClicked(GtkButton *button, gpointer user_data);
-void  onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data);
-char *loadCharArray(char *path);
-void  onRotateSliderChanged(GtkRange *range, gpointer user_data);
-void  onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data);
-void  onVerboseCheckboxToggled(GtkToggleButton *togglebutton,
-                               gpointer         user_data);
-void  onWindowDestroy(GtkWidget *widget, gpointer user_data);
+// Handler for OCR Sudoku
+void onImportButtonClicked(GtkButton *button, gpointer user_data);
+void onRotateSliderChanged(GtkRange *range, gpointer user_data);
+void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data);
+
+// Handler for Neural Network
+void onTrainButtonClicked(GtkButton *button, gpointer user_data);
+
+// Handler for Solver
+void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data);
+
+// Handler for UI
+void onWindowDestroy(GtkWidget *widget, gpointer user_data);

@@ -3,10 +3,10 @@
 #include <unistd.h>
 #include "main.h"
 
-guint update_label_signal_id = 0;
+guint updateLabelSignalId = 0;
 void  addConsoleMessage(UserInterface *ui, char *message)
 {
-  g_signal_emit(ui->console, update_label_signal_id, 0, message);
+  g_signal_emit(ui->console, updateLabelSignalId, 0, message);
 }
 
 void loadCSS()
@@ -21,7 +21,7 @@ void loadCSS()
 }
 bool toggleImage = false;
 
-gboolean update_label(GtkTextView *console, const char *text, gpointer data)
+gboolean updateLabel(GtkTextView *console, const char *text, gpointer data)
 {
   GtkTextBuffer *buffer = gtk_text_view_get_buffer(console);
   GtkTextIter    end;
@@ -47,7 +47,6 @@ void onHideSudokuButtonClicked(GtkButton *button, gpointer data)
   UserInterface *ui = (UserInterface *)data;
   if (toggleImage == false)
   {
-
     gtk_widget_set_visible(GTK_WIDGET(ui->sudokuImage), FALSE);
     // Resize console to 500x500
     gtk_widget_set_size_request(GTK_WIDGET(ui->console), 400, 500);
@@ -86,84 +85,84 @@ int uiMain(int argc, char *argv[])
     return 1;
   }
 
-  // Gets the widgets.
-  GtkWindow *window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
-  GtkButton *importButton
-      = GTK_BUTTON(gtk_builder_get_object(builder, "ImportButton"));
-  GtkScale *rotateSlider
-      = GTK_SCALE(gtk_builder_get_object(builder, "RotateSlider"));
-  GtkButton *launchProcessButton
-      = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));
-  GtkCheckButton *verboseCheckbox
-      = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "VerboseCheckbox"));
-  GtkImage *sudokuImage
-      = GTK_IMAGE(gtk_builder_get_object(builder, "SudokuImage"));
-  GtkTextView *console
-      = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "Console"));
-  GtkStackSwitcher *stackSwitcher
-      = GTK_STACK_SWITCHER(gtk_builder_get_object(builder, "StackSwitcher"));
-  GtkStack *stack = GTK_STACK(gtk_builder_get_object(builder, "Stack"));
-  gtk_stack_switcher_set_stack(stackSwitcher, stack);
-
-  GtkButton *trainButton
-      = GTK_BUTTON(gtk_builder_get_object(builder, "TrainButton"));
-  GtkButton *toggleImageButton
-      = GTK_BUTTON(gtk_builder_get_object(builder, "ToggleImageButton"));
-
-  GtkEntry *entryEpoch
-      = GTK_ENTRY(gtk_builder_get_object(builder, "EntryEpoch"));
-
-  // Link object "StackSwitcher", "Page1", "Page2" and "Stack"
-
-  // Add titles to the stack
-
-  UserInterface ui = {
-      .window              = window,
-      .importButton        = importButton,
-      .rotateSlider        = rotateSlider,
-      .launchProcessButton = launchProcessButton,
-      .verboseCheckbox     = verboseCheckbox,
-      .sudokuImage         = sudokuImage,
-      .sudokuLive          = NULL,
-      .console             = console,
-      .entryEpoch          = entryEpoch,
+  // Get OCR Sudoku widgets
+  OCR ocr = {
+      .importButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "ImportButton")),
+      .rotateSlider
+      = GTK_SCALE(gtk_builder_get_object(builder, "RotateSlider")),
+      .launchProcessButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton")),
+      .verboseCheckbox
+      = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "VerboseCheckbox")),
   };
 
-  // Connects the signals with handler from handler.c
-  g_signal_connect(window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
-  g_signal_connect(importButton, "clicked", G_CALLBACK(onImportButtonClicked),
-                   &ui);
-  g_signal_connect(rotateSlider, "value-changed",
-                   G_CALLBACK(onRotateSliderChanged), &ui);
-  g_signal_connect(launchProcessButton, "clicked",
-                   G_CALLBACK(onLaunchProcessButtonClicked), &ui);
-  g_signal_connect(verboseCheckbox, "toggled",
-                   G_CALLBACK(onVerboseCheckboxToggled), &ui);
+  // Get Neural Network widgets
+  NN nn = {
+      .trainButton = GTK_BUTTON(
+          gtk_builder_get_object(builder, "LaunchProcessTrainingButton")),
+      .entryEpoch = GTK_ENTRY(gtk_builder_get_object(builder, "EntryEpoch")),
+  };
 
-  g_signal_connect(toggleImageButton, "clicked",
+  // Get Sudoku Solver widgets
+  Solver solver = {
+      .hexaModeCheckbox
+      = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "HexaMode")),
+      .launchProcessSolverButton = GTK_BUTTON(
+          gtk_builder_get_object(builder, "LaunchProcessSolverButton")),
+  };
+
+  UserInterface ui = {
+      .window      = GTK_WINDOW(gtk_builder_get_object(builder, "window")),
+      .sudokuImage = GTK_IMAGE(gtk_builder_get_object(builder, "SudokuImage")),
+      .toggleImageButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "ToggleImageButton")),
+      .stackSwitcher
+      = GTK_STACK_SWITCHER(gtk_builder_get_object(builder, "StackSwitcher")),
+      .stack      = GTK_STACK(gtk_builder_get_object(builder, "Stack")),
+      .console    = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "Console")),
+      .ocr        = &ocr,
+      .nn         = &nn,
+      .solver     = &solver,
+      .sudokuLive = NULL,
+  };
+
+  gtk_stack_switcher_set_stack(ui.stackSwitcher, ui.stack);
+
+  // Connects the signals with handler from handler.c
+  g_signal_connect(ui.window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
+  g_signal_connect(ui.ocr->importButton, "clicked",
+                   G_CALLBACK(onImportButtonClicked), &ui);
+  g_signal_connect(ui.ocr->rotateSlider, "value-changed",
+                   G_CALLBACK(onRotateSliderChanged), &ui);
+  g_signal_connect(ui.ocr->launchProcessButton, "clicked",
+                   G_CALLBACK(onLaunchProcessButtonClicked), &ui);
+
+  g_signal_connect(ui.toggleImageButton, "clicked",
                    G_CALLBACK(onHideSudokuButtonClicked), &ui);
 
-  g_signal_connect(trainButton, "clicked", G_CALLBACK(onTrainButtonClicked),
-                   &ui);
+  g_signal_connect(ui.solver->launchProcessSolverButton, "clicked",
+                   G_CALLBACK(onSolveSudokuButtonClicked), &ui);
 
-  update_label_signal_id = g_signal_new(
-      "update-label", G_TYPE_FROM_CLASS(GTK_WIDGET_GET_CLASS(console)),
+  g_signal_connect(ui.nn->trainButton, "clicked",
+                   G_CALLBACK(onTrainButtonClicked), &ui);
+
+  updateLabelSignalId = g_signal_new(
+      "update-label", G_TYPE_FROM_CLASS(GTK_WIDGET_GET_CLASS(ui.console)),
       G_SIGNAL_RUN_FIRST, 0, NULL, NULL, g_cclosure_marshal_VOID__STRING,
       G_TYPE_NONE, 1, G_TYPE_STRING);
 
-  g_signal_connect(console, "update-label", G_CALLBACK(update_label), &ui);
+  g_signal_connect(ui.console, "update-label", G_CALLBACK(updateLabel), &ui);
 
   // Set slider range from -180 to 180 with default value 0 and step 1
-  gtk_range_set_range(GTK_RANGE(rotateSlider), -180, 180);
-  gtk_range_set_value(GTK_RANGE(rotateSlider), 0);
-  gtk_range_set_increments(GTK_RANGE(rotateSlider), 1, 1);
+  gtk_range_set_range(GTK_RANGE(ui.ocr->rotateSlider), -180, 180);
+  gtk_range_set_value(GTK_RANGE(ui.ocr->rotateSlider), 0);
+  gtk_range_set_increments(GTK_RANGE(ui.ocr->rotateSlider), 1, 1);
 
   loadImageUi(&ui, "tests/image-processing-images/sudoku1.jpg");
 
-
   // Runs the main loop.
   gtk_main();
-
 
   return 0;
 }

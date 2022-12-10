@@ -12,7 +12,7 @@ void *threadImageProcessing(void *data)
   displayImage(ui, ui->sudokuLive);
 
   // Reset slider to 0
-  gtk_range_set_value(GTK_RANGE(ui->rotateSlider), 0);
+  gtk_range_set_value(GTK_RANGE(ui->ocr->rotateSlider), 0);
 
   return NULL;
 }

@@ -3,19 +3,40 @@
 #include <SDL2/SDL_image.h>
 #include <gtk/gtk.h>
 
+typedef struct OCR
+{
+  GtkButton      *importButton;
+  GtkScale       *rotateSlider;
+  GtkButton      *launchProcessButton;
+  GtkCheckButton *verboseCheckbox
+
+} OCR;
+
+typedef struct NN
+{
+  GtkButton *trainButton;
+  GtkEntry  *entryEpoch;
+} NN;
+
+typedef struct Solver
+{
+  GtkCheckButton *hexaModeCheckbox;
+  GtkButton      *launchProcessSolverButton;
+} Solver;
+
 typedef struct UserInterface
 {
-  GtkWindow       *window;
-  GtkButton       *importButton;
-  GtkScale        *rotateSlider;
-  GtkButton       *launchProcessButton;
-  GtkCheckButton  *verboseCheckbox;
-  GtkButton       *solveSudokuButton;
-  GtkImage        *sudokuImage;
-  GtkTextView     *console;
-  cairo_surface_t *sudokuLive;
-  gboolean         verbose;
-  GtkEntry        *entryEpoch;
+  GtkWindow        *window;
+  GtkImage         *sudokuImage;
+  GtkButton        *toggleImageButton;
+  GtkStackSwitcher *stackSwitcher;
+  GtkStack         *stack;
+  GtkTextView      *console;
+  OCR              *ocr;
+  NN               *nn;
+  Solver           *solver;
+  cairo_surface_t  *sudokuLive;
+  gboolean          verbose;
 } UserInterface;
 
 void addConsoleMessage(UserInterface *ui, char *message);
