@@ -4,8 +4,14 @@ int main(int argc, char **argv)
 {
   if (argc >= 2)
   {
-    // make a switch
-    if (strcmp(argv[1], "image-processing") == 0)
+    if (strcmp(argv[1], "all") == 0)
+    {
+      imageProcessingMain(argc - 1, argv + 1);
+      char *argv2[] = {"ocr-neural-network", "--comp-batch",
+                       "output/train/train.txt", "output/tiles"};
+      ocrNeuralNetworkMain(4, argv2);
+    }
+    else if (strcmp(argv[1], "image-processing") == 0)
     {
       imageProcessingMain(argc - 1, argv + 1);
     }
@@ -17,7 +23,7 @@ int main(int argc, char **argv)
     {
       imageRotateMain(argc - 1, argv + 1);
     }
-    else if (strcmp(argv[1], "ocr-neural-network") == 0)
+    else if (strcmp(argv[1], "ocr") == 0)
     {
       ocrNeuralNetworkMain(argc - 1, argv + 1);
     }

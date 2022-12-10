@@ -56,5 +56,6 @@ void denoise(SDL_Surface *surface)
   applyDenoise(surface, copy, medianFilter);
   // Apply the average filter
   applyDenoise(surface, copy, averageFilter);
+
   SDL_FreeSurface(copy);
 }

@@ -58,3 +58,4 @@ main
 doc/
 .DS_Store
 tests/ocr/tiles/[1-9][0-9]*/**.*
+output/**/*

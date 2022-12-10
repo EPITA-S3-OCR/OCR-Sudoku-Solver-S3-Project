@@ -1,50 +1,47 @@
-#pragma once
 #include <err.h>
+#include "stdio.h"
 #include "stdlib.h"
 
-typedef struct LinkedList
+#pragma once
+typedef struct list
 {
-  void              *value;
-  struct LinkedList *next;
-  struct LinkedList *prev;
-} LinkedList;
+  struct list *next;
+  void        *data;
+} List;
 
 /**
- * @brief Append an element to the list.
+ * @brief Initialize a linked list
  *
- * @param list
- * @param value
- * @return LinkedList*
+ * @return List*
  */
-LinkedList *lkAppend(LinkedList *list, void *value);
+List *initList();
+/**
+ * @brief Insert an element in the list
+ *
+ * @param l
+ * @param data
+ */
+void listInsert(List *l, void *data);
 
 /**
- * @brief Remove an element from the list.
+ * @brief Remove a data element from the list
  *
- * @param list
+ * @param l
+ * @param data
  */
-void lkRemove(LinkedList *list);
+void listRemove(List *l, void *data);
 
 /**
- * @brief Get the element at index from the list.
+ * @brief Free the list
  *
- * @param list
- * @param index
- * @return LinkedList*
+ * @param l
  */
-LinkedList *lkGetIndex(LinkedList *list, int index);
+void freeList(List *l);
 
 /**
- * @brief Free the list.
+ * @brief Get the length of the list
  *
- * @param list
+ * @param l
+ * @return int
  */
-void lkFreeLinkedList(LinkedList *list);
-
-/**
- * @brief Get the length of the list.
- *
- * @param list
- * @return size_t
- */
-size_t lkLen(LinkedList *list);
+int listLength(List *l);

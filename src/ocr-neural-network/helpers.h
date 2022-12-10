@@ -17,6 +17,7 @@ double    getDouble(char *str);
 int       getBinaryInt(int n);
 int       getDecimalInt(int n);
 char     *getBinaryString(int n);
+double  **init2dArray(size_t s1, size_t s2);
 double ***init3dArray(size_t s1, size_t s2, size_t s3);
 size_t    countFolders(char *folderRoot);
 double  **createIdentityMatrix(size_t size);

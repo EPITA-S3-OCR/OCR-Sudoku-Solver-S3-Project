@@ -1,58 +1,73 @@
 #include "linked_list.h"
 
-LinkedList *lkAppend(LinkedList *list, void *value)
+// Code functions for initializing a linked List, inserting an element,
+// removing an element, freeing the List, getting the length of the List.
+
+List *initList()
 {
-  LinkedList *new = malloc(sizeof(LinkedList));
+  List *l = malloc(sizeof(List));
+  if (l == NULL)
+  {
+    err(1, "malloc");
+  }
+  l->next = NULL;
+  l->data = NULL;
+  return l;
+}
+
+void listInsert(List *l, void *data)
+{
+  List *new = malloc(sizeof(List));
   if (new == NULL)
   {
-    errx(1, "malloc");
+    err(1, "malloc");
   }
-  new->value = value;
-  new->next  = NULL;
-  new->prev  = list;
-  list->next = new;
-  return new;
+  new->data = data;
+  new->next = l->next;
+  l->next   = new;
 }
 
-void lkRemove(LinkedList *list)
+void listRemove(List *l, void *data)
 {
-  if (list->prev != NULL)
+  List *prev = l;
+  List *curr = l->next;
+  while (curr != NULL)
   {
-    list->prev->next = list->next;
+
+    if (curr->data == data)
+    {
+      // printf("Removing %p\n", data);
+      prev->next = curr->next;
+      free(curr);
+      return;
+    }
+    prev = curr;
+    curr = curr->next;
   }
-  if (list->next != NULL)
-  {
-    list->next->prev = list->prev;
-  }
-  free(list);
 }
 
-LinkedList *lkGetIndex(LinkedList *list, int index)
+void freeList(List *l)
 {
-  for (int i = 0; i < index; i++)
+  List *curr = l;
+  List *next = l->next;
+  while (next != NULL)
   {
-    list = list->next;
+    free(curr);
+    curr = next;
+    next = next->next;
   }
-  return list;
+  free(curr);
 }
 
-void lkFreeLinkedList(LinkedList *list)
+int listLength(List *l)
 {
-  while (list->next != NULL)
-  {
-    list = list->next;
-    free(list->prev);
-  }
-  free(list);
-}
 
-size_t lkLen(LinkedList *list)
-{
-  size_t len = 0;
-  while (list->next != NULL)
+  int   length = 0;
+  List *curr   = l->next;
+  while (curr != NULL)
   {
-    list = list->next;
-    len++;
+    length++;
+    curr = curr->next;
   }
-  return len;
+  return length;
 }

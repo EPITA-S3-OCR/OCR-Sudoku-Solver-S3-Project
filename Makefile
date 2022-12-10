@@ -17,14 +17,14 @@ INDIRS := $(addprefix -I, \
 )
 
 # Find all filenames with the .c extension
-CFILES := $(shell find . -name "*.c")
+CFILES := $(shell find ./src -name "*.c")
 # From the .c filenames convert their names to .o (object files) filenames and in the subfolder of the build
 OFILES := $(CFILES:./%.c=$(BUILD)/%.o)
 # From the .o filnames convert their names to .d (dependency files) filenames
 DFILES := $(OFILES:%.o=%.d)
 
 # Find all subdirectories
-SRCDIRS := $(shell find . -type d -not \( -path '*build*' -or -path '*git*' -or -path '*vscode*' -or -path '*scripts*' \) )
+SRCDIRS := $(shell find ./src -type d -not \( -path '*build*' -or -path '*git*' -or -path '*vscode*' -or -path '*scripts*' \) )
 # Create the Build folder and all subdirectories
 $(shell mkdir -p $(SRCDIRS:%=$(BUILD)/%))
 

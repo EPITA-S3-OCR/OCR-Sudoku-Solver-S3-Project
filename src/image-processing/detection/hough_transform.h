@@ -11,4 +11,4 @@
  * @param surface
  * @param list
  */
-void houghTransform(SDL_Surface *surface, LinkedList *list);
+void houghTransform(SDL_Surface *surface, List *list);

@@ -1,44 +1,5 @@
 #include "local_threshold.h"
 
-// float noiseLevel(SDL_Surface* surface)
-// {
-//   const unsigned int width = surface->w;
-//   const unsigned int height = surface->h;
-//   float noiseThreshold = 0.5;
-//   float count = 0.0;
-//   double medium = 0.0;
-//   for (unsigned int i = 0; i < width; i++)
-//     {
-//       for (unsigned int j = 0; j < height; j++)
-//         {
-//           medium = 0.0;
-//           for (unsigned int k = 0; k < 9; k++)
-//             {
-//               Uint8* neighbours = getNeighbours(surface, i, j);
-//               medium += neighbours[k];
-//             }
-//           medium /= 9;
-
-//           // get pixel and its color
-//           Uint32 pixel = getPixel(surface, i, j);
-//           Uint8 r, g, b;
-//           SDL_GetRGB(pixel, surface->format, &r, &g, &b);
-
-//           double val = 1 - (.r / medium);
-//           if (val < 0)
-//             {
-//               val *= -1;
-//             }
-//           if (val > noiseThreshold)
-//             {
-//               count++;
-//             }
-//         }
-//     }
-
-// return count;
-// }
-
 void localThreshold(SDL_Surface *surface)
 {
   // Use the technique of local thresholding to binarize the image
@@ -47,12 +8,12 @@ void localThreshold(SDL_Surface *surface)
   // If the current pixel is below the threshold, it is set to black
   // The threshold is calculated for each pixel
 
-  const double threshold = 0.12; // or more when too much noise
-  const int    width     = surface->w;
-  const int    height    = surface->h;
+  double threshold = 0.12; //  0.12; // or more when too much noise
 
-  const int      s2    = fmax(width, height) / 16;
-  unsigned long *image = calloc(width * height, sizeof(unsigned long));
+  int            width  = surface->w;
+  int            height = surface->h;
+  int            s2     = fmax(width, height) / 16;
+  unsigned long *image  = calloc(width * height, sizeof(unsigned long));
   if (image == NULL)
   {
     errx(1, "calloc");
@@ -106,5 +67,6 @@ void localThreshold(SDL_Surface *surface)
       }
     }
   }
+
   free(image);
 }

@@ -47,6 +47,7 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
   for (size_t i = 0; i < nbHiddenNeurons; i++)
   {
     nn->outputWeights[i] = (double *)calloc(nbOutputNeurons, sizeof(double));
+    /* ---- DESCENT ---- */
     if (nn->outputWeights[i] == NULL)
       errx(1, "neuralNetworkInit: calloc failed for nn->outputWeights[%zu]",
            i);
@@ -68,7 +69,6 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 
 void forwardPropagation(NeuralNetwork *nn, double *input)
 {
-  /* ---- FORWARD PASS ---- */
   // Hidden layer activation
   for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
   {
@@ -89,9 +89,9 @@ void forwardPropagation(NeuralNetwork *nn, double *input)
 }
 
 void backPropagation(NeuralNetwork *nn, double *expectedOutput,
-                     double *deltaOutput, double *deltaHidden)
+                     double deltaOutput[nn->nbOutputNeurons],
+                     double deltaHidden[nn->nbHiddenNeurons])
 {
-  /* ---- BACKPROPAGATION ---- */
   // Change in output weights
   for (size_t j = 0; j < nn->nbOutputNeurons; j++)
   {
@@ -109,10 +109,10 @@ void backPropagation(NeuralNetwork *nn, double *expectedOutput,
   }
 }
 
-void descent(NeuralNetwork *nn, double *input, double *deltaOutput,
-             double *deltaHidden, double learningRate)
+void descent(NeuralNetwork *nn, double *input,
+             double deltaOutput[nn->nbOutputNeurons],
+             double deltaHidden[nn->nbHiddenNeurons], double learningRate)
 {
-  /* ---- DESCENT ---- */
   // Apply the changes to the output layers weights
   for (size_t j = 0; j < nn->nbOutputNeurons; j++)
   {
@@ -124,6 +124,7 @@ void descent(NeuralNetwork *nn, double *input, double *deltaOutput,
           += deltaOutput[k] * learningRate * nn->hiddenLayer[k];
     }
   }
+
   // Apply the changes to the hidden layers weights
   for (size_t j = 0; j < nn->nbHiddenNeurons; j++)
   {
@@ -148,7 +149,7 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
 
     // Shuffle the indexes to randomly train the current epoch
     arrayShuffle(trainingIndexes, nn->nbTraining);
-
+    size_t good = 0;
     // Activate each layer in the shuffled order of the training indexes
     for (size_t x = 0; x < nn->nbTraining; x++)
     {
@@ -157,17 +158,30 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
 
       forwardPropagation(nn, trainingInputs[set][i]);
 
+      size_t interpretation
+          = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
+      if (interpretation == i + 1)
+        good++;
+
       // Print informations about current activation
-      neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-      double *deltaOutput = calloc(nn->nbOutputNeurons, sizeof(double));
-      double *deltaHidden = calloc(nn->nbHiddenNeurons, sizeof(double));
+      // neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
+      double deltaOutput[nn->nbOutputNeurons]; // =
+                                               // calloc(nn->nbOutputNeurons,
+                                               // sizeof(double));
+      double deltaHidden[nn->nbHiddenNeurons]; // = calloc(nn->nbHiddenNeurons,
+                                               // sizeof(double));
       backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
       descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
               learningRate);
     }
+
+    printf("Epoch %lu: ", epoch);
+    if (good == nn->nbTraining)
+      printf("\033[0;32mOK\033[0m\n");
+    else
+      printf("\033[0;31mKO\033[0m (%zu/%zu)\n", good, nn->nbTraining);
   }
 }
-
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
                                  size_t expected)
 {
@@ -191,8 +205,6 @@ void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
   }
   else
   {
-    // printf("Current Set is : %zu, with nb : %zu\n", setCurrent, expected);
-    printf("\033[0;31m");
     printf("KO\n");
     printf("\033[0m");
   }

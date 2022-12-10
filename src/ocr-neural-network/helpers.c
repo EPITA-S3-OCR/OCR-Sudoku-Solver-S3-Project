@@ -139,6 +139,25 @@ double **createIdentityMatrix(size_t size)
   return array2d;
 }
 
+double **init2dArray(size_t s1, size_t s2)
+{
+  // Initialize a 2D-array of size s1 * s2
+  double **array2d = malloc(s1 * sizeof(double *));
+  if (array2d == NULL)
+  {
+    fprintf(stderr, "Error: malloc failed\n");
+  }
+  for (size_t i = 0; i < s1; i++)
+  {
+    array2d[i] = malloc(s2 * sizeof(double));
+    if (array2d[i] == NULL)
+    {
+      errx(1, "malloc failed");
+    }
+  }
+  return array2d;
+}
+
 double ***init3dArray(size_t s1, size_t s2, size_t s3)
 {
   // malloc triple array
