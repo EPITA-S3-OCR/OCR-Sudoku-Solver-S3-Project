@@ -133,8 +133,6 @@ int uiMain(int argc, char *argv[])
   g_signal_connect(window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
   g_signal_connect(importButton, "clicked", G_CALLBACK(onImportButtonClicked),
                    &ui);
-  // g_signal_connect(importButton, "clicked",
-  //                    G_CALLBACK(run_expensive_function_button), &ui);
   g_signal_connect(rotateSlider, "value-changed",
                    G_CALLBACK(onRotateSliderChanged), &ui);
   g_signal_connect(launchProcessButton, "clicked",
@@ -162,16 +160,10 @@ int uiMain(int argc, char *argv[])
 
   loadImageUi(&ui, "tests/image-processing-images/sudoku1.jpg");
 
-  //   pthread_t thread;
-  //   pthread_create(&thread, NULL, run_expensive_function, NULL);
 
   // Runs the main loop.
   gtk_main();
 
-  // Stop the thread
-  //   pthread_cancel(thread);
-
-  //   Exits.
 
   return 0;
 }
