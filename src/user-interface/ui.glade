@@ -32,8 +32,6 @@
                 <property name="height-request">80</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">37</property>
                 <child>
@@ -246,6 +244,22 @@
                     <property name="position">3</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkButton" id="SolveBoardButton">
+                    <property name="label" translatable="yes">Solve board</property>
+                    <property name="width-request">100</property>
+                    <property name="height-request">40</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="halign">start</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -257,8 +271,6 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="hexpand">False</property>
-                <property name="vexpand">False</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">10</property>
                 <child>
@@ -277,18 +289,17 @@
                 <child>
                   <object class="GtkTextView" id="Console">
                     <property name="name">Console</property>
-                    <property name="width-request">200</property>
-                    <property name="height-request">100</property>
+                    <property name="width-request">100</property>
+                    <property name="height-request">80</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="editable">False</property>
-                    <property name="left-margin">20</property>
-                    <property name="right-margin">20</property>
-                    <property name="top-margin">20</property>
+                    <property name="left-margin">10</property>
+                    <property name="right-margin">10</property>
+                    <property name="top-margin">10</property>
                     <property name="bottom-margin">10</property>
                     <property name="cursor-visible">False</property>
                     <property name="accepts-tab">False</property>
-                    <property name="input-purpose">terminal</property>
                     <property name="monospace">True</property>
                   </object>
                   <packing>

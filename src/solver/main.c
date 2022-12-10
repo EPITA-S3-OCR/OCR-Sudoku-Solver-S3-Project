@@ -4,16 +4,17 @@ int solverMain(int argc, char *argv[])
 {
   // declare and initialize an array
 
-  if (argc != 2)
-    errx(1, "bad");
+  if (argc != 3)
+    errx(1, "solver <9 or 16> <path>");
 
-  const size_t SI = 9;
+  char* ptr;
+  const size_t SI = strtol(argv[1], &ptr, 10);
 
-  char sudoku[SI][SI];
+  char sudoku[16][16];
 
-  loadSudoku(sudoku, argv[1]);
+  loadSudoku(sudoku, argv[2], SI);
 
-  if (Solve(sudoku) == -1)
+  if (Solve(sudoku, SI) == -1)
   {
     errx(1, "Could not be solved :(");
   }
@@ -21,7 +22,7 @@ int solverMain(int argc, char *argv[])
   else
   {
     char  actual_path[2048];
-    char *full_path = realpath(argv[1], actual_path);
+    char *full_path = realpath(argv[2], actual_path);
 
     // Grab filename.
 
@@ -42,7 +43,7 @@ int solverMain(int argc, char *argv[])
     strcat(path_for_newfile, ptr_to_filename);
     strcat(path_for_newfile, ".result");
 
-    createFile(sudoku, path_for_newfile);
+    createFile(sudoku, path_for_newfile, SI);
   }
 
   return 0;

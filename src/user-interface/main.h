@@ -10,6 +10,7 @@ typedef struct UserInterface
   GtkScale        *rotateSlider;
   GtkButton       *launchProcessButton;
   GtkCheckButton  *verboseCheckbox;
+  GtkButton       *solveSudokuButton;
   GtkImage        *sudokuImage;
   GtkTextView     *console;
   cairo_surface_t *sudokuLive;

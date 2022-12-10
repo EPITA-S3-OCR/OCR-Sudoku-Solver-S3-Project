@@ -75,6 +75,8 @@ int uiMain(int argc, char *argv[])
       = GTK_IMAGE(gtk_builder_get_object(builder, "SudokuImage"));
   GtkTextView *console
       = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "Console"));
+  GtkButton *solveSudokuButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "SolveBoardButton"));
 
   UserInterface ui = {
       .window              = window,
@@ -82,6 +84,7 @@ int uiMain(int argc, char *argv[])
       .rotateSlider        = rotateSlider,
       .launchProcessButton = launchProcessButton,
       .verboseCheckbox     = verboseCheckbox,
+      .solveSudokuButton   = solveSudokuButton,
       .sudokuImage         = sudokuImage,
       .sudokuLive          = NULL,
       .console             = console,
@@ -89,6 +92,9 @@ int uiMain(int argc, char *argv[])
 
   // Connects the signals with handler from handler.c
   g_signal_connect(window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
+
+  g_signal_connect(solveSudokuButton, "clicked",
+          G_CALLBACK(onSolveSudokuButtonClicked), &ui);
   g_signal_connect(importButton, "clicked", G_CALLBACK(onImportButtonClicked),
                    &ui);
   //   g_signal_connect(importButton, "clicked",
