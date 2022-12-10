@@ -1,51 +1,71 @@
 #include "main.h"
 
-SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
+SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
+                                  bool verbose)
 {
   printf("Applying image processing...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying image processing...");
   // Apply the image processing
   // SDL_Surface *copy = surface; // copySurface(surface);
   SDL_Surface *copy = copySurface(surface);
 
   printf("- Applying grayscale...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying grayscale...");
   grayscale(copy);
   saveSurface(copy, "output/steps/1-grayscale.jpg");
 
   printf("- Applying contrast...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying contrast...");
   contrast(copy);
   saveSurface(copy, "output/steps/2-contrast.jpg");
 
   printf("- Applying noise reduction...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying noise reduction...");
   denoise(copy);
   saveSurface(copy, "output/steps/3-denoise.jpg");
 
   printf("- Applying local threshold...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying local threshold...");
   localThreshold(copy);
   saveSurface(copy, "output/steps/4-local_threshold.jpg");
 
   printf("- Applying sobel...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying sobel...");
   sobelEdgeDetection(copy);
   saveSurface(copy, "output/steps/5-sobel.jpg");
 
   printf("- Applying hough transform...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Applying hough transform...");
   LinkedList *lines = malloc(sizeof(LinkedList));
   houghTransform(copy, lines);
   printf("  - lines: %zu\n", lkLen(lines));
 
   SDL_Color color = {255, 0, 0, 255};
   printf("- Drawing the lines...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Drawing the lines...");
   SDL_Surface *surfacelines = copySurface(copy);
-  printf("here\n");
   drawLines(surfacelines, lines->next, color);
   saveSurface(surfacelines, "output/steps/6-lines.jpg");
 
   printf("- Getting the angle...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Getting the angle...");
   double angle = getRotationAngle(lines);
   printf("  - Angle find : %f\n", radiansToDegrees(angle));
 
   if (angle > 0.1 || angle < -0.1)
   {
     printf("- Rotating the image...\n");
+    if (verbose)
+      addConsoleMessage(ui, "Rotating the image...");
     rotate(copy, angle);
     rotateLines(lines, angle, copy->w, copy->h);
   }
@@ -56,6 +76,8 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   // LinkedList filteredSquares   = squareFilter(&squares);
 
   printf("- Drawing the squares...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Drawing the squares...");
   SDL_Surface *drawSquareSurface = copySurface(copy);
   drawSquares(drawSquareSurface, &squares, color);
   saveSurface(drawSquareSurface, "output/steps/9-draw_squares.jpg");
@@ -81,6 +103,8 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   int distY = rightMostCell.xTopRight - leftMostCell.xBottomLeft;
 
   printf("- Splitting the image...\n");
+  if (verbose)
+    addConsoleMessage(ui, "Splitting the image...");
   splitImage(copy, leftMostCell.xBottomLeft, leftMostCell.yBottomLeft, distX,
              distY);
   printf("End of image processing\n");
@@ -88,6 +112,7 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
 }
 int imageRotateMain(int argv, char **argc)
 {
+
   // Check arguments
   if (argv != 3)
   {
@@ -176,7 +201,7 @@ int imageRotateMain(int argv, char **argc)
   return 0;
 }
 
-void imageProcessingUi(char *filename, bool verbose)
+void imageProcessingUi(char *filename, UserInterface *ui, bool verbose)
 {
   SDL_Surface *surface = IMG_Load(filename);
   if (surface == NULL)
@@ -184,7 +209,7 @@ void imageProcessingUi(char *filename, bool verbose)
     errx(1, "IMG_Load: %s", SDL_GetError());
   }
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
-  surface = applyImageProcessing(surface, verbose);
+  surface = applyImageProcessing(surface, ui, verbose);
   IMG_SaveJPG(surface, filename, 100);
 }
 
@@ -237,7 +262,7 @@ int imageProcessingMain(int argv, char **argc)
   // functions later
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
-  surface = applyImageProcessing(surface, true);
+  surface = applyImageProcessing(surface, NULL, false);
   // Intialize a texture by converting the imported surface
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (texture == NULL)

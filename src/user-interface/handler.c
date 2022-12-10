@@ -3,12 +3,16 @@
 void onImportButtonClicked(GtkButton *button, gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;
-  addConsoleMessage(ui, "📸 1.1 Applying const");
 
   // Create a file picker for an image file
   GtkFileChooserNative *fileChooser = gtk_file_chooser_native_new(
       "Import Image", ui->window, GTK_FILE_CHOOSER_ACTION_OPEN, "_Open",
       "_Cancel");
+
+  // Add filters so that only image files can be selected
+  GtkFileFilter *filter = gtk_file_filter_new();
+  gtk_file_filter_add_pixbuf_formats(filter);
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fileChooser), filter);
 
   // Show the file picker
   gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(fileChooser));
@@ -38,25 +42,26 @@ void onRotateSliderChanged(GtkRange *range, gpointer user_data)
 
 void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
 {
-  g_print("Launch process button clicked\n");
   UserInterface *ui = (UserInterface *)user_data;
-  // Load the image from "currentImagePath"
-  SDL_Surface *image = IMG_Load(currentImagePath);
-  if (image == NULL)
-  {
-    g_print("Failed to load image: %s\n", IMG_GetError());
-    return;
-  }
-  image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGB888, 0);
-  // Get the verbose checkbox state
-  int  angle = gtk_range_get_value(ui->rotateSlider);
-  bool verbose
-      = gtk_toggle_button_get_active((GtkToggleButton *)ui->verboseCheckbox);
-  g_print("Verbose: %s\n", verbose ? "true" : "false");
-  imageProcessingUi(currentImagePath, verbose);
-  // Save the image to "currentImagePath"
-  loadImageUi(ui, currentImagePath);
-  displayImage(ui, ui->sudokuLive);
+
+  // Rotate it by the angle
+  int              angle = gtk_range_get_value(GTK_RANGE(ui->rotateSlider));
+  cairo_surface_t *image = rotate_surface(ui->sudokuLive, angle);
+
+  // Save the cairo surface in "output/ui/current.jpg"
+  // Convert the cairo surface to a pixbuf
+  GdkPixbuf *pixbuf = gdk_pixbuf_get_from_surface(
+      image, 0, 0, cairo_image_surface_get_width(image),
+      cairo_image_surface_get_height(image));
+  // Save the pixbuf as a jpeg file
+  gdk_pixbuf_save(pixbuf, "output/ui/current.jpg", "jpeg", NULL, NULL);
+
+  ui->verbose
+      = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->verboseCheckbox));
+
+  printf("Launching imageProcessingUi in a new thread");
+  pthread_t thread;
+  pthread_create(&thread, NULL, threadImageProcessing, ui);
 }
 
 void onVerboseCheckboxToggled(GtkToggleButton *togglebutton,

@@ -26,18 +26,11 @@ void displayImage(UserInterface *ui, cairo_surface_t *surface)
       = gdk_pixbuf_get_from_surface(surface, 0, 0, width, height);
 
   // Load an image using Pixbuf
-  pixbuf = gdk_pixbuf_scale_simple(pixbuf, 400, 400, GDK_INTERP_BILINEAR);
+  pixbuf = gdk_pixbuf_scale_simple(pixbuf, 400, 400, GDK_INTERP_TILES);
   // Set the image to the pixbuf
   gtk_image_set_from_pixbuf(ui->sudokuImage, pixbuf);
   // Free the pixbuf
   g_object_unref(pixbuf);
-}
-
-void addConsoleMessage(UserInterface *ui, char *message)
-{
-  GtkTextBuffer *buffer = gtk_text_view_get_buffer(ui->console);
-  gtk_text_buffer_insert_at_cursor(buffer, message, -1);
-  gtk_text_buffer_insert_at_cursor(buffer, "\n", -1);
 }
 
 // Create a new Cairo surface that is a copy of the original
@@ -85,7 +78,4 @@ cairo_surface_t *rotate_surface(cairo_surface_t *surface, double degrees)
 
   // Replace the original surface with the rotated surface
   return rotated;
-  // width  = cairo_image_surface_get_width(surface);
-  // height = cairo_image_surface_get_height(surface);
-  // g_print("width: %d, height: %d\n", width, height);
 }

@@ -13,9 +13,11 @@ typedef struct UserInterface
   GtkImage        *sudokuImage;
   GtkTextView     *console;
   cairo_surface_t *sudokuLive;
+  gboolean         verbose;
 } UserInterface;
 
+void addConsoleMessage(UserInterface *ui, char *message);
 #include "handler.h"
+#include "thread.h"
 #include "utils.h"
-
 int uiMain(int argc, char *argv[]);

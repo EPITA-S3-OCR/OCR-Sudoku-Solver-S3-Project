@@ -281,11 +281,11 @@
                     <property name="height-request">100</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="pixels-above-lines">20</property>
+                    <property name="pixels-below-lines">20</property>
                     <property name="editable">False</property>
                     <property name="left-margin">20</property>
                     <property name="right-margin">20</property>
-                    <property name="top-margin">20</property>
-                    <property name="bottom-margin">10</property>
                     <property name="cursor-visible">False</property>
                     <property name="accepts-tab">False</property>
                     <property name="input-purpose">terminal</property>

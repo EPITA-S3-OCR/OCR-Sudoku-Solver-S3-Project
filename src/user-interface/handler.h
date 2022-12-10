@@ -4,6 +4,7 @@
 #include "../image-processing/main.h"
 #include "../image-processing/utils/utils.h"
 #include "main.h"
+#include "thread.h"
 #include "utils.h"
 #define currentImagePath "output/ui/current.jpg"
 #define savedImagePath "output/ui/current_saved.jpg"
