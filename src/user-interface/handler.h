@@ -23,3 +23,4 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data);
 
 // Handler for UI
 void onWindowDestroy(GtkWidget *widget, gpointer user_data);
+void radio_button_selected(GtkWidget *widget, gpointer data);

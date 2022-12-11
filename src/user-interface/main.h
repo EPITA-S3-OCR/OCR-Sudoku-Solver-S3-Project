@@ -20,7 +20,8 @@ typedef struct NN
 
 typedef struct Solver
 {
-  GtkCheckButton *hexaModeCheckbox;
+  GtkRadioButton *normalSudokuRadio;
+  GtkRadioButton *hexadokuRadio;
   GtkButton      *launchProcessSolverButton;
 } Solver;
 

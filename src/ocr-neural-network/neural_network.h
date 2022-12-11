@@ -1,10 +1,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../user-interface/utils.h"
 #include "helpers.h"
 #include "image.h"
 #include "math_nn.h"
-#include "../user-interface/utils.h"
 
 #ifndef NEURAL_NETWORK_H
 #  define NEURAL_NETWORK_H

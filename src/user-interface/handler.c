@@ -65,7 +65,9 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
     printf("Solving sudoku... %s\n", path);
     // get checkbox status
-    bool isHexa = gtk_toggle_button_get_active(ui->solver->hexaModeCheckbox);
+    bool isHexa = gtk_toggle_button_get_active(ui->solver->hexadokuRadio);
+    // bool isHexa =
+    // gtk_toggle_button_get_active(ui->solver->hexaModeCheckbox);
     printf("Hexa mode: %s\n", isHexa ? "true" : "false");
     size_t size = isHexa == false ? 9 : 16;
 
@@ -81,14 +83,11 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     loadSudoku(sudoku, path, size);
 
     // Solve it bro
-    printf("Init MagickWX\n");
     MagickWandGenesis();
-    printf("here\n");
     MagickWand *magick_wand = NewMagickWand();
-    printf("here2\n");
-    MagickReadImage(magick_wand, size == 9
-                                     ? "src/user-interface/jeje.png"
-                                     : "src/user-interface/sixbysix.png");
+    MagickReadImage(magick_wand,
+                    size == 9 ? "src/user-interface/generator/jeje.png"
+                              : "src/user-interface/generator/sixbysix.png");
     DrawingWand *d_wand = NewDrawingWand();
     DrawSetFont(d_wand, "unifont");
 
@@ -96,9 +95,9 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     int y   = (size == 16 ? 35 : 60);
     int dis = (size == 16 ? 38 : 67);
     // int   fontsize = (size == 16 ? 40 : 60);
-    int   fontsize = (size == 16 ? 32 : 60);
-    char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
-    char *modif    = (size == 16 ? "aver.png" : "jeje.png");
+    // int   fontsize = (size == 16 ? 32 : 60);
+    // // char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
+    // char *modif    = (size == 16 ? "aver.png" : "jeje.png");
 
     DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
 
@@ -113,7 +112,6 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
           char *thing = (char *)malloc(2 * sizeof(char));
           thing[0]    = sudoku[i][j];
           thing[1]    = '\0';
-          printf("thing: %s at (%d, %d)\n", thing, x, j);
           DrawAnnotation(d_wand, x, y, thing);
 
           M[i][j] = 1;
@@ -148,15 +146,6 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
           y += 2;
       }
     }
-    if (size == 9)
-    {
-      loadImageUi(ui, "src/user-interface/jeje.png");
-    }
-    else
-    {
-      loadImageUi(ui, "src/user-interface/aver.png");
-    }
-    displayImage(ui, ui->sudokuLive);
 
     Solve(sudoku, size);
 
@@ -177,7 +166,6 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
           char *thing = (char *)malloc(2 * sizeof(char));
           thing[0]    = sudoku[i][j];
           thing[1]    = '\0';
-          printf("thing: %s at (%d, %d)\n", thing, x, j);
           DrawAnnotation(d_wand, x, y, thing);
           // DrawAnnotation(d_wand, x, y, &(sudoku[i][j]));
         }
@@ -213,10 +201,10 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     }
 
     MagickDrawImage(magick_wand, d_wand);
-    MagickWriteImage(magick_wand, "output.png");
+    MagickWriteImage(magick_wand, "output/ui/output.png");
     magick_wand = DestroyMagickWand(magick_wand);
     MagickWandTerminus();
-    loadImageUi(ui, "output.png");
+    loadImageUi(ui, "output/ui/output.png");
     displayImage(ui, ui->sudokuLive);
   }
 }

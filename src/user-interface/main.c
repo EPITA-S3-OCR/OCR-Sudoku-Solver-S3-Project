@@ -106,8 +106,10 @@ int uiMain(int argc, char *argv[])
 
   // Get Sudoku Solver widgets
   Solver solver = {
-      .hexaModeCheckbox
-      = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "HexaMode")),
+      .normalSudokuRadio
+      = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "NormalSudokuRadio")),
+      .hexadokuRadio
+      = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "HexadokuRadio")),
       .launchProcessSolverButton = GTK_BUTTON(
           gtk_builder_get_object(builder, "LaunchProcessSolverButton")),
   };
@@ -125,6 +127,7 @@ int uiMain(int argc, char *argv[])
       .nn         = &nn,
       .solver     = &solver,
       .sudokuLive = NULL,
+      .verbose    = false,
   };
 
   gtk_stack_switcher_set_stack(ui.stackSwitcher, ui.stack);

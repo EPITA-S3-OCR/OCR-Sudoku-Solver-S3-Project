@@ -336,6 +336,8 @@
                                   <object class="GtkEntry" id="EntryEpoch">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -423,7 +425,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="margin-end">20</property>
-                                    <property name="label" translatable="yes">Hexadaoku mode</property>
+                                    <property name="label" translatable="yes">Sudoku Mode</property>
                                     <attributes>
                                       <attribute name="font-desc" value="JetBrains Mono NL Ultra-Bold 10"/>
                                       <attribute name="style" value="normal"/>
@@ -438,18 +440,50 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="HexaMode">
-                                    <property name="height-request">40</property>
+                                  <object class="GtkBox">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="use-stock">True</property>
-                                    <property name="draw-indicator">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">8</property>
+                                    <child>
+                                      <object class="GtkRadioButton" id="NormalSudokuRadio">
+                                        <property name="label" translatable="yes">Normal 9x9</property>
+                                        <property name="name">RadioButton</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="HexadokuRadio">
+                                        <property name="label" translatable="yes">Hexadoku 16x16</property>
+                                        <property name="name">RadioButton</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">False</property>
+                                        <property name="group">NormalSudokuRadio</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">1</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                               </object>
