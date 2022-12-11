@@ -1,7 +1,7 @@
 #include "main.h"
 
 void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath,
-           bool verbose)
+           UserInterface *ui, bool verbose)
 { // Count the number of epochs to be imported in the given root folder
   // char *subfolderPath = malloc(MAX_PATH_LENGTH);
   // sprintf(subfolderPath, "%s", argv[3]);
@@ -48,7 +48,7 @@ void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath,
 
   // Train the neural network
   neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                     learningRate, maxEpochs, verbose);
+                     learningRate, maxEpochs, ui, verbose);
 
   // Print weights & biases values after 'maxEpochs' trains
   // neuralNetworkPrintResults(&nn, maxEpochs);
@@ -71,7 +71,6 @@ void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath,
   // Free the neural network
   neuralNetworkFree(&nn);
 }
-
 // A comparison function used by qsort
 int compare_filenames(const void *a, const void *b)
 {
@@ -80,9 +79,9 @@ int compare_filenames(const void *a, const void *b)
 
   return strcmp(pa, pb);
 }
-void ocrNeuralNetworkUi(int epoch, bool verbose)
+void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose)
 {
-  train("tests/ocr/tiles", epoch, "output/train/train_live.txt", verbose);
+  train("tests/ocr/tiles", epoch, "output/train/train_live.txt", ui, verbose);
 }
 
 void compare(char *ocrPath, char *compareDirPath)
@@ -208,9 +207,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     if (argc != 5)
       errx(1, "Usage: %s --train nbEpochs imagesFoldersPath saveOutputPath\n",
            argv[0]);
-    // train("tests/ocr/tiles", 1000, "output/train/train_live.txt", true);
-    // ocrNeuralNetworkUi(10, true);
-    train(argv[3], strtoul(argv[2], NULL, 10), argv[4], false);
+    train(argv[3], strtoul(argv[2], NULL, 10), argv[4], NULL, false);
   }
   else if (!strcmp(argv[1], "--comp"))
   {
@@ -309,7 +306,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                       learningRate, maxEpochs, false);
+                       learningRate, maxEpochs, NULL, false);
 
     // Print weights & biases values after 'maxEpochs' trains
     // neuralNetworkPrintReosults(&nn, maxEpochs);
@@ -384,7 +381,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                       learningRate, maxEpochs, false);
+                       learningRate, maxEpochs, NULL, false);
 
     // Print weights & biases values after 'maxEpochs' trains
     neuralNetworkPrintResults(&nn, maxEpochs);

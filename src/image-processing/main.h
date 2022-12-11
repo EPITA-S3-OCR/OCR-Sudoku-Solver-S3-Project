@@ -14,6 +14,13 @@
 #include "utils/splitting.h"
 #include "utils/utils.h"
 
-void imageProcessingUi(SDL_Surface *surface, bool verbose);
+/**
+ * @brief 
+ * @param
+ * @param
+ *
+ */
+void imageProcessingUi(SDL_Surface * surface, UserInterface *ui, bool verbose);
+
 int  imageRotateMain(int argv, char **argc);
 int  imageProcessingMain(int argv, char **argc);

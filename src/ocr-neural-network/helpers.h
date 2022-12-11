@@ -52,4 +52,7 @@ double ***init3dArray(size_t s1, size_t s2, size_t s3);
 /// @return The number of folders in the given directory
 size_t countFolders(char *folderRoot);
 
+/// @brief Created a identity matrix of size size
+/// @param The size of the Identity Matrix
+/// @return The Identity Matrix
 double **createIdentityMatrix(size_t size);

@@ -17,12 +17,21 @@
 #define OUTPUT_SIZE 9
 #define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
+// #define LEARNING_RATE 0.2
 #define LEARNING_RATE 0.02
+// #define LEARNING_RATE 0.8
 
 /// @brief Main function of the OCR neural network
 /// @param argc The number of arguments
 /// @param argv The arguments (string array)
 /// @return The exit code
-int  ocrNeuralNetworkMain(int argc, char *argv[]);
-void ocrNeuralNetworkUi(int epoch, bool verbose);
+int ocrNeuralNetworkMain(int argc, char *argv[]);
+
+/// @brief Main function to train OCR neural network used by the UI
+/// @param epoch The number of epochs to train on
+/// @param verbose If verbose or not.
+/// @param ui The user interface
+void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose);
+
+/// @brief Calculates, using the NN, the numbers in the tiles and saves it in a array.
 void ocrUi();

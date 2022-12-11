@@ -76,7 +76,7 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         double **trainingOutputs, size_t *trainingIndexes,
                         const double learningRate, unsigned long nbEpochs,
-                        bool verbose);
+                        UserInterface *ui, bool verbose);
 
 /// @brief Asserts the accuracy of a neural network.
 /// @param nn The neural network to assert.

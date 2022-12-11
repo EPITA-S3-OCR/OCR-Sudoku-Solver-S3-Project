@@ -1,12 +1,13 @@
 #include "main.h"
 
-SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
+SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
+                                  bool verbose)
 {
-  printf("🧵 Launching multi-thread image processing\n");
+  printf("🧵Launching multi-thread image processing\n");
   printf("----- \n");
   if (verbose)
   {
-    g_idle_add(addConsoleMessage, "🧵 Launching multi-thread image processing");
+    g_idle_add(addConsoleMessage, "🧵Launching multi-thread image processing");
     g_idle_add(addConsoleMessage, "-----");
   }
   SDL_Surface *copy = copySurface(surface);
@@ -56,10 +57,10 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   sobelEdgeDetection(copy);
   saveSurface(copy, "output/steps/5-sobel.jpg");
 
-  printf("📐 Applying Hough transform algorithm...\n");
+  printf("📐Applying Hough transform algorithm...\n");
   if (verbose)
   {
-    g_idle_add(addConsoleMessage, "📐 Applying Hough transform algorithm...");
+    g_idle_add(addConsoleMessage, "📐Applying Hough transform algorithm...");
   }
   List *lines = initList();
 
@@ -67,17 +68,17 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   printf("        📈 Number of detected lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of detected lines: %d", listLength(lines));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(lines)); g_idle_add(addConsoleMessage, str);
   }
   lineCleaning(lines);
   printf("        📈 Number of cleaned lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(lines)); g_idle_add(addConsoleMessage, str);
   }
 
   SDL_Color black = {0, 0, 0, 255};
@@ -91,15 +92,15 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   printf("📌 Getting the angle...\n");
   if (verbose)
   {
-    g_idle_add(addConsoleMessage, "📌 Getting the angle...");
+    // g_idle_add(addConsoleMessage, "📌 Getting the angle...");
   }
   double angle = getRotationAngle(lines);
   printf("        ⭕ Found angle : %2f\n", radiansToDegrees(angle));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
+    // g_idle_add(addConsoleMessage, str);
   }
 
   if (angle > 0.1 || angle < -0.1)
@@ -124,19 +125,19 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
   printf("        📈 Number of detected lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of detected lines: %d",
-            listLength(squares));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of detected lines: %d",
+    //         listLength(squares));
+    // g_idle_add(addConsoleMessage, str);
   }
   squares = squareFilter(squares);
   printf("        📈 Number of cleaned lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
+    // char str[MAX_PATH_LENGTH];
 
-    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(squares));
-    g_idle_add(addConsoleMessage, str);
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(squares)); g_idle_add(addConsoleMessage, str);
   }
   // printf("- Drawing the squares...\n");
   SDL_Surface *drawSelectedSquareSurface = copySurface(copy);
@@ -160,11 +161,6 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
              distX, distY);
   printf("🧵 Image processing finished\n");
   printf("----- \n");
-  if (verbose)
-  {
-    g_idle_add(addConsoleMessage, "🧵 Image processing finished");
-    g_idle_add(addConsoleMessage, "-----");
-  }
   return copy;
 }
 
@@ -196,7 +192,7 @@ int imageRotateMain(int argv, char **argc)
   return 0;
 }
 
-void imageProcessingUi(SDL_Surface *surface, bool verbose)
+void imageProcessingUi(SDL_Surface *surface, UserInterface *ui, bool verbose)
 {
   printf("imageProcessingUi\n");
   // SDL_Surface *surface = IMG_Load(filename);
@@ -206,7 +202,7 @@ void imageProcessingUi(SDL_Surface *surface, bool verbose)
   // }
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
   printf("image converted\n");
-  surface = applyImageProcessing(surface, verbose);
+  surface = applyImageProcessing(surface, ui, verbose);
   IMG_SaveJPG(surface, "output/ui/current.jpg", 100);
 }
 
@@ -229,7 +225,7 @@ int imageProcessingMain(int argv, char **argc)
   // functions later
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
-  surface = applyImageProcessing(surface, false);
+  surface = applyImageProcessing(surface, NULL, false);
   // Intialize a texture by converting the imported surface
   SDL_FreeSurface(surface);
 
