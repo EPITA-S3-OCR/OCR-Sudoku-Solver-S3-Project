@@ -1,6 +1,7 @@
 #include "main.h"
 
-void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath)
+void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath,
+           UserInterface *ui, bool verbose)
 { // Count the number of epochs to be imported in the given root folder
   // char *subfolderPath = malloc(MAX_PATH_LENGTH);
   // sprintf(subfolderPath, "%s", argv[3]);
@@ -47,11 +48,20 @@ void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath)
 
   // Train the neural network
   neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                     learningRate, maxEpochs);
+                     learningRate, maxEpochs, ui, verbose);
 
   // Print weights & biases values after 'maxEpochs' trains
-  neuralNetworkPrintResults(&nn, maxEpochs);
-
+  // neuralNetworkPrintResults(&nn, maxEpochs);
+  printf("Success rate for %zu epochs: %lf\n", maxEpochs,
+         (nn.successCount / nn.totalTries) * 100);
+  printf("Verbose : %s\n", verbose ? "true" : "false");
+  if (verbose)
+  {
+    char *str = malloc(100 * sizeof(char));
+    sprintf(str, "📊 Success rate for %zu epochs: %.2lf%%\n", maxEpochs,
+            (nn.successCount / nn.totalTries) * 100);
+    addConsoleMessage(ui, str);
+  }
   // Save the neural network weights & biases to a file
   // const char *ocrFN = argv[4];
   const char *ocrFN = outputPath;
@@ -70,7 +80,7 @@ int compare_filenames(const void *a, const void *b)
 }
 void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose)
 {
-  train("tests/ocr/tiles", epoch, "output/train/train_live.txt");
+  train("tests/ocr/tiles", epoch, "output/train/train_live.txt", ui, verbose);
 }
 
 void compare(char *ocrPath, char *compareDirPath)
@@ -196,7 +206,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     if (argc != 5)
       errx(1, "Usage: %s --train nbEpochs imagesFoldersPath saveOutputPath\n",
            argv[0]);
-    train(argv[3], strtoul(argv[2], NULL, 10), argv[4]);
+    train(argv[3], strtoul(argv[2], NULL, 10), argv[4], NULL, false);
   }
   else if (!strcmp(argv[1], "--comp"))
   {
@@ -295,10 +305,10 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                       learningRate, maxEpochs);
+                       learningRate, maxEpochs, NULL, false);
 
     // Print weights & biases values after 'maxEpochs' trains
-    neuralNetworkPrintResults(&nn, maxEpochs);
+    // neuralNetworkPrintReosults(&nn, maxEpochs);
 
     // Save the neural network weights & biases to a file
     const char *saveOcrFN = argv[5];
@@ -369,7 +379,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
 
     // Train the neural network
     neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                       learningRate, maxEpochs);
+                       learningRate, maxEpochs, NULL, false);
 
     // Print weights & biases values after 'maxEpochs' trains
     neuralNetworkPrintResults(&nn, maxEpochs);
@@ -390,7 +400,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
   return 0;
 }
 
-void ocrUi(UserInterface *ui, bool verbose)
+void ocrUi()
 {
   compare("output/train/train.txt", "output/tiles");
 }

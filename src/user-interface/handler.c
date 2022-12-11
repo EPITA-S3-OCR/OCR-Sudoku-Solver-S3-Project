@@ -19,20 +19,18 @@ void duplicateFile(char *source, char *destination)
 
 void onTrainButtonClicked(GtkButton *button, gpointer user_data)
 {
+  (void)button;
   UserInterface *ui = (UserInterface *)user_data;
-  // Get the number of epochs
-  const char *epochs = gtk_entry_get_text(ui->nn->entryEpoch);
-  printf("Epochs: %s\n", epochs);
-  // Get the number of epochs in int
-  unsigned long maxEpochs = strtoul(epochs, NULL, 10);
-
-  // Get status of the verbose checkbox
-  ocrNeuralNetworkUi(maxEpochs, ui, true);
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
+  pthread_t thread;
+  pthread_create(&thread, NULL, threadTrain, ui);
 }
 
 void onImportButtonClicked(GtkButton *button, gpointer user_data)
 {
+  (void)button;
   UserInterface *ui = (UserInterface *)user_data;
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
 
   // Create a file picker for an image file
   GtkFileChooserNative *fileChooser = gtk_file_chooser_native_new(
@@ -66,9 +64,10 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
   gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
 
-void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
+void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
 
   // Create a file picker for an image file
   GtkFileChooserNative *fileChooser = gtk_file_chooser_native_new(
@@ -88,18 +87,19 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
     printf("Solving sudoku... %s\n", path);
     // get checkbox status
-    bool isHexa = gtk_toggle_button_get_active(ui->solver->hexadokuRadio);
+    bool isHexa = gtk_toggle_button_get_active(
+        (GtkToggleButton *)ui->solver->hexadokuRadio);
     // bool isHexa =
     // gtk_toggle_button_get_active(ui->solver->hexaModeCheckbox);
     printf("Hexa mode: %s\n", isHexa ? "true" : "false");
-    size_t size = isHexa == false ? 9 : 16;
+    int size = isHexa == false ? 9 : 16;
 
     char sudoku[16][16];
     int  M[16][16] = {0};
 
-    for (size_t i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
-      for (size_t j = 0; j < size; j++)
+      for (int j = 0; j < size; j++)
         M[i][j] = '0';
     }
 
@@ -117,25 +117,21 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     int x   = (size == 16 ? 12 : 27);
     int y   = (size == 16 ? 35 : 60);
     int dis = (size == 16 ? 38 : 67);
-    // int   fontsize = (size == 16 ? 40 : 60);
-    // int   fontsize = (size == 16 ? 32 : 60);
-    // // char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
-    // char *modif    = (size == 16 ? "aver.png" : "jeje.png");
 
     DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
 
-    char s[1000] = {0};
-
-    for (size_t i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
-      for (size_t j = 0; j < size; j++)
+      for (int j = 0; j < size; j++)
       {
         if (sudoku[i][j] != '0')
         {
-          char *thing = (char *)malloc(2 * sizeof(char));
-          thing[0]    = sudoku[i][j];
-          thing[1]    = '\0';
-          DrawAnnotation(d_wand, x, y, thing);
+
+          unsigned char *digit = malloc(2 * sizeof(unsigned char));
+          digit[0]             = sudoku[i][j];
+          digit[1]             = '\0';
+          DrawAnnotation(d_wand, x, y, digit);
+          free(digit);
 
           M[i][j] = 1;
         }
@@ -169,60 +165,7 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
           y += 2;
       }
     }
-
-    Solve(sudoku, size);
-
-    // Set magick wand drawing color red
-    PixelWand *color = NewPixelWand();
-    PixelSetColor(color, "red");
-    DrawSetFillColor(d_wand, color);
-
-    x = (size == 16 ? 12 : 27);
-    y = (size == 16 ? 35 : 60);
-
-    for (size_t i = 0; i < size; i++)
-    {
-      for (size_t j = 0; j < size; j++)
-      {
-        if (M[i][j] != 1)
-        {
-          char *thing = (char *)malloc(2 * sizeof(char));
-          thing[0]    = sudoku[i][j];
-          thing[1]    = '\0';
-          DrawAnnotation(d_wand, x, y, thing);
-          // DrawAnnotation(d_wand, x, y, &(sudoku[i][j]));
-        }
-        x += dis;
-        if (size == 9)
-        {
-          if (j == size / 2 - 1)
-            x += 4;
-        }
-        else
-        {
-          if (j == size / 2 - 1)
-            x += 4;
-          else if (j == size / 4 - 1)
-            x += 2;
-        }
-      }
-
-      x = (size == 16 ? 12 : 27);
-      y += dis;
-      if (size == 9)
-      {
-        if (i == size / 2 - 1)
-          y += 4;
-      }
-      else
-      {
-        if (i == size / 2 - 1)
-          y += 4;
-        else if (i == size / 4 - 1)
-          y += 2;
-      }
-    }
-
+    ui->solver->sudokuPath = path;
     MagickDrawImage(magick_wand, d_wand);
     MagickWriteImage(magick_wand, "output/ui/output.png");
     magick_wand = DestroyMagickWand(magick_wand);
@@ -230,6 +173,152 @@ void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
     loadImageUi(ui, "output/ui/output.png");
     displayImage(ui, ui->sudokuLive);
   }
+}
+void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data)
+{
+  (void)button;
+  UserInterface *ui = (UserInterface *)user_data;
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
+  char *path = ui->solver->sudokuPath;
+  // get checkbox status
+  bool isHexa = gtk_toggle_button_get_active(
+      (GtkToggleButton *)ui->solver->hexadokuRadio);
+  // bool isHexa =
+  // gtk_toggle_button_get_active(ui->solver->hexaModeCheckbox);
+  printf("Hexa mode: %s\n", isHexa ? "true" : "false");
+  int size = isHexa == false ? 9 : 16;
+
+  char sudoku[16][16];
+  int  M[16][16] = {0};
+
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
+      M[i][j] = '0';
+  }
+
+  loadSudoku(sudoku, path, size);
+
+  // Solve it bro
+  MagickWandGenesis();
+  MagickWand *magick_wand = NewMagickWand();
+  MagickReadImage(magick_wand,
+                  size == 9 ? "src/user-interface/generator/jeje.png"
+                            : "src/user-interface/generator/sixbysix.png");
+  DrawingWand *d_wand = NewDrawingWand();
+  DrawSetFont(d_wand, "unifont");
+
+  int x   = (size == 16 ? 12 : 27);
+  int y   = (size == 16 ? 35 : 60);
+  int dis = (size == 16 ? 38 : 67);
+
+  DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
+
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
+    {
+      if (sudoku[i][j] != '0')
+      {
+
+        unsigned char *digit = malloc(2 * sizeof(unsigned char));
+        digit[0]             = sudoku[i][j];
+        digit[1]             = '\0';
+        DrawAnnotation(d_wand, x, y, digit);
+        free(digit);
+
+        M[i][j] = 1;
+      }
+      x += dis;
+      if (size == 9)
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+      }
+      else
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+        else if (j == size / 4 - 1)
+          x += 2;
+      }
+    }
+
+    x = (size == 16 ? 12 : 27);
+    y += dis;
+    if (size == 9)
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+    }
+    else
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+      else if (i == size / 4 - 1)
+        y += 2;
+    }
+  }
+
+  Solve(sudoku, size);
+
+  // Set magick wand drawing color red
+  PixelWand *color = NewPixelWand();
+  PixelSetColor(color, "red");
+  DrawSetFillColor(d_wand, color);
+
+  x = (size == 16 ? 12 : 27);
+  y = (size == 16 ? 35 : 60);
+
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
+    {
+      if (M[i][j] != 1)
+      {
+        unsigned char *digit = malloc(2 * sizeof(unsigned char));
+        digit[0]             = sudoku[i][j];
+        digit[1]             = '\0';
+        DrawAnnotation(d_wand, x, y, digit);
+        free(digit);
+      }
+      x += dis;
+      if (size == 9)
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+      }
+      else
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+        else if (j == size / 4 - 1)
+          x += 2;
+      }
+    }
+
+    x = (size == 16 ? 12 : 27);
+    y += dis;
+    if (size == 9)
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+    }
+    else
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+      else if (i == size / 4 - 1)
+        y += 2;
+    }
+  }
+
+  MagickDrawImage(magick_wand, d_wand);
+  MagickWriteImage(magick_wand, "output/ui/output.png");
+  magick_wand = DestroyMagickWand(magick_wand);
+  MagickWandTerminus();
+  loadImageUi(ui, "output/ui/output.png");
+  displayImage(ui, ui->sudokuLive);
 }
 
 void onRotateSliderChanged(GtkRange *range, gpointer user_data)
@@ -245,31 +334,18 @@ void onRotateSliderChanged(GtkRange *range, gpointer user_data)
 
 void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
 {
+  (void)button;
   UserInterface *ui = (UserInterface *)user_data;
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
 
   // Rotate it by the angle
-  int angle = gtk_range_get_value(GTK_RANGE(ui->ocr->rotateSlider));
-  // cairo_surface_t *image = rotate_surface(ui->sudokuLive, angle);
-  // cairo_surface_t *image = ui->sudokuLive;
-
-  // Save the cairo surface in "output/ui/current.jpg"
-  // Convert the cairo surface to a pixbuf
-  // GdkPixbuf *pixbuf = gdk_pixbuf_get_from_surface(
-  //     image, 0, 0, cairo_image_surface_get_width(image),
-  //     cairo_image_surface_get_height(image));
-  // // Save the pixbuf as a jpeg file
-  // // gdk_pixbuf_save(pixbuf, "tests/image-processing-images/sudoku1.jpg",
-  // // "jpeg", NULL, NULL);
-  // gdk_pixbuf_save(pixbuf, "output/ui/current.jpg", "jpeg", NULL, NULL);
-  // gdk_pixbuf_save(pixbuf, "output/ui/current-saved.jpg", "jpeg", NULL,
+  // int angle = gtk_range_get_value(GTK_RANGE(ui->ocr->rotateSlider));
   // NULL);
 
   ui->verbose = gtk_toggle_button_get_active(
       GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
 
-  /// convert cairio surfac;e to SDL surface
-
-  printf("rotate image\n");
+  // printf("rotate image\n");
   // rotate(ui->sudokuLiveSDL, -degreesToRadians(angle));
 
   printf("Launching imageProcessingUi in a new thread\n");
@@ -277,8 +353,23 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
   pthread_create(&thread, NULL, threadImageProcessing, ui);
 }
 
-void onWindowDestroy(GtkWidget *widget, gpointer user_data)
+void onWindowDestroy()
 {
   g_print("Window destroyed\n");
   gtk_main_quit();
+}
+
+void onHexadokuRadioToggled(GtkToggleButton *button, gpointer user_data)
+{
+  (void)button;
+  UserInterface *ui = (UserInterface *)user_data;
+  loadImageUi(ui, "src/user-interface/generator/sixbysix.png");
+}
+
+void onNormalSudokuRadioToggled(GtkToggleButton *button, gpointer user_data)
+{
+  (void)button;
+  UserInterface *ui = (UserInterface *)user_data;
+
+  loadImageUi(ui, "src/user-interface/generator/jeje.png");
 }

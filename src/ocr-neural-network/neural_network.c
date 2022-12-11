@@ -138,7 +138,8 @@ void descent(NeuralNetwork *nn, double *input,
 
 void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         double **trainingOutputs, size_t *trainingIndexes,
-                        const double learningRate, unsigned long nbEpochs)
+                        const double learningRate, unsigned long nbEpochs,
+                        UserInterface *ui, bool verbose)
 {
 
   // Process to train the neural network
@@ -177,12 +178,26 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
       descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
               learningRate);
     }
+    if (epoch % 100 == 0)
+    {
 
-    printf("Epoch %lu: ", epoch);
-    if (good == nn->nbTraining)
-      printf("\033[0;32mOK\033[0m\n");
-    else
-      printf("\033[0;31mKO\033[0m (%zu/%zu)\n", good, nn->nbTraining);
+      printf("Epoch %lu: ", epoch);
+      if (good == nn->nbTraining)
+        printf("\033[0;32mOK\033[0m\n");
+      else
+        printf("\033[0;31mKO\033[0m (%zu/%zu)\n", good, nn->nbTraining);
+      if (verbose)
+      {
+        char *str = malloc(100);
+        if (good == nn->nbTraining)
+          sprintf(str, "Epoch %lu: ✅", epoch);
+        else
+          sprintf(str, "Epoch %lu: 🟥 (%zu/%zu)", epoch, good, nn->nbTraining);
+
+        addConsoleMessage(ui, str);
+        free(str);
+      }
+    }
   }
 }
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,

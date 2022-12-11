@@ -2,6 +2,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../user-interface/main.h"
+#include "../user-interface/utils.h"
 #include "helpers.h"
 #include "image.h"
 #include "math_nn.h"
@@ -73,7 +75,8 @@ void neuralNetworkInit(NeuralNetwork *nn, size_t nbInputNeurons,
 /// @param nbEpochs The number of epochs.
 void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         double **trainingOutputs, size_t *trainingIndexes,
-                        const double learningRate, unsigned long nbEpochs);
+                        const double learningRate, unsigned long nbEpochs,
+                        UserInterface *ui, bool verbose);
 
 /// @brief Asserts the accuracy of a neural network.
 /// @param nn The neural network to assert.

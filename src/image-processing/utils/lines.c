@@ -93,7 +93,6 @@ double getRotationAngle(List *lines)
 
   List  *current  = lines;
   double maxAngle = 0;
-  int    count    = 0;
   while (current->next != NULL)
   {
     current        = current->next;
@@ -350,7 +349,7 @@ List *sortSquares(List *squares)
   return squares;
 }
 
-List *printSquares(List *squares)
+void printSquares(List *squares)
 {
   for (List *n1 = squares->next; n1->next != NULL; n1 = n1->next)
   {
@@ -379,6 +378,7 @@ int getMedianSizeSquares(List *squares)
     }
     i++;
   }
+  return -1;
 }
 List *squareFilter(List *squares)
 {
@@ -419,10 +419,7 @@ List *squareFilter(List *squares)
 
 SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
 {
-  SDL_Color blue   = {0, 0, 255, 255};
-  SDL_Color green  = {0, 255, 0, 255};
   SDL_Color violet = {255, 0, 255, 255};
-  int       color  = 1;
   // From all the squares selec the one that is the most on the left
   // Verify that there is 9 other squares under it and 9 other squares on his
   // right
@@ -430,12 +427,6 @@ SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
   // drawSquare(surface, &savedLeftMostCell, violet);
   SudokuCell verticalCell = savedLeftMostCell;
   int        threshold    = 25;
-
-  SDL_Color colors[5] = {{255, 0, 0, 255},
-                         {0, 255, 0, 255},
-                         {0, 0, 255, 255},
-                         {255, 255, 0, 255},
-                         {255, 0, 255, 255}};
 
   // Verify that there is 9 other squares under it and 9 other squares on his
   // right
@@ -447,7 +438,6 @@ SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
         && abs(cell->yBottomLeft - verticalCell.yTopLeft) < threshold)
     {
       // drawSquare(surface, cell, colors[color]);
-      color = (color + 1) % 5;
       verticalStreak++;
       verticalCell = *cell;
       n            = squares->next;
@@ -470,7 +460,6 @@ SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
         && abs(cell->yTopLeft - horizontalCell.yTopRight) < threshold)
     {
       // drawSquare(surface, cell, colors[color]);
-      color = (color + 1) % 5;
       horizontalStreak++;
       horizontalCell = *cell;
       n              = squares->next;
@@ -513,7 +502,6 @@ SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
           && abs(cell->yBottomLeft - verticalCell.yTopLeft) < threshold)
       {
         // drawSquare(surface, cell, colors[color]);
-        color = (color + 1) % 5;
         verticalStreak++;
         verticalCell = *cell;
         n            = squares->next;
@@ -542,6 +530,7 @@ SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
     drawSquare(surface, &cell, violet, 2);
     return cell;
   }
+  return savedLeftMostCell;
 }
 
 SudokuCell selectLeftMostCell(List *squares)
@@ -592,7 +581,6 @@ SudokuCell selectRightMostCell(List *squares)
 void drawSquare(SDL_Surface *surface, SudokuCell *cell, SDL_Color color,
                 int width)
 {
-  SDL_Color green = {0, 255, 0, 255};
   drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xTopRight,
            cell->yTopRight, color, width);
   drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xBottomLeft,
@@ -601,11 +589,6 @@ void drawSquare(SDL_Surface *surface, SudokuCell *cell, SDL_Color color,
            cell->yBottomRight, color, width);
   drawLine(surface, cell->xBottomRight, cell->yBottomRight, cell->xTopRight,
            cell->yTopRight, color, width);
-
-  // drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xBottomRight,
-  //          cell->yBottomRight, green, 1);
-  // drawLine(surface, cell->xBottomLeft, cell->yBottomLeft, cell->xTopRight,
-  //          cell->yTopRight, green, 1);
 }
 
 void drawSquares(SDL_Surface *surface, List *squares, SDL_Color color)

@@ -21,7 +21,7 @@ void loadCSS()
 }
 bool toggleImage = false;
 
-gboolean updateLabel(GtkTextView *console, const char *text, gpointer data)
+gboolean updateLabel(GtkTextView *console, const char *text)
 {
   GtkTextBuffer *buffer = gtk_text_view_get_buffer(console);
   GtkTextIter    end;
@@ -31,7 +31,7 @@ gboolean updateLabel(GtkTextView *console, const char *text, gpointer data)
 
   // if more than 3 lines in the buffer, delete the first line
   int line_count = gtk_text_buffer_get_line_count(buffer);
-  if ((toggleImage == false && line_count > 6) || line_count > 20)
+  if ((toggleImage == false && line_count > 6) || line_count > 30)
   {
     GtkTextIter start;
     gtk_text_buffer_get_iter_at_line(buffer, &start, 0);
@@ -63,9 +63,12 @@ void onHideSudokuButtonClicked(GtkButton *button, gpointer data)
     // set button label to "Hide Sudoku"
     gtk_button_set_label(button, "Hide Sudoku");
   }
+  // Clear console
+  GtkTextBuffer *buffer = gtk_text_view_get_buffer(ui->console);
+  gtk_text_buffer_set_text(buffer, "", -1);
 }
 
-int uiMain(int argc, char *argv[])
+int uiMain()
 {
   // Initializes GTK.
   gtk_init(NULL, NULL);
@@ -112,6 +115,8 @@ int uiMain(int argc, char *argv[])
       = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "HexadokuRadio")),
       .launchProcessSolverButton = GTK_BUTTON(
           gtk_builder_get_object(builder, "LaunchProcessSolverButton")),
+      .importSolverButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "ImportSolverButton")),
   };
 
   UserInterface ui = {
@@ -144,11 +149,19 @@ int uiMain(int argc, char *argv[])
   g_signal_connect(ui.toggleImageButton, "clicked",
                    G_CALLBACK(onHideSudokuButtonClicked), &ui);
 
+  g_signal_connect(ui.solver->importSolverButton, "clicked",
+                   G_CALLBACK(onImportSolverButtonClicked), &ui);
+
   g_signal_connect(ui.solver->launchProcessSolverButton, "clicked",
                    G_CALLBACK(onSolveSudokuButtonClicked), &ui);
 
   g_signal_connect(ui.nn->trainButton, "clicked",
                    G_CALLBACK(onTrainButtonClicked), &ui);
+
+  g_signal_connect(ui.solver->hexadokuRadio, "toggled",
+                   G_CALLBACK(onHexadokuRadioToggled), &ui);
+  g_signal_connect(ui.solver->normalSudokuRadio, "toggled",
+                   G_CALLBACK(onNormalSudokuRadioToggled), &ui);
 
   updateLabelSignalId = g_signal_new(
       "update-label", G_TYPE_FROM_CLASS(GTK_WIDGET_GET_CLASS(ui.console)),

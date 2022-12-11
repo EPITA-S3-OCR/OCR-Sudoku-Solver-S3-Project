@@ -117,7 +117,6 @@ void houghTransform(SDL_Surface *surface, List *list)
   // unsigned int rounded_angle;
 
   List *lines = list;
-  List *start = list;
 
   int prev       = accumulator[0];
   int prev_theta = 0, prev_rho = 0;

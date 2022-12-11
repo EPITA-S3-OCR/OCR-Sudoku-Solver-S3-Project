@@ -33,8 +33,8 @@ int main(int argc, char **argv)
     }
     else if (strcmp(argv[1], "ui") == 0)
     {
-      uiMain(argc - 1, argv + 1);
-    }
+      uiMain();
+        }
     else
     {
       errx(1, "usage: %s solver or image-processing ...", argv[0]);

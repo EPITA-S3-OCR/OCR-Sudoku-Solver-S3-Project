@@ -1,13 +1,27 @@
 #include "thread.h"
 
+void *threadTrain(void *user_data)
+{
+  UserInterface *ui = (UserInterface *)user_data;
+  // Get the number of epochs
+  const char *epochs = gtk_entry_get_text(ui->nn->entryEpoch);
+  printf("Epochs: %s\n", epochs);
+  // Get the number of epochs in int
+  unsigned long maxEpochs = strtoul(epochs, NULL, 10);
+
+  // Get status of the verbose checkbox
+  ocrNeuralNetworkUi(maxEpochs, ui, true);
+  return NULL;
+}
+
 void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
 {
   char sudoku[16][16];
   int  M[16][16] = {0};
 
-  for (size_t i = 0; i < size; i++)
+  for (int i = 0; i < size; i++)
   {
-    for (size_t j = 0; j < size; j++)
+    for (int j = 0; j < size; j++)
       M[i][j] = '0';
   }
 
@@ -25,24 +39,18 @@ void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
   int x   = (size == 16 ? 12 : 27);
   int y   = (size == 16 ? 35 : 60);
   int dis = (size == 16 ? 38 : 67);
-  // int   fontsize = (size == 16 ? 40 : 60);
-  // int   fontsize = (size == 16 ? 32 : 60);
-  // // char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
-  // char *modif    = (size == 16 ? "aver.png" : "jeje.png");
 
   DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
 
-  char s[1000] = {0};
-
-  for (size_t i = 0; i < size; i++)
+  for (int i = 0; i < size; i++)
   {
-    for (size_t j = 0; j < size; j++)
+    for (int j = 0; j < size; j++)
     {
       if (sudoku[i][j] != '0')
       {
-        char *thing = (char *)malloc(2 * sizeof(char));
-        thing[0]    = sudoku[i][j];
-        thing[1]    = '\0';
+        unsigned char *thing = malloc(2 * sizeof(unsigned char));
+        thing[0]             = sudoku[i][j];
+        thing[1]             = '\0';
         DrawAnnotation(d_wand, x, y, thing);
 
         M[i][j] = 1;
@@ -88,15 +96,15 @@ void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
   x = (size == 16 ? 12 : 27);
   y = (size == 16 ? 35 : 60);
 
-  for (size_t i = 0; i < size; i++)
+  for (int i = 0; i < size; i++)
   {
-    for (size_t j = 0; j < size; j++)
+    for (int j = 0; j < size; j++)
     {
       if (M[i][j] != 1)
       {
-        char *thing = (char *)malloc(2 * sizeof(char));
-        thing[0]    = sudoku[i][j];
-        thing[1]    = '\0';
+        unsigned char *thing = malloc(2 * sizeof(unsigned char));
+        thing[0]             = sudoku[i][j];
+        thing[1]             = '\0';
         DrawAnnotation(d_wand, x, y, thing);
         // DrawAnnotation(d_wand, x, y, &(sudoku[i][j]));
       }
@@ -167,9 +175,9 @@ void *threadImageProcessing(void *data)
   if (ui->verbose)
     addConsoleMessage(ui, "🏁 Solving the sudoku");
   generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
-  printf("🏆 Sudoku solved\n");
+  printf("🏆 Sudoku solved ! :)\n");
   if (ui->verbose)
-    addConsoleMessage(ui, "🏆 Sudoku solved");
+    addConsoleMessage(ui, "🏆 Sudoku solved! :)");
 
   return NULL;
 }

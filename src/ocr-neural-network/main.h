@@ -28,4 +28,4 @@
 int ocrNeuralNetworkMain(int argc, char *argv[]);
 
 void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose);
-void ocrUi(UserInterface *ui, bool verbose);
+void ocrUi();
