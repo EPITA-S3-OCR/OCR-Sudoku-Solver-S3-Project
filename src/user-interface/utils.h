@@ -11,7 +11,6 @@
 
 void loadImageUi(UserInterface *ui, char *path);
 void displayImage(UserInterface *ui, cairo_surface_t *surface);
-void addConsoleMessage(UserInterface *ui, char *message);
 
 // Create a new Cairo surface that is a copy of the original
 cairo_surface_t *duplicate_surface(cairo_surface_t *original);

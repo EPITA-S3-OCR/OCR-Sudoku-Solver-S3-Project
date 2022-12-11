@@ -3,30 +3,17 @@
 #include <unistd.h>
 #include "main.h"
 
-guint updateLabelSignalId = 0;
-void  addConsoleMessage(UserInterface *ui, char *message)
-{
-  g_signal_emit(ui->console, updateLabelSignalId, 0, message);
-}
+bool           toggleImage         = false;
+guint          updateLabelSignalId = 0;
+GtkTextBuffer *buffer;
 
-void loadCSS()
+gboolean addConsoleMessage(gpointer data)
 {
-  // add css provider from the file "mystyle.css"
-  GtkCssProvider *provider = gtk_css_provider_new();
-  gtk_css_provider_load_from_path(provider, "src/user-interface/style.css",
-                                  NULL);
-  gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
-                                            GTK_STYLE_PROVIDER(provider),
-                                            GTK_STYLE_PROVIDER_PRIORITY_USER);
-}
-bool toggleImage = false;
-
-gboolean updateLabel(GtkTextView *console, const char *text)
-{
-  GtkTextBuffer *buffer = gtk_text_view_get_buffer(console);
-  GtkTextIter    end;
+  char *message = (char *)data;
+  printf("MessageHere: %s\n", message);
+  GtkTextIter end;
   gtk_text_buffer_get_end_iter(buffer, &end);
-  gtk_text_buffer_insert(buffer, &end, text, -1);
+  gtk_text_buffer_insert(buffer, &end, message, -1);
   gtk_text_buffer_insert(buffer, &end, "\n", -1);
 
   // if more than 3 lines in the buffer, delete the first line
@@ -39,6 +26,25 @@ gboolean updateLabel(GtkTextView *console, const char *text)
     gtk_text_buffer_delete(buffer, &start, &end);
   }
 
+  return FALSE;
+
+  // add string to text buffer
+  // g_signal_emit(ui->console, updateLabelSignalId, 0, message);
+}
+
+void loadCSS()
+{
+  // add css provider from the file "mystyle.css"
+  GtkCssProvider *provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_path(provider, "src/user-interface/style.css",
+                                  NULL);
+  gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                            GTK_STYLE_PROVIDER(provider),
+                                            GTK_STYLE_PROVIDER_PRIORITY_USER);
+}
+
+gboolean updateLabel(GtkTextView *console, char *text)
+{
   return FALSE;
 }
 void onHideSudokuButtonClicked(GtkButton *button, gpointer data)
@@ -133,12 +139,16 @@ int uiMain()
       .solver     = &solver,
       .sudokuLive = NULL,
       .verbose    = false,
+      // .consoleBuffer = gtk_text_view_get_buffer(ui.console),
   };
 
+  buffer = gtk_text_view_get_buffer(ui.console);
   gtk_stack_switcher_set_stack(ui.stackSwitcher, ui.stack);
 
   // Connects the signals with handler from handler.c
   g_signal_connect(ui.window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
+  g_signal_connect(ui.ocr->importButton, "clicked",
+                   G_CALLBACK(launchExpensiveCalculation), &ui);
   g_signal_connect(ui.ocr->importButton, "clicked",
                    G_CALLBACK(onImportButtonClicked), &ui);
   g_signal_connect(ui.ocr->rotateSlider, "value-changed",

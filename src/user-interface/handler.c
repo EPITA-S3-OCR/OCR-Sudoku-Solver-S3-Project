@@ -22,8 +22,7 @@ void onTrainButtonClicked(GtkButton *button, gpointer user_data)
   (void)button;
   UserInterface *ui = (UserInterface *)user_data;
   gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
-  pthread_t thread;
-  pthread_create(&thread, NULL, threadTrain, ui);
+  g_thread_new("threadTrain", threadTrain, ui);
 }
 
 void onImportButtonClicked(GtkButton *button, gpointer user_data)
@@ -119,6 +118,8 @@ void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
     int dis = (size == 16 ? 38 : 67);
 
     DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
+
+    // char s[1000] = {0};
 
     for (int i = 0; i < size; i++)
     {

@@ -60,7 +60,8 @@ void train(char *subfolderPath, unsigned long maxEpochs, char *outputPath,
     char *str = malloc(100 * sizeof(char));
     sprintf(str, "📊 Success rate for %zu epochs: %.2lf%%\n", maxEpochs,
             (nn.successCount / nn.totalTries) * 100);
-    addConsoleMessage(ui, str);
+
+    g_idle_add(addConsoleMessage, str);
   }
   // Save the neural network weights & biases to a file
   // const char *ocrFN = argv[4];
@@ -322,6 +323,7 @@ int ocrNeuralNetworkMain(int argc, char *argv[])
     // Prevent wrong number of arguments
     if (argc != 4)
       errx(1, "Usage: %s --comp-batch savePath folderName\n", argv[0]);
+
     compare(argv[2], argv[3]);
   }
   else if (!strcmp(argv[1], "--train-from"))

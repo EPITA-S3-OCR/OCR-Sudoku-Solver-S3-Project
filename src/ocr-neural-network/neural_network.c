@@ -193,9 +193,7 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
           sprintf(str, "Epoch %lu: ✅", epoch);
         else
           sprintf(str, "Epoch %lu: 🟥 (%zu/%zu)", epoch, good, nn->nbTraining);
-
-        addConsoleMessage(ui, str);
-        free(str);
+        g_idle_add(addConsoleMessage, str);
       }
     }
   }

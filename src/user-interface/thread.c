@@ -1,6 +1,37 @@
 #include "thread.h"
 
-void *threadTrain(void *user_data)
+// gpointer expensiveCalculation(gpointer data)
+// {
+//   printf("Expensive calculation\n");
+//   UserInterface *ui = (UserInterface *)data;
+//   // Do something expensive
+//   for (int i = 0; i < 1000000000; i++)
+//   {
+//     sleep(1);
+//     printf("i: %d\n", i);
+//     char *message = malloc(100);
+//     sprintf(message, "i: %d", i);
+//     g_idle_add(addConsoleMessage, message);
+//   };
+//   printf("Expensive calculation done\n");
+//   // Upda the GUI
+//   return NULL;
+// }
+
+// void launchExpensiveCalculation(GtkButton *button, gpointer data)
+// {
+//   UserInterface *ui = (UserInterface *)data;
+//   // Do something
+//   printf("Launch expensive calculation\n");
+
+//   // Launch the calcalation on a new thread
+//   g_thread_new("expensiveCalculation", expensiveCalculation, ui);
+
+//   // Wait for the thread to finish
+//   // g_thread_join(thread);
+// }
+
+gpointer threadTrain(gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;
   // Get the number of epochs
@@ -168,16 +199,16 @@ void *threadImageProcessing(void *data)
 
   printf("🤖 Identifying cells content\n");
   if (ui->verbose)
-    addConsoleMessage(ui, "🤖 Identifying cells content");
+    addConsoleMessage("🤖 Identifying cells content");
   ocrUi(ui, true);
 
   printf("🏁 Solving the sudoku\n");
   if (ui->verbose)
-    addConsoleMessage(ui, "🏁 Solving the sudoku");
+    addConsoleMessage("🏁 Solving the sudoku");
   generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
   printf("🏆 Sudoku solved ! :)\n");
   if (ui->verbose)
-    addConsoleMessage(ui, "🏆 Sudoku solved! :)");
+    addConsoleMessage("🏆 Sudoku solved! :)");
 
   return NULL;
 }

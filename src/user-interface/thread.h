@@ -5,5 +5,6 @@
 #include "main.h"
 #include "utils.h"
 
+void  launchExpensiveCalculation(GtkButton *button, gpointer data);
 void *threadTrain(void *user_data);
 void *threadImageProcessing(void *data);

@@ -41,9 +41,10 @@ typedef struct UserInterface
   cairo_surface_t  *sudokuLive;
   gboolean          verbose;
   SDL_Surface      *sudokuLiveSDL;
+  GtkTextBuffer    *consoleBuffer;
 } UserInterface;
 
-void addConsoleMessage(UserInterface *ui, char *message);
+gboolean addConsoleMessage(gpointer data);
 #include "handler.h"
 #include "thread.h"
 #include "utils.h"
