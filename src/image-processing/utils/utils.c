@@ -43,7 +43,7 @@ Uint32 getPixel(SDL_Surface *surface, int x, int y)
 
 void putPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
-  // Our pixels are on 32bits in SDL_PIXELFORMAT_RGBA8888
+  // Our pixels are on 32bits in SDL_PIXELFORMAT_RGB888
   Uint32 *pixels             = surface->pixels;
   pixels[y * surface->w + x] = pixel;
 }

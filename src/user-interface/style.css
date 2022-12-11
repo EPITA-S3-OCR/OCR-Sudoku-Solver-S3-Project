@@ -1,0 +1,49 @@
+#mainWindow {
+  background-color: #1d1d1d;
+}
+
+#mainWindow button {
+  background-image: none;
+  background-color: #1d1d1d;
+}
+
+#mainWindow button label {
+  color: white;
+  text-shadow: none;
+}
+#mainWindow button:checked {
+  background-color: white;
+}
+#mainWindow button:checked label {
+  color: black;
+  font-weight: bold;
+}
+
+#mainWindow #main-button {
+  background-color: white;
+}
+
+#mainWindow #main-button label {
+  color: #1d1d1d;
+}
+
+#RotateSlider {
+  color: white;
+}
+
+#Console {
+  background: transparent;
+}
+
+#Console text {
+  color: white;
+  border-radius: 8px;
+  background-color: #373737;
+}
+
+#mainWindow #RadioButton:checked {
+  background-color: white;
+}
+#mainWindow #RadioButton:checked label {
+  color: black;
+}

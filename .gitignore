@@ -56,3 +56,10 @@ dkms.conf
 **/build
 main
 doc/
+*~w
+*.glade~
+.DS_Store
+**/.keep
+output/**/*
+!output/**/
+!output/**/.gitkeep

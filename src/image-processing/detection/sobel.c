@@ -67,7 +67,14 @@ void sobelEdgeDetection(SDL_Surface *surface)
 
       Uint32 pixel = SDL_MapRGB(copy->format, g, g, g);
       // Binarize the Image (black and white)
-      putPixel(surface, x, y, (pixel > 0x00FFFFFF) ? 0xFFFFFFFF : 0x00000000);
+      if (g > 100)
+      {
+        pixel = SDL_MapRGB(copy->format, 255, 255, 255);
+      }
+      else
+      {
+        pixel = SDL_MapRGB(copy->format, 0, 0, 0);
+      }
     }
   }
   SDL_FreeSurface(copy);
