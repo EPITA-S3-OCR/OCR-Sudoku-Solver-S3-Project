@@ -595,7 +595,7 @@ VERHILLE Titouan
                 </child>
                 <child>
                   <object class="GtkButton" id="WebsiteButton">
-                    <property name="label" translatable="yes">See Website</property>
+                    <property name="label" translatable="yes">https://epita-s3-ocr.netlify.app/</property>
                     <property name="name">website-button</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>

@@ -95,14 +95,6 @@ void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
     int size = isHexa == false ? 9 : 16;
 
     char sudoku[16][16];
-    int  M[16][16] = {0};
-
-    for (int i = 0; i < size; i++)
-    {
-      for (int j = 0; j < size; j++)
-        M[i][j] = '0';
-    }
-
     loadSudoku(sudoku, path, size);
 
     // Solve it bro
@@ -120,8 +112,6 @@ void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
 
     DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
 
-    // char s[1000] = {0};
-
     for (int i = 0; i < size; i++)
     {
       for (int j = 0; j < size; j++)
@@ -134,8 +124,6 @@ void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
           digit[1]             = '\0';
           DrawAnnotation(d_wand, x, y, digit);
           free(digit);
-
-          M[i][j] = 1;
         }
         x += dis;
         if (size == 9)
