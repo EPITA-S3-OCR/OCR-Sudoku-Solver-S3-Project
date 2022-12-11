@@ -68,17 +68,17 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        📈 Number of detected lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(lines)); g_idle_add(addConsoleMessage, str);
   }
   lineCleaning(lines);
   printf("        📈 Number of cleaned lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(lines)); g_idle_add(addConsoleMessage, str);
   }
 
   SDL_Color black = {0, 0, 0, 255};
