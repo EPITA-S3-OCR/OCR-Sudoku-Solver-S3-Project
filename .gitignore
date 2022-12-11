@@ -60,9 +60,12 @@ doc/
 *.glade~
 .DS_Store
 **/.keep
-output/**/*
-!output/**/
-!output/**/.gitkeep
-.DS_Store
-tests/ocr/tiles/[1-9][0-9]*/**.*
-output/**/*
+# output/**/*
+# !output/**/
+# !output/**/.gitkeep
+# !output/
+# !output/train/
+# !output/train/train.txt
+# .DS_Store
+# tests/ocr/tiles/[1-9][0-9]*/**.*
+# output/**/*

@@ -9,8 +9,8 @@ GtkTextBuffer *buffer;
 
 gboolean addConsoleMessage(gpointer data)
 {
-  char *message = (char *)data;
-  printf("MessageHere: %s\n", message);
+  printf("console add message\n");
+  char       *message = (char *)data;
   GtkTextIter end;
   gtk_text_buffer_get_end_iter(buffer, &end);
   gtk_text_buffer_insert(buffer, &end, message, -1);
@@ -27,11 +27,24 @@ gboolean addConsoleMessage(gpointer data)
   }
 
   return FALSE;
-
-  // add string to text buffer
-  // g_signal_emit(ui->console, updateLabelSignalId, 0, message);
 }
 
+void onWebsiteButtonClicked(GtkButton *button, gpointer data)
+{
+  (void)button;
+  (void)data;
+  printf("Website Button Clicked\n");
+  // test if firefox comand is available if so open in firefox else open in
+  // default browser
+  if (system("firefox") == 0)
+  {
+    system("firefox 'https://epita-s3-ocr.netlify.app/'");
+  }
+  else
+  {
+    system("open 'https://epita-s3-ocr.netlify.app/'");
+  }
+}
 void loadCSS()
 {
   // add css provider from the file "mystyle.css"
@@ -43,10 +56,6 @@ void loadCSS()
                                             GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-gboolean updateLabel(GtkTextView *console, char *text)
-{
-  return FALSE;
-}
 void onHideSudokuButtonClicked(GtkButton *button, gpointer data)
 {
   printf("Hide Sudoku Button Clicked\n");
@@ -139,16 +148,18 @@ int uiMain()
       .solver     = &solver,
       .sudokuLive = NULL,
       .verbose    = false,
-      // .consoleBuffer = gtk_text_view_get_buffer(ui.console),
   };
+
+  GtkButton *websiteButton
+      = GTK_BUTTON(gtk_builder_get_object(builder, "WebsiteButton"));
+  g_signal_connect(websiteButton, "clicked",
+                   G_CALLBACK(onWebsiteButtonClicked), &ui);
 
   buffer = gtk_text_view_get_buffer(ui.console);
   gtk_stack_switcher_set_stack(ui.stackSwitcher, ui.stack);
 
   // Connects the signals with handler from handler.c
   g_signal_connect(ui.window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
-  // g_signal_connect(ui.ocr->importButton, "clicked",
-  //  G_CALLBACK(launchExpensiveCalculation), &ui);
   g_signal_connect(ui.ocr->importButton, "clicked",
                    G_CALLBACK(onImportButtonClicked), &ui);
   g_signal_connect(ui.ocr->rotateSlider, "value-changed",
@@ -172,13 +183,6 @@ int uiMain()
                    G_CALLBACK(onHexadokuRadioToggled), &ui);
   g_signal_connect(ui.solver->normalSudokuRadio, "toggled",
                    G_CALLBACK(onNormalSudokuRadioToggled), &ui);
-
-  updateLabelSignalId = g_signal_new(
-      "update-label", G_TYPE_FROM_CLASS(GTK_WIDGET_GET_CLASS(ui.console)),
-      G_SIGNAL_RUN_FIRST, 0, NULL, NULL, g_cclosure_marshal_VOID__STRING,
-      G_TYPE_NONE, 1, G_TYPE_STRING);
-
-  g_signal_connect(ui.console, "update-label", G_CALLBACK(updateLabel), &ui);
 
   // Set slider range from -180 to 180 with default value 0 and step 1
   gtk_range_set_range(GTK_RANGE(ui.ocr->rotateSlider), -180, 180);

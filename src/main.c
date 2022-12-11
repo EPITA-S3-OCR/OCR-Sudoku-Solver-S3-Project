@@ -27,14 +27,10 @@ int main(int argc, char **argv)
     {
       ocrNeuralNetworkMain(argc - 1, argv + 1);
     }
-    else if (strcmp(argv[1], "image-splitting") == 0)
-    {
-      splitMain(argc - 1, argv + 1);
-    }
     else if (strcmp(argv[1], "ui") == 0)
     {
       uiMain();
-        }
+    }
     else
     {
       errx(1, "usage: %s solver or image-processing ...", argv[0]);

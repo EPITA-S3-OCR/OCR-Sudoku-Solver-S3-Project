@@ -44,6 +44,11 @@
 #mainWindow #RadioButton:checked {
   background-color: white;
 }
-#mainWindow #RadioButton:checked label {
-  color: black;
+
+#mainWindow #website-button {
+  border-bottom: 1px solid white;
+}
+
+#mainWindow #website-button label {
+  color: white;
 }

@@ -41,7 +41,7 @@ gpointer threadTrain(gpointer user_data)
   unsigned long maxEpochs = strtoul(epochs, NULL, 10);
 
   // Get status of the verbose checkbox
-  ocrNeuralNetworkUi(maxEpochs, ui, true);
+  ocrNeuralNetworkUi(maxEpochs, true);
   return NULL;
 }
 
@@ -91,13 +91,7 @@ void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
       {
         if (j == size / 2 - 1)
           x += 4;
-      }
-      else
-      {
-        if (j == size / 2 - 1)
-          x += 4;
-        else if (j == size / 4 - 1)
-          x += 2;
+        x += 2;
       }
     }
 
@@ -180,14 +174,18 @@ void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
 
 gpointer threadImageProcessing(gpointer data)
 {
+  time_t begin = time(NULL);
+
   printf("running image processing\n");
-  UserInterface *ui = (UserInterface *)data;
+  UserInterface *ui      = (UserInterface *)data;
+  bool           verbose = gtk_toggle_button_get_active(
+      GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
   if (ui->sudokuLiveSDL == NULL)
   {
     printf("surface is null\n");
     return NULL;
   }
-  imageProcessingUi(ui->sudokuLiveSDL, ui, ui->verbose);
+  imageProcessingUi(ui->sudokuLiveSDL, ui->verbose);
   printf("image processing done\n");
   loadImageUi(ui, "output/ui/current.jpg");
 
@@ -198,17 +196,28 @@ gpointer threadImageProcessing(gpointer data)
   gtk_range_set_value(GTK_RANGE(ui->ocr->rotateSlider), 0);
 
   printf("🤖 Identifying cells content\n");
-  if (ui->verbose)
+  if (verbose)
     g_idle_add(addConsoleMessage, "🤖 Identifying cells content");
   ocrUi(ui, true);
 
   printf("🏁 Solving the sudoku\n");
-  if (ui->verbose)
+  if (verbose)
     g_idle_add(addConsoleMessage, "🏁 Solving the sudoku");
   generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
-  printf("🏆 Sudoku solved ! :)\n");
-  if (ui->verbose)
-    g_idle_add(addConsoleMessage, "🏆 Sudoku solved! :)");
+
+  time_t        end      = time(NULL);
+  unsigned long secondes = (unsigned long)difftime(end, begin);
+
+  printf("----- \n");
+  if (verbose)
+  {
+    g_idle_add(addConsoleMessage, "-----");
+  }
+  printf("🏆 Sudoku solved in %lu ! :)\n", secondes);
+  if (verbose)
+  {
+    g_idle_add(addConsoleMessage, "🏆 Sudoku solved ! :)");
+  }
 
   return NULL;
 }

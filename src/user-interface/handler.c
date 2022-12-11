@@ -65,6 +65,7 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
 
 void onImportSolverButtonClicked(GtkButton *button, gpointer user_data)
 {
+  (void)button;
   UserInterface *ui = (UserInterface *)user_data;
   gtk_text_buffer_set_text(gtk_text_view_get_buffer(ui->console), "", -1);
 
