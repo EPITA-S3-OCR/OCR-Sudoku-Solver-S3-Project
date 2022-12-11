@@ -55,7 +55,7 @@ void train(char *folderPath, unsigned long maxEpochs, char *savePath,
 
   // Train the neural network
   neuralNetworkTrain(&nn, trainingInputs, trainingOutputs, trainingIndexes,
-                     learningRate, maxEpochs);
+                     learningRate, maxEpochs, ui, verbose);
 
   // Print weights & biases values after 'maxEpochs' trains
   neuralNetworkPrintResults(&nn, maxEpochs);

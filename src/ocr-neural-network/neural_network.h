@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "image.h"
 #include "math_nn.h"
+#include "../user-interface/utils.h"
 
 #ifndef NEURAL_NETWORK_H
 #  define NEURAL_NETWORK_H
@@ -35,7 +36,7 @@ void neuralNetworkTrain(
     double         trainingInputs[nn->nbTraining][nn->nbInputNeurons],
     double         trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
-    unsigned long nbEpochs);
+    unsigned long nbEpochs, UserInterface *ui, bool verbose);
 
 void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
                                  size_t expected);

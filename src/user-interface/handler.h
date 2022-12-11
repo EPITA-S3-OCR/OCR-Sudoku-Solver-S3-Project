@@ -1,4 +1,5 @@
 #pragma once
+#include <MagickWand/MagickWand.h>
 #include <gtk/gtk.h>
 #include <stdbool.h>
 #include "../image-processing/main.h"

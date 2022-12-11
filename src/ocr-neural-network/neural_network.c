@@ -49,7 +49,7 @@ void neuralNetworkTrain(
     double         trainingInputs[nn->nbTraining][nn->nbInputNeurons],
     double         trainingOutputs[nn->nbTraining][nn->nbOutputNeurons],
     size_t trainingIndexes[nn->nbTraining], const double learningRate,
-    unsigned long nbEpochs)
+    unsigned long nbEpochs, UserInterface *ui, bool verbose)
 {
 
   // Process to train the neural network
@@ -86,7 +86,12 @@ void neuralNetworkTrain(
       }
 
       // Print informations about current activation
-      neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
+      // neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
+      size_t interpretation
+          = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
+      nn->totalTries++;
+      if (interpretation == i + 1)
+        nn->successCount++;
 
       /* ---- BACKPROPAGATION ---- */
       // Change in output weights
@@ -127,6 +132,13 @@ void neuralNetworkTrain(
               += trainingInputs[i][k] * deltaHidden[j] * learningRate;
       }
     }
+    if (verbose)
+    {
+      char *str = malloc(100);
+      sprintf(str, "Epoch %lu: %f%% success rate", epoch,
+              (double)nn->successCount / nn->totalTries * 100);
+      addConsoleMessage(ui, str);
+    }
   }
 }
 
@@ -135,13 +147,14 @@ void neuralNetworkPrintAssertOCR(NeuralNetwork *nn, unsigned long epoch,
 {
   // print the output layer
   printf("Epoch %lu: [", epoch);
-  for (size_t i = 0; i < nn->nbOutputNeurons-1; i++)
-    printf("%zu=%f,", i+1, nn->outputLayer[i]);
-  printf("9=%f] ", nn->outputLayer[nn->nbOutputNeurons-1]);
+  for (size_t i = 0; i < nn->nbOutputNeurons - 1; i++)
+    printf("%zu=%f,", i + 1, nn->outputLayer[i]);
+  printf("9=%f] ", nn->outputLayer[nn->nbOutputNeurons - 1]);
 
-  size_t interpretation = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
-  printf("Epoch %lu: image of a %zu interpreted as an image of a %zu ",
-         epoch, expected, interpretation);
+  size_t interpretation
+      = arrayMaxIndex(nn->outputLayer, nn->nbOutputNeurons) + 1;
+  printf("Epoch %lu: image of a %zu interpreted as an image of a %zu ", epoch,
+         expected, interpretation);
 
   nn->totalTries++;
   if (interpretation == expected)
@@ -173,7 +186,8 @@ void neuralNetworkPrintResults(NeuralNetwork *nn, size_t maxEpochs)
   // printf("Output layer biases:\t");
   // print1dArray(nn->outputBiases, nn->nbOutputNeurons);
 
-  printf("Success rate for %zu epochs: %lf\n", maxEpochs, (nn->successCount / nn->totalTries) * 100);
+  printf("Success rate for %zu epochs: %lf\n", maxEpochs,
+         (nn->successCount / nn->totalTries) * 100);
 }
 
 void neuralNetworkSaveOCR(NeuralNetwork *nn, const char *filename)

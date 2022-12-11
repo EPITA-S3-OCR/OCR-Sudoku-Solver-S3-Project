@@ -8,9 +8,9 @@ TARGET := main
 
 # Compiler and linker flags
 CPPFLAGS =
-CFLAGS = -std=c99 -Wall -Wextra -O0 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0`
+CFLAGS = -std=c99 -Wall -Wextra -O0 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0 MagickWand`
 LDFLAGS =
-LDLIBS = `pkg-config --libs sdl2 SDL2_image gtk+-3.0` -lm
+LDLIBS = `pkg-config --libs sdl2 SDL2_image gtk+-3.0 MagickWand` -lm
 
 # If source files are inside subdirectories, add the subdirectories here
 INDIRS := $(addprefix -I, \
