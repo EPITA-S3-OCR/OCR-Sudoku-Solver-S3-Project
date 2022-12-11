@@ -16,24 +16,23 @@
 
 /**
  * @brief Does the image processing
- * @param ui The user interface
  * @param verbose verbose or not
  *
  */
-void imageProcessingUi(SDL_Surface * surface, UserInterface *ui, bool verbose);
+void imageProcessingUi(SDL_Surface *surface, bool verbose);
 
 /**
- * @brief The main function for the rotation of an image 
+ * @brief The main function for the rotation of an image
  * @param argv The number of arguments
  * @param argc The array of arguments
  * @return The exit code
  */
-int  imageRotateMain(int argv, char **argc);
+int imageRotateMain(int argv, char **argc);
 
 /**
- * @brief The main function for the image processing 
- * @param argc The number of arguments 
+ * @brief The main function for the image processing
+ * @param argc The number of arguments
  * @param argv The array of arguments
  *
  */
-int  imageProcessingMain(int argv, char **argc);
+int imageProcessingMain(int argv, char **argc);

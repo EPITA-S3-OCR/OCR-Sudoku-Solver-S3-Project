@@ -41,7 +41,7 @@ gpointer threadTrain(gpointer user_data)
   unsigned long maxEpochs = strtoul(epochs, NULL, 10);
 
   // Get status of the verbose checkbox
-  ocrNeuralNetworkUi(maxEpochs, ui, true);
+  ocrNeuralNetworkUi(maxEpochs, true);
   return NULL;
 }
 
@@ -187,7 +187,7 @@ gpointer threadImageProcessing(gpointer data)
     printf("surface is null\n");
     return NULL;
   }
-  imageProcessingUi(ui->sudokuLiveSDL, ui, ui->verbose);
+  imageProcessingUi(ui->sudokuLiveSDL, ui->verbose);
   printf("image processing done\n");
   loadImageUi(ui, "output/ui/current.jpg");
 

@@ -1,7 +1,6 @@
 #include "main.h"
 
-SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
-                                  bool verbose)
+SDL_Surface *applyImageProcessing(SDL_Surface *surface, bool verbose)
 {
   printf("🧵Launching multi-thread image processing\n");
   printf("----- \n");
@@ -192,17 +191,12 @@ int imageRotateMain(int argv, char **argc)
   return 0;
 }
 
-void imageProcessingUi(SDL_Surface *surface, UserInterface *ui, bool verbose)
+void imageProcessingUi(SDL_Surface *surface, bool verbose)
 {
   printf("imageProcessingUi\n");
-  // SDL_Surface *surface = IMG_Load(filename);
-  // if (surface == NULL)
-  // {
-  //   errx(1, "IMG_Load: %s", SDL_GetError());
-  // }
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
   printf("image converted\n");
-  surface = applyImageProcessing(surface, ui, verbose);
+  surface = applyImageProcessing(surface, verbose);
   IMG_SaveJPG(surface, "output/ui/current.jpg", 100);
 }
 
@@ -225,7 +219,7 @@ int imageProcessingMain(int argv, char **argc)
   // functions later
   surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
-  surface = applyImageProcessing(surface, NULL, false);
+  surface = applyImageProcessing(surface, false);
   // Intialize a texture by converting the imported surface
   SDL_FreeSurface(surface);
 

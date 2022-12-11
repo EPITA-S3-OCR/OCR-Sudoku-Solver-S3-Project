@@ -139,7 +139,7 @@ void descent(NeuralNetwork *nn, double *input,
 void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
                         double **trainingOutputs, size_t *trainingIndexes,
                         const double learningRate, unsigned long nbEpochs,
-                        UserInterface *ui, bool verbose)
+                        bool verbose)
 {
 
   // Process to train the neural network

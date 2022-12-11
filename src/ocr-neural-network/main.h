@@ -31,7 +31,8 @@ int ocrNeuralNetworkMain(int argc, char *argv[]);
 /// @param epoch The number of epochs to train on
 /// @param verbose If verbose or not.
 /// @param ui The user interface
-void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose);
+void ocrNeuralNetworkUi(int epoch, bool verbose);
 
-/// @brief Calculates, using the NN, the numbers in the tiles and saves it in a array.
+/// @brief Calculates, using the NN, the numbers in the tiles and saves it in a
+/// array.
 void ocrUi();
