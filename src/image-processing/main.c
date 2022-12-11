@@ -3,42 +3,85 @@
 SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
                                   bool verbose)
 {
-  printf("Applying image processing...\n");
-  printf("- Copying surface...\n");
+  printf("🧵Launching multi-thread image processing\n");
+  printf("----- \n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "🧵Launching multi-thread image processing");
+    addConsoleMessage(ui, "-----");
+  }
   SDL_Surface *copy = copySurface(surface);
 
-  printf("- Applying grayscale...\n");
+  printf("📸 Converting & applying to grayscale...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "📸 Converting & applying to grayscale...");
+  }
+
   grayscale(copy);
   saveSurface(copy, "output/steps/1-grayscale.jpg");
 
-  printf("- Applying contrast...\n");
+  printf("🖌️ Applying contrast...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "🖌️ Applying contrast...");
+  }
   contrast(copy);
   saveSurface(copy, "output/steps/2-contrast.jpg");
 
-  printf("- Applying noise reduction...\n");
+  printf("🔊 Applying noise detection & reduction...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "🔊 Applying noise detection & reduction...");
+  }
   denoise(copy);
   saveSurface(copy, "output/steps/3-denoise.jpg");
   saveSurface(copy, "output/steps/3-denoise-contrast.jpg");
 
-  printf("- Applying local threshold...\n");
+  printf("✨ Applying local threshold...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "✨ Applying local threshold...");
+  }
   localThreshold(copy);
   saveSurface(copy, "output/steps/4-local_threshold.jpg");
 
   SDL_Surface *surfaceToSplit = copySurface(copy);
   invert(surfaceToSplit);
 
-  printf("- Applying sobel...\n");
+  printf("💽 Applying Sobel operator...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "💽 Applying Sobel operator...");
+  }
   sobelEdgeDetection(copy);
   saveSurface(copy, "output/steps/5-sobel.jpg");
 
-  printf("- Applying hough transform...\n");
+  printf("📐Applying Hough transform algorithm...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "📐Applying Hough transform algorithm...");
+  }
   List *lines = initList();
 
   houghTransform(copy, lines);
-  printf("  - lines: %d\n", listLength(lines));
+  printf("        📈 Number of detected lines: %d\n", listLength(lines));
+  if (verbose)
+  {
+    char *str = malloc(100);
+    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
+    addConsoleMessage(ui, str);
+    free(str);
+  }
   lineCleaning(lines);
-  printf("here\n");
-  printf("  - lines: %d\n", listLength(lines));
+  printf("        📈 Number of cleaned lines: %d\n", listLength(lines));
+  if (verbose)
+  {
+    char *str = malloc(100);
+    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
+    addConsoleMessage(ui, str);
+    free(str);
+  }
 
   SDL_Color black = {0, 0, 0, 255};
   drawLines(surfaceToSplit, lines, black, 15);
@@ -48,9 +91,20 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   drawLines(surfacelines, lines->next, color, 1);
   saveSurface(surfacelines, "output/steps/6-lines.jpg");
 
-  printf("- Getting the angle...\n");
+  printf("📌 Getting the angle...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "📌 Getting the angle...");
+  }
   double angle = getRotationAngle(lines);
-  printf("  - Angle find : %f\n", radiansToDegrees(angle));
+  printf("        ⭕ Found angle : %2f\n", radiansToDegrees(angle));
+  if (verbose)
+  {
+    char *str = malloc(100);
+    sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
+    addConsoleMessage(ui, str);
+    free(str);
+  }
 
   if (angle > 0.1 || angle < -0.1)
   {
@@ -65,13 +119,31 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   saveSurface(copy, "output/steps/8-rotate.jpg");
   saveSurface(surfaceToSplit, "output/steps/draw-lines.jpg");
 
+  printf("🟦 Applying square detection...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "🟦 Applying square detection...");
+  }
   List *squares = squareDetection(lines, surface->w, surface->h);
-  printf("  - squares: %d\n", listLength(squares));
-
+  printf("        📈 Number of detected lines: %d\n", listLength(squares));
+  if (verbose)
+  {
+    char *str = malloc(100);
+    sprintf(str, "        📈 Number of detected lines: %d",
+            listLength(squares));
+    addConsoleMessage(ui, str);
+    free(str);
+  }
   squares = squareFilter(squares);
-  printf("  - squares: %d\n", listLength(squares));
-
-  printf("- Drawing the squares...\n");
+  printf("        📈 Number of cleaned lines: %d\n", listLength(squares));
+  if (verbose)
+  {
+    char *str = malloc(100);
+    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(squares));
+    addConsoleMessage(ui, str);
+    free(str);
+  }
+  // printf("- Drawing the squares...\n");
   SDL_Surface *drawSelectedSquareSurface = copySurface(copy);
   SDL_Surface *drawSquareSurface         = copySurface(copy);
   drawSquares(drawSquareSurface, squares, color);
@@ -79,12 +151,20 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
 
   SudokuCell sudokuCell = selectSudoku(drawSelectedSquareSurface, squares);
   saveSurface(drawSelectedSquareSurface, "output/steps/10-draw_sudoku.jpg");
-
   int distX = sudokuCell.xTopRight - sudokuCell.xBottomLeft;
   int distY = sudokuCell.yTopRight - sudokuCell.yBottomLeft;
 
+  printf("✂️ Splitting the image into tiles...\n");
+  printf("💾 Resizing all the tiles (28x28)...\n");
+  if (verbose)
+  {
+    addConsoleMessage(ui, "✂️ Splitting the image into tiles...");
+    addConsoleMessage(ui, "💾 Resizing all the tiles (28x28)...");
+  }
   splitImage(surfaceToSplit, sudokuCell.xBottomLeft, sudokuCell.yBottomLeft,
              distX, distY);
+  printf("🧵 Image processing finished\n");
+  printf("----- \n");
   return copy;
 }
 

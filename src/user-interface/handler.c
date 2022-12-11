@@ -55,9 +55,13 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
     // duplicate the image file under currentImagePath
     loadImageUi(ui, path);
     ui->sudokuLiveSDL = IMG_Load(path);
+    // Set to RGB888
+    ui->sudokuLiveSDL = SDL_ConvertSurfaceFormat(ui->sudokuLiveSDL,
+                                                 SDL_PIXELFORMAT_RGB888, 0);
     // copy file to "output/ui/current.jpg"
   }
-
+  // Reset the slide to 0
+  gtk_range_set_value(GTK_RANGE(ui->ocr->rotateSlider), 0);
   // Destroy the file picker
   gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
@@ -260,13 +264,13 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
   // gdk_pixbuf_save(pixbuf, "output/ui/current-saved.jpg", "jpeg", NULL,
   // NULL);
 
-  // ui->verbose = gtk_toggle_button_get_active(
-  //     GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
+  ui->verbose = gtk_toggle_button_get_active(
+      GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
 
   /// convert cairio surfac;e to SDL surface
 
   printf("rotate image\n");
-  // rotate(ui->sudokuLiveSDL, degreesToRadians(angle));
+  // rotate(ui->sudokuLiveSDL, -degreesToRadians(angle));
 
   printf("Launching imageProcessingUi in a new thread\n");
   pthread_t thread;

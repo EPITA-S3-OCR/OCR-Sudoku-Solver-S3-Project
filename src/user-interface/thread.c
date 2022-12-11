@@ -158,8 +158,18 @@ void *threadImageProcessing(void *data)
   // Reset slider to 0
   gtk_range_set_value(GTK_RANGE(ui->ocr->rotateSlider), 0);
 
+  printf("🤖 Identifying cells content\n");
+  if (ui->verbose)
+    addConsoleMessage(ui, "🤖 Identifying cells content");
   ocrUi(ui, true);
-  // solverMainUi("output/ui/sudoku", 9);
+
+  printf("🏁 Solving the sudoku\n");
+  if (ui->verbose)
+    addConsoleMessage(ui, "🏁 Solving the sudoku");
   generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
+  printf("🏆 Sudoku solved\n");
+  if (ui->verbose)
+    addConsoleMessage(ui, "🏆 Sudoku solved");
+
   return NULL;
 }
