@@ -199,16 +199,16 @@ gpointer threadImageProcessing(gpointer data)
 
   printf("🤖 Identifying cells content\n");
   if (ui->verbose)
-    addConsoleMessage("🤖 Identifying cells content");
+    g_idle_add(addConsoleMessage, "🤖 Identifying cells content");
   ocrUi(ui, true);
 
   printf("🏁 Solving the sudoku\n");
   if (ui->verbose)
-    addConsoleMessage("🏁 Solving the sudoku");
+    g_idle_add(addConsoleMessage, "🏁 Solving the sudoku");
   generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
   printf("🏆 Sudoku solved ! :)\n");
   if (ui->verbose)
-    addConsoleMessage("🏆 Sudoku solved! :)");
+    g_idle_add(addConsoleMessage, "🏆 Sudoku solved! :)");
 
   return NULL;
 }
