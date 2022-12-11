@@ -33,7 +33,7 @@ double *loadImage(char *path)
   {
     // Get the current pixel & convert it to grayscale
     SDL_GetRGB(surfacePixels[i], surface->format, &r, &g, &b);
-    pixels[i] = r / 255.0;
+    pixels[i] = 255 ? r > 127 : 0;
   }
 
   // Free the memory allocated for the surface

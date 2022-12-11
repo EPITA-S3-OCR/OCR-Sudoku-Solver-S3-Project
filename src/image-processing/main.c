@@ -3,8 +3,6 @@
 SDL_Surface *applyImageProcessing(SDL_Surface *surface)
 {
   printf("Applying image processing...\n");
-  // Apply the image processing
-  // SDL_Surface *copy = surface; // copySurface(surface);
   SDL_Surface *copy = copySurface(surface);
 
   printf("- Applying grayscale...\n");
@@ -78,34 +76,16 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface)
   saveSurface(drawSquareSurface, "output/steps/9-draw_squares.jpg");
 
   SudokuCell sudokuCell = selectSudoku(drawSelectedSquareSurface, squares);
-  // drawSquare(drawSquareSurface, &sudokuCell, blue);
   saveSurface(drawSelectedSquareSurface, "output/steps/10-draw_sudoku.jpg");
-  // // set the upper left pixel to red
-  // SudokuCell leftMostCell  = selectLeftMostCell(squares);
-  // SudokuCell rightMostCell = selectRightMostCell(squares);
-  // saveSurface(copy, "output/output.png");
 
-  // // new linkedlist
-  // // LinkedList  start       = {NULL, NULL, 0};
-  // // LinkedList *mainSquares = &start;
-  // // mainSquares             = lkAppend(mainSquares, &leftMostCell);
-  // // mainSquares             = lkAppend(mainSquares, &rightMostCell);
+  int distX = sudokuCell.xTopRight - sudokuCell.xBottomLeft;
+  int distY = sudokuCell.yTopRight - sudokuCell.yBottomLeft;
 
-  // // drawSquares(copy, &start, surface->w, surface->h, color);
-
-  // drawLine(copy, leftMostCell.xBottomLeft, leftMostCell.yBottomLeft,
-  //          rightMostCell.xTopRight, rightMostCell.yTopRight, color, 1);
-
-  // saveSurface(copy, "output/output2.png");
-  // int distX = rightMostCell.xTopRight - leftMostCell.xBottomLeft;
-  // int distY = rightMostCell.xTopRight - leftMostCell.xBottomLeft;
-
-  // printf("- Splitting the image...\n");
-  // splitImage(surfaceToSplit, leftMostCell.xBottomLeft,
-  //            leftMostCell.yBottomLeft, distX, distY);
-  // printf("End of image processing\n");
+  splitImage(surfaceToSplit, sudokuCell.xBottomLeft, sudokuCell.yBottomLeft,
+             distX, distY);
   return copy;
 }
+
 int imageRotateMain(int argv, char **argc)
 {
   // Check arguments
