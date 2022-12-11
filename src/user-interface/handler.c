@@ -350,8 +350,8 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
   // rotate(ui->sudokuLiveSDL, -degreesToRadians(angle));
 
   printf("Launching imageProcessingUi in a new thread\n");
-  pthread_t thread;
-  pthread_create(&thread, NULL, threadImageProcessing, ui);
+  // pthread_create(&thread, NULL, threadImageProcessing, ui);
+  g_thread_new("threadImageProcessing", threadImageProcessing, ui);
 }
 
 void onWindowDestroy()

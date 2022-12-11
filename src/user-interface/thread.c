@@ -178,7 +178,7 @@ void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
   displayImage(ui, ui->sudokuLive);
 }
 
-void *threadImageProcessing(void *data)
+gpointer threadImageProcessing(gpointer data)
 {
   printf("running image processing\n");
   UserInterface *ui = (UserInterface *)data;
