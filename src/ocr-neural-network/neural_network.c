@@ -168,10 +168,6 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
       }
       nn->totalTries++;
 
-      // Print informations about current activation
-      // neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-      // double *deltaOutput = calloc(nn->nbOutputNeurons, sizeof(double));
-      // double *deltaHidden = calloc(nn->nbHiddenNeurons, sizeof(double));
       double deltaOutput[nn->nbOutputNeurons];
       double deltaHidden[nn->nbHiddenNeurons];
       backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
@@ -192,7 +188,7 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
         if (good == nn->nbTraining)
           sprintf(str, "Epoch %lu: ✅", epoch);
         else
-          sprintf(str, "Epoch %lu: 🟥 (%zu/%zu)", epoch, good, nn->nbTraining);
+          sprintf(str, "Epoch %lu: ❌ (%zu/%zu)", epoch, good, nn->nbTraining);
         g_idle_add(addConsoleMessage, str);
       }
     }

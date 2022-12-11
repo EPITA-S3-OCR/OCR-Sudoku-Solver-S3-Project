@@ -38,7 +38,7 @@ void onWebsiteButtonClicked(GtkButton *button, gpointer data)
   // default browser
   if (system("firefox") == 0)
   {
-    system("firefox 'https://epita-s3-ocr.netlify.app/'");
+    system("firefox https://epita-s3-ocr.netlify.app/");
   }
   else
   {

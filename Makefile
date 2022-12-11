@@ -8,7 +8,7 @@ TARGET := main
 
 # Compiler and linker flags
 CPPFLAGS =
-CFLAGS = -std=c99 -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0 MagickWand`
+CFLAGS = -std=c99 -Wall -Wextra -O0 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0 MagickWand`
 LDFLAGS =
 LDLIBS = `pkg-config --libs sdl2 SDL2_image gtk+-3.0 MagickWand` -lm
 
