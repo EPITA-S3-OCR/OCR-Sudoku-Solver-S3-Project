@@ -19,5 +19,8 @@
 #define LEARNING_RATE 0.02
 // #define LEARNING_RATE 0.8
 
-size_t countFolders(char *folderRoot);
+/// @brief Main function of the OCR neural network
+/// @param argc The number of arguments
+/// @param argv The arguments (string array)
+/// @return The exit code
 int    ocrNeuralNetworkMain(int argc, char *argv[]);

@@ -164,12 +164,9 @@ void neuralNetworkTrain(NeuralNetwork *nn, double ***trainingInputs,
         good++;
 
       // Print informations about current activation
-      // neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
-      double deltaOutput[nn->nbOutputNeurons]; // =
-                                               // calloc(nn->nbOutputNeurons,
-                                               // sizeof(double));
-      double deltaHidden[nn->nbHiddenNeurons]; // = calloc(nn->nbHiddenNeurons,
-                                               // sizeof(double));
+      neuralNetworkPrintAssertOCR(nn, epoch, i + 1);
+      double *deltaOutput = calloc(nn->nbOutputNeurons, sizeof(double));
+      double *deltaHidden = calloc(nn->nbHiddenNeurons, sizeof(double));
       backPropagation(nn, trainingOutputs[i], deltaOutput, deltaHidden);
       descent(nn, trainingInputs[set][i], deltaOutput, deltaHidden,
               learningRate);
