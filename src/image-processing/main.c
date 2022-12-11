@@ -92,15 +92,15 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("📌 Getting the angle...\n");
   if (verbose)
   {
-    g_idle_add(addConsoleMessage, "📌 Getting the angle...");
+    // g_idle_add(addConsoleMessage, "📌 Getting the angle...");
   }
   double angle = getRotationAngle(lines);
   printf("        ⭕ Found angle : %2f\n", radiansToDegrees(angle));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
+    // g_idle_add(addConsoleMessage, str);
   }
 
   if (angle > 0.1 || angle < -0.1)
@@ -125,18 +125,19 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        📈 Number of detected lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of detected lines: %d",
-            listLength(squares));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+    // sprintf(str, "        📈 Number of detected lines: %d",
+    //         listLength(squares));
+    // g_idle_add(addConsoleMessage, str);
   }
   squares = squareFilter(squares);
   printf("        📈 Number of cleaned lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char str[MAX_PATH_LENGTH];
-    sprintf(str, "        📈 Number of cleaned lines: %d", listLength(squares));
-    g_idle_add(addConsoleMessage, str);
+    // char str[MAX_PATH_LENGTH];
+
+    // sprintf(str, "        📈 Number of cleaned lines: %d",
+    // listLength(squares)); g_idle_add(addConsoleMessage, str);
   }
   // printf("- Drawing the squares...\n");
   SDL_Surface *drawSelectedSquareSurface = copySurface(copy);
