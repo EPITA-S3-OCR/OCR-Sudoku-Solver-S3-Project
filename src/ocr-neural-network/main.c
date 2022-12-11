@@ -136,10 +136,10 @@ void compare(char *ocrPath, char *compareDirPath)
     if (imagePath == NULL)
       errx(1, "%s: malloc failed\n", __func__);
 
-    strcat(imagePath, compareDirPath);
-    strcat(imagePath, "/");
-    strcat(imagePath, filenames[i]);
-
+    // strcat(imagePath, compareDirPath);
+    // strcat(imagePath, "/");
+    // strcat(imagePath, filenames[i]);
+    sprintf(imagePath, "%s/%s", compareDirPath, filenames[i]);
     // Load the image to test
     double *pixels = loadImage(imagePath);
 

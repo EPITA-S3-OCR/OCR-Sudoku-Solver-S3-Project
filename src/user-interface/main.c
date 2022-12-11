@@ -147,8 +147,8 @@ int uiMain()
 
   // Connects the signals with handler from handler.c
   g_signal_connect(ui.window, "destroy", G_CALLBACK(onWindowDestroy), &ui);
-  g_signal_connect(ui.ocr->importButton, "clicked",
-                   G_CALLBACK(launchExpensiveCalculation), &ui);
+  // g_signal_connect(ui.ocr->importButton, "clicked",
+  //  G_CALLBACK(launchExpensiveCalculation), &ui);
   g_signal_connect(ui.ocr->importButton, "clicked",
                    G_CALLBACK(onImportButtonClicked), &ui);
   g_signal_connect(ui.ocr->rotateSlider, "value-changed",
