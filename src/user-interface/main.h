@@ -8,7 +8,7 @@ typedef struct OCR
   GtkButton      *importButton;
   GtkScale       *rotateSlider;
   GtkButton      *launchProcessButton;
-  GtkCheckButton *verboseCheckbox
+  GtkCheckButton *verboseCheckbox;
 
 } OCR;
 
@@ -38,6 +38,7 @@ typedef struct UserInterface
   Solver           *solver;
   cairo_surface_t  *sudokuLive;
   gboolean          verbose;
+  SDL_Surface      *sudokuLiveSDL;
 } UserInterface;
 
 void addConsoleMessage(UserInterface *ui, char *message);

@@ -26,11 +26,12 @@ void printAcc(unsigned int *acc, int width, int height)
   }
 }
 
-void houghTransform(SDL_Surface *surface, LinkedList *list)
+void houghTransform(SDL_Surface *surface, List *list)
 {
   // const float threshold = 0.55;
-  const float threshold = 0.5;
-  // const float threshold = 0.25;
+  // const float threshold = 0.5;
+  const float threshold = 0.35;
+
   // Save the image dimensions
   const double width = surface->w, height = surface->h;
   // Calculate the diagonal of the image
@@ -115,8 +116,8 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
   // unsigned int histogram[181] = {0};
   // unsigned int rounded_angle;
 
-  LinkedList *lines = list;
-  LinkedList *start = list;
+  List *lines = list;
+  List *start = list;
 
   int prev       = accumulator[0];
   int prev_theta = 0, prev_rho = 0;
@@ -174,8 +175,7 @@ void houghTransform(SDL_Surface *surface, LinkedList *list)
 
         Line *linePtr = malloc(sizeof(Line));
         *linePtr      = line;
-        lines = lineInsert(start, lines, linePtr);
-
+        listInsert(lines, linePtr);
         // lines = lkAppend(lines, linePtr);
       }
     }

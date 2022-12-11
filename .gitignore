@@ -63,3 +63,6 @@ doc/
 output/**/*
 !output/**/
 !output/**/.gitkeep
+.DS_Store
+tests/ocr/tiles/[1-9][0-9]*/**.*
+output/**/*

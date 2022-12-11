@@ -94,6 +94,120 @@ int getDecimalInt(int n)
   return decimal;
 }
 
+double **createIdentityMatrix(size_t size)
+{
+  // Initialize the training outputs
+  double **array2d = malloc(size * sizeof(double *));
+  if (array2d == NULL)
+  {
+    fprintf(stderr, "Error: malloc failed\n");
+  }
+  for (size_t i = 0; i < size; i++)
+  {
+    array2d[i] = malloc(size * sizeof(double));
+    if (array2d[i] == NULL)
+    {
+      errx(1, "malloc failed");
+    }
+  }
+
+  for (size_t i = 0; i < size; i++)
+  {
+    // Initialize the current training output
+    for (size_t j = 0; j < size; j++)
+    {
+      // Everything should be 0 except the current number
+      if (j == i)
+        array2d[i][j] = 1;
+      else
+        array2d[i][j] = 0;
+    }
+  }
+  return array2d;
+}
+
+double **init2dArray(size_t s1, size_t s2)
+{
+  // Initialize a 2D-array of size s1 * s2
+  double **array2d = malloc(s1 * sizeof(double *));
+  if (array2d == NULL)
+  {
+    fprintf(stderr, "Error: malloc failed\n");
+  }
+  for (size_t i = 0; i < s1; i++)
+  {
+    array2d[i] = malloc(s2 * sizeof(double));
+    if (array2d[i] == NULL)
+    {
+      errx(1, "malloc failed");
+    }
+  }
+  return array2d;
+}
+
+double ***init3dArray(size_t s1, size_t s2, size_t s3)
+{
+  // malloc triple array
+  double ***trainingInputs = malloc(s1 * sizeof(double **));
+  if (trainingInputs == NULL)
+    errx(1,
+         "initTrainingInputs: Could not allocate memory for trainingInputs");
+
+  // malloc double array
+  for (size_t i = 0; i < s1; i++)
+  {
+    trainingInputs[i] = malloc(s2 * sizeof(double *));
+    if (trainingInputs[i] == NULL)
+      errx(1,
+           "initTrainingInputs: Could not allocate memory for "
+           "trainingInputs[%zu]",
+           i);
+  }
+
+  // malloc single array
+
+  for (size_t i = 0; i < s1; i++)
+  {
+    for (size_t j = 0; j < s2; j++)
+    {
+      trainingInputs[i][j] = malloc(s3 * sizeof(double));
+      if (trainingInputs[i][j] == NULL)
+        errx(1,
+             "initTrainingInputs: Could not allocate memory for "
+             "trainingInputs[%zu][%zu]",
+             i, j);
+    }
+  }
+
+  return trainingInputs;
+}
+
+size_t countFolders(char *folderRoot)
+{
+  // Create a directory stream & initialize the counter
+  struct dirent *entry;
+  size_t         count = 0;
+
+  // Open the given folder path
+  DIR *dir = opendir(folderRoot);
+  if (dir == NULL)
+    errx(1, "countFolder: Could not open folder %s", folderRoot);
+
+  // Count the number of files in the folder
+  while ((entry = readdir(dir)) != NULL)
+  {
+    // Ignore the current & parent directories
+    if (entry->d_name[0] != '.') // not safe, could also count regular files
+      count++;
+  }
+
+  // Close the directory stream
+  closedir(dir);
+
+  // Return the number of training sets (folders) contained within the folder
+  return count;
+}
+
 // get binary string from int
 char *getBinaryString(int n)
 {

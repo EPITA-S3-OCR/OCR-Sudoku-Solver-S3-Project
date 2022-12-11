@@ -2,20 +2,29 @@
 
 void loadImageUi(UserInterface *ui, char *path)
 {
+  printf("loadImageUi\n");
   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+  printf("pref\n");
   // Convert it to cairo surface
   cairo_surface_t *surface
       = gdk_cairo_surface_create_from_pixbuf(pixbuf, 0, NULL);
+  printf("pref is null : %s\n", surface == NULL ? "true" : "false");
   ui->sudokuLive = surface;
-  int width      = cairo_image_surface_get_width(ui->sudokuLive);
-  int height     = cairo_image_surface_get_height(ui->sudokuLive);
+  printf("pref\n");
+  int width = cairo_image_surface_get_width(ui->sudokuLive);
+  printf("pref\n");
+  int height = cairo_image_surface_get_height(ui->sudokuLive);
+  printf("pref\n");
   g_print("width: %d, height: %d\n", width, height);
+  printf("pref\n");
 
   pixbuf = gdk_pixbuf_scale_simple(pixbuf, 400, 400, GDK_INTERP_BILINEAR);
+  printf("pr2ef\n");
   // Set the image to the pixbuf
   gtk_image_set_from_pixbuf(ui->sudokuImage, pixbuf);
   // Free the pixbuf
   g_object_unref(pixbuf);
+  printf("pr2ef\n");
 }
 
 void displayImage(UserInterface *ui, cairo_surface_t *surface)

@@ -1,11 +1,12 @@
 // Import librairies & helper files
+#include <dirent.h>
 #include <err.h>
 #include <math.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "../solver/solver.h"
 #include "../user-interface/utils.h"
 #include "helpers.h"
 #include "image.h"
@@ -16,6 +17,15 @@
 #define OUTPUT_SIZE 9
 #define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
+// #define LEARNING_RATE 0.2
+#define LEARNING_RATE 0.02
+// #define LEARNING_RATE 0.8
+
+/// @brief Main function of the OCR neural network
+/// @param argc The number of arguments
+/// @param argv The arguments (string array)
+/// @return The exit code
+int ocrNeuralNetworkMain(int argc, char *argv[]);
 
 void ocrNeuralNetworkUi(int epoch, UserInterface *ui, bool verbose);
-int  ocrNeuralNetworkMain(int argc, char *argv[]);
+void ocrUi(UserInterface *ui, bool verbose);

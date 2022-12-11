@@ -2,12 +2,12 @@
 #include <gtk/gtk.h>
 #include "main.h"
 
-typedef struct ThreadArgs
-{
-  char          *filename;
-  UserInterface *ui;
-  bool           verbose;
-} ThreadArgs;
+// typedef struct ThreadArgs
+// {
+//   char          *filename;
+//   UserInterface *ui;
+//   bool           verbose;
+// } ThreadArgs;
 
 void loadImageUi(UserInterface *ui, char *path);
 void displayImage(UserInterface *ui, cairo_surface_t *surface);

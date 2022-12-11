@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include <stdbool.h>
 #include "../image-processing/main.h"
+#include "../image-processing/utils/lines.h"
 #include "../image-processing/utils/utils.h"
 #include "../ocr-neural-network/main.h"
 #include "../solver/solver.h"
@@ -17,7 +18,6 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data);
 
 // Handler for Neural Network
 void onTrainButtonClicked(GtkButton *button, gpointer user_data);
-
 // Handler for Solver
 void onSolveSudokuButtonClicked(GtkButton *button, gpointer user_data);
 

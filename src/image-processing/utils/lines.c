@@ -1,68 +1,58 @@
 #include "lines.h"
 
 void drawLine(SDL_Surface *surface, int xStart, int yStart, int xEnd, int yEnd,
-              SDL_Color color)
+              SDL_Color color, int width)
 {
-  int x0 = xStart;
-  int y0 = yStart;
-
-  int x1 = xEnd;
-  int y1 = yEnd;
-
-  int dx = abs(x1 - x0);
-  int sx = x0 < x1 ? 1 : -1;
-  int dy = -abs(y1 - y0);
-  int sy = y0 < y1 ? 1 : -1;
-
-  int err = dx + dy;
-
-  int    w     = surface->w;
-  int    h     = surface->h;
   Uint32 pixel = SDL_MapRGB(surface->format, color.r, color.g, color.b);
-  while (1)
+
+  // draw a line from (xStart, yStart) to (xEnd, yEnd) of color (color) and
+  // width (width) on each side of the line
+  int dx    = abs(xEnd - xStart);
+  int dy    = abs(yEnd - yStart);
+  int x     = xStart;
+  int y     = yStart;
+  int n     = 1 + dx + dy;
+  int x_inc = (xEnd > xStart) ? 1 : -1;
+  int y_inc = (yEnd > yStart) ? 1 : -1;
+  int error = dx - dy;
+  dx *= 2;
+  dy *= 2;
+
+  for (; n > 0; --n)
   {
-    if (0 <= x0 && x0 < w && 0 <= y0 && y0 < h)
+    for (int i = -width; i <= width; i++)
     {
-      putPixel(surface, x0, y0, pixel);
+      for (int j = -width; j <= width; j++)
+      {
+        if (x + i >= 0 && x + i < surface->w && y + j >= 0
+            && y + j < surface->h)
+        {
+          putPixel(surface, x + i, y + j, pixel);
+        }
+      }
     }
 
-    if (x0 == x1 && y0 == y1)
-      break;
-
-    int e2 = 2 * err;
-
-    if (e2 >= dy)
+    if (error > 0)
     {
-      err += dy;
-      x0 += sx;
+      x += x_inc;
+      error -= dy;
     }
-    if (e2 <= dx)
+    else
     {
-      err += dx;
-      y0 += sy;
+      y += y_inc;
+      error += dx;
     }
   }
 }
 
-void drawLines(SDL_Surface *surface, LinkedList *lines, SDL_Color color)
+void drawLines(SDL_Surface *surface, List *lines, SDL_Color color, int width)
 {
-  (void)color;
-  SDL_Color colors[] = {
-      {255, 0, 0, 255},     {0, 255, 0, 255},   {0, 0, 255, 255},
-      {255, 255, 0, 255},   {255, 0, 255, 255}, {0, 255, 255, 255},
-      {255, 255, 255, 255},
-  };
-  size_t      nbColors = sizeof(colors) / sizeof(SDL_Color);
-  size_t      cpt      = 0;
-  LinkedList *current  = lines;
+  List *current = lines;
   while (current->next != NULL)
   {
     current = current->next;
-
-    Line *line = (Line *)current->value;
-    drawLine(surface, line->x1, line->y1, line->x2, line->y2,
-             colors[cpt % (nbColors - 1)]);
-    cpt++;
+    Line *l = (Line *)current->data;
+    drawLine(surface, l->x1, l->y1, l->x2, l->y2, color, width);
   }
 }
 
@@ -96,35 +86,48 @@ double min(double a, double b)
   return b;
 }
 
-double getRotationAngle(LinkedList *lines)
+double getRotationAngle(List *lines)
 {
-  double      max_angle = 0;
-  LinkedList *current   = lines;
+  // For all line that have an angle of 90 degrees approximately, get the angle
+  // of l1
+
+  List  *current  = lines;
+  double maxAngle = 0;
+  int    count    = 0;
   while (current->next != NULL)
   {
     current        = current->next;
-    Line  *l1      = (Line *)current->value;
-    double angle_1 = getAngle(l1);
-    if (radiansToDegrees(fabs(angle_1)) > 80)
+    Line *l1       = (Line *)current->data;
+    List *current2 = lines;
+    while (current2->next != NULL)
     {
-      continue;
-    }
-    else
-    {
-      if (max_angle < fabs(angle_1))
+      current2 = current2->next;
+      Line *l2 = (Line *)current2->data;
+      if (l1 == l2)
       {
-        max_angle = angle_1;
+        continue;
+      }
+      double lineAngle = line_angle(l1, l2);
+
+      if (radiansToDegrees(lineAngle) < 90 + 10
+          && radiansToDegrees(lineAngle) > 90 - 10)
+      {
+        double angle = fmin(fabs(getAngle(l1)), fabs(getAngle(l2)));
+        if (angle > maxAngle)
+        {
+          maxAngle = angle;
+        }
       }
     }
   }
-  return max_angle;
+  return maxAngle;
 }
 
-void rotateLines(LinkedList *lines, double angle, int width, int height)
+void rotateLines(List *lines, double angle, int width, int height)
 {
   // go through all lines
   // rotate their points from 0,0 by angle in radians
-  LinkedList *current = lines;
+  List *current = lines;
 
   double cos_angle = cos(angle);
   double sin_angle = sin(angle);
@@ -132,7 +135,7 @@ void rotateLines(LinkedList *lines, double angle, int width, int height)
   while (current->next != NULL)
   {
     current = current->next;
-    Line *l = (Line *)current->value;
+    Line *l = (Line *)current->data;
     int   new_x, new_y;
     convertPoints(l->x1, l->y1, &new_x, &new_y, width, height, cos_angle,
                   sin_angle);
@@ -219,49 +222,47 @@ SudokuCell makeSquare(int x1, int y1, int x2, int y2, int x3, int y3, int x4,
   return cell;
 }
 
-LinkedList squareDetection(LinkedList *lines, int width, int height)
+List *squareDetection(List *lines, int width, int height)
 {
-  LinkedList  start   = {NULL, NULL, NULL};
-  LinkedList *squares = &start;
+  List *start   = initList();
+  List *squares = start;
 
-  for (LinkedList *n1 = lines->next; n1->next != NULL; n1 = n1->next)
+  for (List *n1 = lines->next; n1->next != NULL; n1 = n1->next)
   {
 
-    for (LinkedList *n2 = n1->next; n2->next != NULL; n2 = n2->next)
+    for (List *n2 = n1->next; n2->next != NULL; n2 = n2->next)
     {
       if (n1 == n2)
         continue;
 
-      Line *line1 = (Line *)n1->value;
-      Line *line2 = (Line *)n2->value;
+      Line *line1 = (Line *)n1->data;
+      Line *line2 = (Line *)n2->data;
       // Get all line that actualLine have a intersection point with
       int intX, intY;
       getIntersection(*line1, *line2, &intX, &intY, width, height);
       if (intX == -1)
         continue;
-      // ALL INTERSECTED EDGES
-      for (LinkedList *n3 = lines->next; n3->next != NULL; n3 = n3->next)
+
+      for (List *n3 = lines->next; n3->next != NULL; n3 = n3->next)
       {
         if (n2 == n3)
           continue;
 
-        Line *line3 = (Line *)n3->value;
+        Line *line3 = (Line *)n3->data;
         int   intX2, intY2;
         getIntersection(*line2, *line3, &intX2, &intY2, width, height);
 
         if (intX2 == -1)
           continue;
-        // ALL INTERSECTED EDGES
 
-        for (LinkedList *n4 = n3->next; n4->next != NULL; n4 = n4->next)
+        for (List *n4 = n3->next; n4->next != NULL; n4 = n4->next)
         {
           if (n4 == n3)
             continue;
 
-          Line *line4 = (Line *)n4->value;
+          Line *line4 = (Line *)n4->data;
           int   intX3, intY3;
           getIntersection(*line3, *line4, &intX3, &intY3, width, height);
-
           if (intX3 == -1)
             continue;
 
@@ -298,39 +299,17 @@ LinkedList squareDetection(LinkedList *lines, int width, int height)
             if (n1 == n2 || n1 == n3 || n1 == n4 || n2 == n3 || n2 == n4
                 || n3 == n4)
             {
-              // printf("EQUAL\n");
               continue;
-              // printf("line1 : (%d, %d) -> (%d, %d)\n", line1->x1, line1->y1,
-              //        line1->x2, line1->y2);
-              // printf("line2 : (%d, %d) -> (%d, %d)\n", line2->x1, line2->y1,
-              //        line2->x2, line2->y2);
-              // printf("line3 : (%d, %d) -> (%d, %d)\n", line3->x1, line3->y1,
-              //        line3->x2, line3->y2);
-              // printf("line4 : (%d, %d) -> (%d, %d)\n", line4->x1, line4->y1,
-              //        line4->x2, line4->y2);
-              // printf("line1 : %p\n", line1);
-              // printf("line2 : %p\n", line2);
-              // printf("line3 : %p\n", line3);
-              // printf("line4 : %p\n", line4);
             }
-            // printf("SQUARE FOUND\n");
-            SudokuCell cell = makeSquare(intX, intY, intX2, intY2, intX3,
-                                         intY3, intX4, intY4);
-            // printf("xBottomLeft: %d yBottomLeft: %d\nxBottomRight: %d "
-            //        "yBottomRight: %d\nxTopLeft: %d yTopLeft: %d\nxTopRight:
-            //        "
-            //        "%d yTopRight: %d\n",
-            //        cell.xBottomLeft, cell.yBottomLeft, cell.xBottomRight,
-            //        cell.yBottomRight, cell.xTopLeft, cell.yTopLeft,
-            //        cell.xTopRight, cell.yTopRight);
-
+            SudokuCell  cell    = makeSquare(intX, intY, intX2, intY2, intX3,
+                                             intY3, intX4, intY4);
             SudokuCell *cellPtr = malloc(sizeof(SudokuCell));
             if (cellPtr == NULL)
             {
               printf("malloc failed\n");
             }
             *cellPtr = cell;
-            squares  = lkAppend(squares, cellPtr);
+            listInsert(squares, cellPtr);
           }
         }
       }
@@ -339,76 +318,243 @@ LinkedList squareDetection(LinkedList *lines, int width, int height)
   return start;
 }
 
-LinkedList squareFilter(LinkedList *squares)
+List *sortSquares(List *squares)
 {
-  LinkedList  start          = {NULL, NULL, NULL};
-  LinkedList *filteredSquare = &start;
-  // get the minimum square size
-  // int minSize = 100000;
-  // for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
-  // {
-  //   SudokuCell *cell = (SudokuCell *)n->value;
-  //   int         size = abs(cell->xBottomRight - cell->xBottomLeft);
-  //   if (size < minSize)
-  //     minSize = size;
-  // }
-  int minSize = 100;
-  // printf("minSize : %d\n", minSize);
-  for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
+  // Sort the squares by the size of the square using bubble sort
+  int swapped = 1;
+  while (swapped)
   {
-    SudokuCell *cell = (SudokuCell *)n->value;
-    int         size = fmax(abs(cell->xBottomLeft - cell->xBottomRight),
-                            abs(cell->xBottomLeft - cell->xTopLeft));
-    if (size > minSize * 1.5 || size < minSize * 1)
+    swapped = 0;
+    for (List *n1 = squares->next; n1->next != NULL; n1 = n1->next)
     {
-      // printf("size : %d\n", size);
-      // printf("x  : bl = %d br = %d tl = %d tr = %d\n", cell->xBottomLeft,
-      //        cell->xBottomRight, cell->xTopLeft, cell->xTopRight);
-      continue;
-      // printf("%d\n", abs(cell->xBottomLeft - cell->xBottomRight));
-      // printf("%d\n", abs(cell->xBottomLeft - cell->xTopLeft));
-      // printf("%d\n", abs(cell->xBottomRight - cell->xTopRight));
-      // printf("%d\n", abs(cell->xTopLeft - cell->xTopRight));
-    }
-    filteredSquare = lkAppend(filteredSquare, cell);
-  }
-  return start;
+      SudokuCell *cell1 = (SudokuCell *)n1->data;
+      SudokuCell *cell2 = (SudokuCell *)n1->next->data;
+      // get size of the square
 
-  // get the bigest square
-  // int maxSize = 0;
-  // for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
-  // {
-  //   SudokuCell *cell = (SudokuCell *)n->value;
-  //   int         size = fmax(abs(cell->xBottomLeft - cell->xBottomRight),
-  //                           abs(cell->xBottomLeft - cell->xTopLeft));
-  //   if (size > maxSize)
-  //     maxSize = size;
-  // }
-  // // get only the squares that are bigger than 80% of the bigest square
-  // for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
-  // {
-  //   SudokuCell *cell = (SudokuCell *)n->value;
-  //   int         size = fmax(abs(cell->xBottomLeft - cell->xBottomRight),
-  //                           abs(cell->xBottomLeft - cell->xTopLeft));
-  //   if (size == maxSize)
-  //   {
-  //     filteredSquare = lkAppend(filteredSquare, cell);
-  //   }
-  // }
-  // return start;
+      // int size1 = sqrt(pow(cell1->xBottomLeft - cell1->xBottomRight, 2)
+      //                  + pow(cell1->yBottomLeft - cell1->yBottomRight, 2));
+      // int size2 = sqrt(pow(cell2->xBottomLeft - cell2->xBottomRight, 2)
+      //                  + pow(cell2->yBottomLeft - cell2->yBottomRight, 2));
+      int size1 = abs(cell1->xBottomLeft - cell1->xBottomRight);
+      int size2 = abs(cell2->xBottomLeft - cell2->xBottomRight);
+      // printf("size1: %d, size2: %d\n", size1, size2);
+      if (size1 > size2)
+      {
+        swapped        = 1;
+        void *temp     = n1->data;
+        n1->data       = n1->next->data;
+        n1->next->data = temp;
+      }
+    }
+  }
+  return squares;
 }
 
-SudokuCell selectLeftMostCell(LinkedList *squares)
+List *printSquares(List *squares)
+{
+  for (List *n1 = squares->next; n1->next != NULL; n1 = n1->next)
+  {
+    SudokuCell *cell1 = (SudokuCell *)n1->data;
+    // get size of the square
+    int size = cell1->xBottomLeft - cell1->xBottomRight;
+    printf("size: %d\n", size);
+  }
+}
+
+int getMedianSizeSquares(List *squares)
+{
+  // From a sorted list return the median size of the squares
+  int size   = listLength(squares->next);
+  int median = size / 4;
+  // int median = 10;
+  int i = 0;
+  for (List *n1 = squares->next; n1->next != NULL; n1 = n1->next)
+  {
+    if (i == median)
+    {
+      SudokuCell *cell1 = (SudokuCell *)n1->data;
+      // get size of the square
+      int size = abs(cell1->xBottomLeft - cell1->xBottomRight);
+      return size;
+    }
+    i++;
+  }
+}
+List *squareFilter(List *squares)
+{
+  printf("Squares before filter\n");
+  List *sortedSquares = sortSquares(squares);
+  // printSquares(sortedSquares);
+  SudokuCell *cell     = (SudokuCell *)sortedSquares->next->data;
+  int         cellSize = abs(cell->xBottomLeft - cell->xBottomRight);
+  printf("min cell size: %d\n", cellSize);
+
+  int medianSize = getMedianSizeSquares(sortedSquares);
+  printf("Median size: %d\n", medianSize);
+
+  List *filteredSquares = initList();
+  // int   threshold       = 130;
+  int threshold = medianSize;
+  // int threshold = 80;
+
+  int errorAcceptance = 0.2 * threshold;
+
+  int upperThreshold = threshold + errorAcceptance;
+  int lowerThreshold = threshold - errorAcceptance;
+
+  printf("acceptance : (%d, %d)\n", lowerThreshold, upperThreshold);
+
+  for (List *n1 = squares->next; n1->next != NULL; n1 = n1->next)
+  {
+    SudokuCell *cell1 = (SudokuCell *)n1->data;
+    // get size of the square
+    int size = sqrt(pow(cell1->xBottomLeft - cell1->xBottomRight, 2)
+                    + pow(cell1->yBottomLeft - cell1->yBottomRight, 2));
+    if (size > lowerThreshold && size < upperThreshold)
+      listInsert(filteredSquares, cell1);
+  }
+  freeList(squares);
+  return filteredSquares;
+}
+
+SudokuCell selectSudoku(SDL_Surface *surface, List *squares)
+{
+  SDL_Color blue   = {0, 0, 255, 255};
+  SDL_Color green  = {0, 255, 0, 255};
+  SDL_Color violet = {255, 0, 255, 255};
+  int       color  = 1;
+  // From all the squares selec the one that is the most on the left
+  // Verify that there is 9 other squares under it and 9 other squares on his
+  // right
+  SudokuCell savedLeftMostCell = selectLeftMostCell(squares);
+  // drawSquare(surface, &savedLeftMostCell, violet);
+  SudokuCell verticalCell = savedLeftMostCell;
+  int        threshold    = 25;
+
+  SDL_Color colors[5] = {{255, 0, 0, 255},
+                         {0, 255, 0, 255},
+                         {0, 0, 255, 255},
+                         {255, 255, 0, 255},
+                         {255, 0, 255, 255}};
+
+  // Verify that there is 9 other squares under it and 9 other squares on his
+  // right
+  int verticalStreak = 0;
+  for (List *n = squares->next; n->next != NULL; n = n->next)
+  {
+    SudokuCell *cell = (SudokuCell *)n->data;
+    if (abs(cell->xBottomLeft - verticalCell.xTopLeft) < threshold
+        && abs(cell->yBottomLeft - verticalCell.yTopLeft) < threshold)
+    {
+      // drawSquare(surface, cell, colors[color]);
+      color = (color + 1) % 5;
+      verticalStreak++;
+      verticalCell = *cell;
+      n            = squares->next;
+      if (verticalStreak == 8)
+      {
+        printf("here\n");
+        break;
+      }
+    }
+  }
+  printf("Vertical streak : %d\n", verticalStreak);
+
+  SudokuCell horizontalCell = savedLeftMostCell;
+
+  int horizontalStreak = 0;
+  for (List *n = squares->next; n->next != NULL; n = n->next)
+  {
+    SudokuCell *cell = (SudokuCell *)n->data;
+    if (abs(cell->xTopLeft - horizontalCell.xTopRight) < threshold
+        && abs(cell->yTopLeft - horizontalCell.yTopRight) < threshold)
+    {
+      // drawSquare(surface, cell, colors[color]);
+      color = (color + 1) % 5;
+      horizontalStreak++;
+      horizontalCell = *cell;
+      n              = squares->next;
+      if (horizontalStreak == 8)
+      {
+        printf("here\n");
+        break;
+      }
+    }
+  }
+  printf("Horizontal streak : %d\n", horizontalStreak);
+
+  if (horizontalStreak < 8 && verticalStreak < 8)
+    errx(1, "Not a sudoku");
+  if (horizontalStreak == 8 && verticalStreak == 8)
+  {
+
+    SudokuCell cell = {
+        .xTopLeft     = verticalCell.xTopLeft,
+        .yTopLeft     = verticalCell.yTopLeft,
+        .xTopRight    = horizontalCell.xTopRight,
+        .yTopRight    = verticalCell.yTopRight,
+        .xBottomRight = horizontalCell.xBottomRight,
+        .yBottomRight = horizontalCell.yBottomRight,
+        .xBottomLeft  = savedLeftMostCell.xBottomLeft,
+        .yBottomLeft  = savedLeftMostCell.yBottomLeft,
+    };
+    drawSquare(surface, &cell, violet, 2);
+    return cell;
+  }
+
+  if (verticalStreak < 8)
+  {
+    verticalCell   = horizontalCell;
+    verticalStreak = 0;
+    for (List *n = squares->next; n->next != NULL; n = n->next)
+    {
+      SudokuCell *cell = (SudokuCell *)n->data;
+      if (abs(cell->xBottomLeft - verticalCell.xTopLeft) < threshold
+          && abs(cell->yBottomLeft - verticalCell.yTopLeft) < threshold)
+      {
+        // drawSquare(surface, cell, colors[color]);
+        color = (color + 1) % 5;
+        verticalStreak++;
+        verticalCell = *cell;
+        n            = squares->next;
+        if (verticalStreak == 8)
+        {
+          printf("here\n");
+          break;
+        }
+      }
+    }
+    printf("Vertical streak : %d\n", verticalStreak);
+
+    if (verticalStreak < 8)
+      errx(1, "Not a sudoku");
+
+    SudokuCell cell = {
+        .xTopLeft     = savedLeftMostCell.xTopLeft,
+        .yTopLeft     = verticalCell.yTopLeft,
+        .xTopRight    = horizontalCell.xTopRight,
+        .yTopRight    = verticalCell.yTopRight,
+        .xBottomRight = horizontalCell.xBottomRight,
+        .yBottomRight = horizontalCell.yBottomRight,
+        .xBottomLeft  = savedLeftMostCell.xBottomLeft,
+        .yBottomLeft  = savedLeftMostCell.yBottomLeft,
+    };
+    drawSquare(surface, &cell, violet, 2);
+    return cell;
+  }
+}
+
+SudokuCell selectLeftMostCell(List *squares)
 {
   int threshold = 15;
 
-  SudokuCell *cell         = (SudokuCell *)squares->next->value;
+  SudokuCell *cell         = (SudokuCell *)squares->next->data;
   SudokuCell  selectedCell = *cell;
   // int         cpt          = 0;
   // Uint32      red          = SDL_MapRGB(surface->format, 255, 0, 0);
-  for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
+  for (List *n = squares->next; n->next != NULL; n = n->next)
   {
-    SudokuCell *cell = (SudokuCell *)n->value;
+    SudokuCell *cell = (SudokuCell *)n->data;
 
     if ((cell->xBottomLeft <= selectedCell.xBottomLeft
          && abs(cell->yBottomLeft - selectedCell.yBottomLeft) < threshold)
@@ -420,17 +566,17 @@ SudokuCell selectLeftMostCell(LinkedList *squares)
   }
   return selectedCell;
 }
-SudokuCell selectRightMostCell(LinkedList *squares)
+SudokuCell selectRightMostCell(List *squares)
 {
   int threshold = 15;
 
-  SudokuCell *cell         = (SudokuCell *)squares->next->value;
+  SudokuCell *cell         = (SudokuCell *)squares->next->data;
   SudokuCell  selectedCell = *cell;
   // int         cpt          = 0;
   // Uint32      red          = SDL_MapRGB(surface->format, 255, 0, 0);
-  for (LinkedList *n = squares->next; n->next != NULL; n = n->next)
+  for (List *n = squares->next; n->next != NULL; n = n->next)
   {
-    SudokuCell *cell = (SudokuCell *)n->value;
+    SudokuCell *cell = (SudokuCell *)n->data;
 
     if ((cell->xTopRight >= selectedCell.xTopRight
          && abs(cell->yTopRight - selectedCell.yTopRight) < threshold)
@@ -443,54 +589,75 @@ SudokuCell selectRightMostCell(LinkedList *squares)
   return selectedCell;
 }
 
-void drawSquares(SDL_Surface *surface, LinkedList *squares, SDL_Color color)
+void drawSquare(SDL_Surface *surface, SudokuCell *cell, SDL_Color color,
+                int width)
 {
-  LinkedList *current = squares;
+  SDL_Color green = {0, 255, 0, 255};
+  drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xTopRight,
+           cell->yTopRight, color, width);
+  drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xBottomLeft,
+           cell->yBottomLeft, color, width);
+  drawLine(surface, cell->xBottomLeft, cell->yBottomLeft, cell->xBottomRight,
+           cell->yBottomRight, color, width);
+  drawLine(surface, cell->xBottomRight, cell->yBottomRight, cell->xTopRight,
+           cell->yTopRight, color, width);
+
+  // drawLine(surface, cell->xTopLeft, cell->yTopLeft, cell->xBottomRight,
+  //          cell->yBottomRight, green, 1);
+  // drawLine(surface, cell->xBottomLeft, cell->yBottomLeft, cell->xTopRight,
+  //          cell->yTopRight, green, 1);
+}
+
+void drawSquares(SDL_Surface *surface, List *squares, SDL_Color color)
+{
+  List *current = squares;
   while (current->next != NULL)
   {
     current          = current->next;
-    SudokuCell *cell = (SudokuCell *)current->value;
+    SudokuCell *cell = (SudokuCell *)current->data;
     if (cell == NULL)
     {
       printf("cell is null\n");
     }
-    // printf(
-    //     "x1 : %d, y1 : %d\n x2 : %d, y2 : %d\n x3 : %d, y3 : %d\n x4 : %d,
-    //     y4 "
-    //     ": %d\n",
-    //     cell->xBottomLeft, cell->yBottomLeft, cell->xBottomRight,
-    //     cell->yBottomRight, cell->xTopRight, cell->yTopRight,
-    //     cell->xTopLeft, cell->yTopLeft);
-    drawLine(surface, cell->xBottomLeft, cell->yBottomLeft, cell->xTopRight,
-             cell->yTopRight, color);
-    drawLine(surface, cell->xBottomRight, cell->yBottomRight, cell->xTopLeft,
-             cell->yTopLeft, color);
-    drawLine(surface, cell->xBottomLeft, cell->yBottomLeft, cell->xTopLeft,
-             cell->yTopLeft, color);
-    drawLine(surface, cell->xBottomRight, cell->yBottomRight, cell->xTopRight,
-             cell->yTopRight, color);
+    drawSquare(surface, cell, color, 1);
   }
 }
 
-LinkedList *lineInsert(LinkedList *start, LinkedList *lines, Line *line)
+void lineCleaning(List *list)
 {
-  if (start->next == NULL)
+  // Remove all the elements line in the list that are close to each other
+  // under a threshold
+  int   threshold = 80;
+  List *current   = list;
+  while (current->next != NULL)
   {
-    return lkAppend(lines, line);
-  }
-  int threshold = 15;
-  // insert the line if not line is approximately the same
-  for (LinkedList *n = start->next; n->next != NULL; n = n->next)
-  {
-    Line *l = (Line *)n->value;
-    if (abs(l->x1 - line->x1) < threshold && abs(l->y1 - line->y1) < threshold
-        && abs(l->x2 - line->x2) < threshold
-        && abs(l->y2 - line->y2) < threshold)
+    current     = current->next;
+    Line *line1 = (Line *)current->data;
+    List *next  = current->next;
+    if (current == NULL || next == NULL)
     {
-      return lines;
+      break;
+    }
+    while (next->next != NULL)
+    {
+      next        = next->next;
+      Line *line2 = (Line *)next->data;
+      if (abs(line1->x1 - line2->x1) < threshold
+          && abs(line1->y1 - line2->y1) < threshold
+          && abs(line1->x2 - line2->x2) < threshold
+          && abs(line1->y2 - line2->y2) < threshold)
+      {
+        void *toRemove = next->data;
+        if (next->next == NULL)
+        {
+          break;
+        }
+        next = next->next;
+
+        listRemove(list, toRemove);
+      }
     }
   }
-  return lkAppend(lines, line);
 }
 
 void point(SDL_Surface *surface, int x, int y, Uint32 pixel)
@@ -508,22 +675,22 @@ void point(SDL_Surface *surface, int x, int y, Uint32 pixel)
   }
 }
 
-void highlight(SDL_Surface *surface, LinkedList *lines)
+void highlight(SDL_Surface *surface, List *lines)
 {
   // find intersections between lines
 
-  LinkedList *line1 = lines;
-  LinkedList *line2 = lines;
+  List *line1 = lines;
+  List *line2 = lines;
 
   while (line1->next != NULL)
   {
     line1    = line1->next;
-    Line *l1 = line1->value;
+    Line *l1 = line1->data;
     line2    = lines;
     while (line2->next != NULL)
     {
       line2     = line2->next;
-      Line  *l2 = line2->value;
+      Line  *l2 = line2->data;
       double x1 = l1->x1;
       double x2 = l1->x2;
       double y1 = l1->y1;

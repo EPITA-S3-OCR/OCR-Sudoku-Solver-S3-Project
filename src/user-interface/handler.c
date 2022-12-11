@@ -1,5 +1,22 @@
 #include "handler.h"
 
+void duplicateFile(char *source, char *destination)
+{
+  FILE *sourceFile      = fopen(source, "rb");
+  FILE *destinationFile = fopen(destination, "wb");
+
+  char   buffer[1024];
+  size_t bytesRead;
+
+  while ((bytesRead = fread(buffer, 1, 1024, sourceFile)) > 0)
+  {
+    fwrite(buffer, 1, bytesRead, destinationFile);
+  }
+
+  fclose(sourceFile);
+  fclose(destinationFile);
+}
+
 void onTrainButtonClicked(GtkButton *button, gpointer user_data)
 {
   UserInterface *ui = (UserInterface *)user_data;
@@ -37,6 +54,8 @@ void onImportButtonClicked(GtkButton *button, gpointer user_data)
     g_print("Selected file: %s\n", path);
     // duplicate the image file under currentImagePath
     loadImageUi(ui, path);
+    ui->sudokuLiveSDL = IMG_Load(path);
+    // copy file to "output/ui/current.jpg"
   }
 
   // Destroy the file picker
@@ -226,20 +245,30 @@ void onLaunchProcessButtonClicked(GtkButton *button, gpointer user_data)
 
   // Rotate it by the angle
   int angle = gtk_range_get_value(GTK_RANGE(ui->ocr->rotateSlider));
-  cairo_surface_t *image = rotate_surface(ui->sudokuLive, angle);
+  // cairo_surface_t *image = rotate_surface(ui->sudokuLive, angle);
+  // cairo_surface_t *image = ui->sudokuLive;
 
   // Save the cairo surface in "output/ui/current.jpg"
   // Convert the cairo surface to a pixbuf
-  GdkPixbuf *pixbuf = gdk_pixbuf_get_from_surface(
-      image, 0, 0, cairo_image_surface_get_width(image),
-      cairo_image_surface_get_height(image));
-  // Save the pixbuf as a jpeg file
-  gdk_pixbuf_save(pixbuf, "output/ui/current.jpg", "jpeg", NULL, NULL);
+  // GdkPixbuf *pixbuf = gdk_pixbuf_get_from_surface(
+  //     image, 0, 0, cairo_image_surface_get_width(image),
+  //     cairo_image_surface_get_height(image));
+  // // Save the pixbuf as a jpeg file
+  // // gdk_pixbuf_save(pixbuf, "tests/image-processing-images/sudoku1.jpg",
+  // // "jpeg", NULL, NULL);
+  // gdk_pixbuf_save(pixbuf, "output/ui/current.jpg", "jpeg", NULL, NULL);
+  // gdk_pixbuf_save(pixbuf, "output/ui/current-saved.jpg", "jpeg", NULL,
+  // NULL);
 
-  ui->verbose = gtk_toggle_button_get_active(
-      GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
+  // ui->verbose = gtk_toggle_button_get_active(
+  //     GTK_TOGGLE_BUTTON(ui->ocr->verboseCheckbox));
 
-  printf("Launching imageProcessingUi in a new thread");
+  /// convert cairio surfac;e to SDL surface
+
+  printf("rotate image\n");
+  // rotate(ui->sudokuLiveSDL, degreesToRadians(angle));
+
+  printf("Launching imageProcessingUi in a new thread\n");
   pthread_t thread;
   pthread_create(&thread, NULL, threadImageProcessing, ui);
 }

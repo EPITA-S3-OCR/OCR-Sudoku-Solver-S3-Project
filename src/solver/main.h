@@ -7,3 +7,4 @@
 #include "solver.h"
 
 int solverMain(int argc, char *argv[]);
+int solverMainUi(char *sudokuPath, int length);

@@ -7,7 +7,7 @@ int solverMain(int argc, char *argv[])
   if (argc != 3)
     errx(1, "solver <9 or 16> <path>");
 
-  char* ptr;
+  char        *ptr;
   const size_t SI = strtol(argv[1], &ptr, 10);
 
   char sudoku[16][16];
@@ -32,7 +32,7 @@ int solverMain(int argc, char *argv[])
     char *ptr_to_rest = strstr(full_path, "/tests/solver");
 
     // Index until /solver
-    int pos = ptr_to_rest - full_path;
+    int  pos = ptr_to_rest - full_path;
     char path_for_newfile[2048];
     strncpy(path_for_newfile, full_path, pos);
 
@@ -44,6 +44,25 @@ int solverMain(int argc, char *argv[])
     strcat(path_for_newfile, ".result");
 
     createFile(sudoku, path_for_newfile, SI);
+  }
+
+  return 0;
+}
+
+int solverMainUi(char *sudokuPath, int length)
+{
+  char sudoku[16][16];
+
+  loadSudoku(sudoku, sudokuPath, length);
+
+  if (Solve(sudoku, length) == -1)
+  {
+    errx(1, "Could not be solved :(");
+  }
+
+  else
+  {
+    createFile(sudoku, "output/ui/sudoku.result", length);
   }
 
   return 0;

@@ -1,10 +1,154 @@
 #include "thread.h"
 
+void generateFinalSudokuGrid(UserInterface *ui, char *path, int size)
+{
+  char sudoku[16][16];
+  int  M[16][16] = {0};
+
+  for (size_t i = 0; i < size; i++)
+  {
+    for (size_t j = 0; j < size; j++)
+      M[i][j] = '0';
+  }
+
+  loadSudoku(sudoku, path, size);
+
+  // Solve it bro
+  MagickWandGenesis();
+  MagickWand *magick_wand = NewMagickWand();
+  MagickReadImage(magick_wand,
+                  size == 9 ? "src/user-interface/generator/jeje.png"
+                            : "src/user-interface/generator/sixbysix.png");
+  DrawingWand *d_wand = NewDrawingWand();
+  DrawSetFont(d_wand, "unifont");
+
+  int x   = (size == 16 ? 12 : 27);
+  int y   = (size == 16 ? 35 : 60);
+  int dis = (size == 16 ? 38 : 67);
+  // int   fontsize = (size == 16 ? 40 : 60);
+  // int   fontsize = (size == 16 ? 32 : 60);
+  // // char *original = (size == 16 ? "sixbysix.png" : "defgrid.png");
+  // char *modif    = (size == 16 ? "aver.png" : "jeje.png");
+
+  DrawSetFontSize(d_wand, size == 16 ? 32 : 50);
+
+  char s[1000] = {0};
+
+  for (size_t i = 0; i < size; i++)
+  {
+    for (size_t j = 0; j < size; j++)
+    {
+      if (sudoku[i][j] != '0')
+      {
+        char *thing = (char *)malloc(2 * sizeof(char));
+        thing[0]    = sudoku[i][j];
+        thing[1]    = '\0';
+        DrawAnnotation(d_wand, x, y, thing);
+
+        M[i][j] = 1;
+      }
+      x += dis;
+      if (size == 9)
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+      }
+      else
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+        else if (j == size / 4 - 1)
+          x += 2;
+      }
+    }
+
+    x = (size == 16 ? 12 : 27);
+    y += dis;
+    if (size == 9)
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+    }
+    else
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+      else if (i == size / 4 - 1)
+        y += 2;
+    }
+  }
+
+  Solve(sudoku, size);
+
+  // Set magick wand drawing color red
+  PixelWand *color = NewPixelWand();
+  PixelSetColor(color, "red");
+  DrawSetFillColor(d_wand, color);
+
+  x = (size == 16 ? 12 : 27);
+  y = (size == 16 ? 35 : 60);
+
+  for (size_t i = 0; i < size; i++)
+  {
+    for (size_t j = 0; j < size; j++)
+    {
+      if (M[i][j] != 1)
+      {
+        char *thing = (char *)malloc(2 * sizeof(char));
+        thing[0]    = sudoku[i][j];
+        thing[1]    = '\0';
+        DrawAnnotation(d_wand, x, y, thing);
+        // DrawAnnotation(d_wand, x, y, &(sudoku[i][j]));
+      }
+      x += dis;
+      if (size == 9)
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+      }
+      else
+      {
+        if (j == size / 2 - 1)
+          x += 4;
+        else if (j == size / 4 - 1)
+          x += 2;
+      }
+    }
+
+    x = (size == 16 ? 12 : 27);
+    y += dis;
+    if (size == 9)
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+    }
+    else
+    {
+      if (i == size / 2 - 1)
+        y += 4;
+      else if (i == size / 4 - 1)
+        y += 2;
+    }
+  }
+
+  MagickDrawImage(magick_wand, d_wand);
+  MagickWriteImage(magick_wand, "output/ui/output.png");
+  magick_wand = DestroyMagickWand(magick_wand);
+  MagickWandTerminus();
+  loadImageUi(ui, "output/ui/output.png");
+  displayImage(ui, ui->sudokuLive);
+}
+
 void *threadImageProcessing(void *data)
 {
   printf("running image processing\n");
   UserInterface *ui = (UserInterface *)data;
-  imageProcessingUi("output/ui/current.jpg", ui, ui->verbose);
+  if (ui->sudokuLiveSDL == NULL)
+  {
+    printf("surface is null\n");
+    return NULL;
+  }
+  imageProcessingUi(ui->sudokuLiveSDL, ui, ui->verbose);
   printf("image processing done\n");
   loadImageUi(ui, "output/ui/current.jpg");
 
@@ -14,30 +158,8 @@ void *threadImageProcessing(void *data)
   // Reset slider to 0
   gtk_range_set_value(GTK_RANGE(ui->ocr->rotateSlider), 0);
 
+  ocrUi(ui, true);
+  // solverMainUi("output/ui/sudoku", 9);
+  generateFinalSudokuGrid(ui, "output/ui/sudoku", 9);
   return NULL;
 }
-
-// This function will run in a separate thread
-// void *run_expensive_function(void *data)
-// {
-//   printf("running expensive function\n");
-//   UserInterface *ui = (UserInterface *)data;
-//   // Emit the "update-label" signal to update the label
-//   for (int i = 0; i < 1000; i++)
-//   {
-//     sleep(1);
-//     char *message = malloc(100 * sizeof(char));
-//     sprintf(message, "i = %d", i);
-//     addConsoleMessage(ui, message);
-//     printf("i = %d\n", i);
-//     free(message);
-//   }
-//   return NULL;
-// }
-// void run_expensive_function_button(GtkWidget *button, gpointer data)
-// {
-//   UserInterface *ui = (UserInterface *)data;
-//   // Create a new thread to run the expensive function
-//   pthread_t thread;
-//   pthread_create(&thread, NULL, run_expensive_function, ui);
-// }

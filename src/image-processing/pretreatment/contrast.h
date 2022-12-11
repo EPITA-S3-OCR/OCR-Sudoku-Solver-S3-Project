@@ -3,6 +3,8 @@
 #include <err.h>
 #include "../utils/utils.h"
 
+void invert(SDL_Surface *surface);
+
 /**
  * @brief Add contrast to the surface.
  *

@@ -57,6 +57,8 @@ void sobelEdgeDetection(SDL_Surface *surface)
 
   __invert(surface);
   SDL_Surface *copy = copySurface(surface);
+  // convert copy to RGBA
+  copy = SDL_ConvertSurfaceFormat(copy, SDL_PIXELFORMAT_RGBA8888, 0);
   for (int y = 1; y < surface->h - 1; y++)
   {
     for (int x = 1; x < surface->w - 1; x++)
@@ -64,17 +66,9 @@ void sobelEdgeDetection(SDL_Surface *surface)
       int gx = convX(x, y, copy);
       int gy = convY(x, y, copy);
       int g  = abs(gx) + abs(gy);
-
-      Uint32 pixel = SDL_MapRGB(copy->format, g, g, g);
       // Binarize the Image (black and white)
-      if (g > 100)
-      {
-        pixel = SDL_MapRGB(copy->format, 255, 255, 255);
-      }
-      else
-      {
-        pixel = SDL_MapRGB(copy->format, 0, 0, 0);
-      }
+      Uint32 pixel = SDL_MapRGB(copy->format, g, g, g);
+      putPixel(surface, x, y, (pixel > 0x00FFFFFF) ? 0xFFFFFFFF : 0x00000000);
     }
   }
   SDL_FreeSurface(copy);
