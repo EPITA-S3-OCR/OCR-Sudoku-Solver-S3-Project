@@ -68,19 +68,17 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        📈 Number of detected lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char *str = malloc(100);
+    char str[MAX_PATH_LENGTH];
     sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
     g_idle_add(addConsoleMessage, str);
-    free(str);
   }
   lineCleaning(lines);
   printf("        📈 Number of cleaned lines: %d\n", listLength(lines));
   if (verbose)
   {
-    char *str = malloc(100);
+    char str[MAX_PATH_LENGTH];
     sprintf(str, "        📈 Number of cleaned lines: %d", listLength(lines));
     g_idle_add(addConsoleMessage, str);
-    free(str);
   }
 
   SDL_Color black = {0, 0, 0, 255};
@@ -100,7 +98,7 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        ⭕ Found angle : %2f\n", radiansToDegrees(angle));
   if (verbose)
   {
-    char *str = malloc(100);
+    char str[MAX_PATH_LENGTH];
     sprintf(str, "        ⭕ Found angle : %.2f", radiansToDegrees(angle));
     g_idle_add(addConsoleMessage, str);
     free(str);
@@ -128,7 +126,7 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        📈 Number of detected lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char *str = malloc(100);
+    char str[MAX_PATH_LENGTH];
     sprintf(str, "        📈 Number of detected lines: %d",
             listLength(squares));
     g_idle_add(addConsoleMessage, str);
@@ -138,7 +136,7 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
   printf("        📈 Number of cleaned lines: %d\n", listLength(squares));
   if (verbose)
   {
-    char *str = malloc(100);
+    char str[MAX_PATH_LENGTH];
     sprintf(str, "        📈 Number of cleaned lines: %d", listLength(squares));
     g_idle_add(addConsoleMessage, str);
     free(str);
