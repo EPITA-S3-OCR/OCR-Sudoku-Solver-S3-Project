@@ -102,7 +102,7 @@ void compare(char *ocrPath, char *compareDirPath)
   {
     // If the entry is a regular file and its it not from the banned list
     // [".", "..", ".*"], add its name to the array
-    if (entry->d_type == DT_REG && entry->d_name[0] != '.')
+    if (entry->d_name[0] != '.')
     {
       // printf("File: %s\n", entry->d_name);
       filenames = realloc(filenames, sizeof(char *) * (file_count + 1));

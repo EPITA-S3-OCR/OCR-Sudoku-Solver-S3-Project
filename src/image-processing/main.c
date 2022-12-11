@@ -4,7 +4,6 @@ SDL_Surface *applyImageProcessing(SDL_Surface *surface, UserInterface *ui,
                                   bool verbose)
 {
   printf("Applying image processing...\n");
-  saveSurface(surface, "output/steps/eazeazeazeaz-original.jpg");
   printf("- Copying surface...\n");
   SDL_Surface *copy = copySurface(surface);
 
