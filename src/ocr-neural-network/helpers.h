@@ -1,10 +1,10 @@
+#pragma once
+
 #include <dirent.h>
 #include <err.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#pragma once
 
 /// @brief Returns the max index of an array
 /// @param array The given array

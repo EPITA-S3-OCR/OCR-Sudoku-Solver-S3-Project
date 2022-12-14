@@ -55,6 +55,10 @@ clean-output :
 	rm -rf output/train/*
 	rm -rf output/output*
 
+clean-all:
+	clean clean-doc clean-output
+
+
 # To tell make that all and clean are not files rules
 .PHONY: all clean doc clean-doc clean-output
 

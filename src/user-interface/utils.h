@@ -1,13 +1,7 @@
 #pragma once
+
 #include <gtk/gtk.h>
 #include "main.h"
-
-// typedef struct ThreadArgs
-// {
-//   char          *filename;
-//   UserInterface *ui;
-//   bool           verbose;
-// } ThreadArgs;
 
 /**
  * @brief Loads the image onto the User Interface

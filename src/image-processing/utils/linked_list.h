@@ -1,8 +1,9 @@
+#pragma once
+
 #include <err.h>
 #include "stdio.h"
 #include "stdlib.h"
 
-#pragma once
 typedef struct list
 {
   struct list *next;

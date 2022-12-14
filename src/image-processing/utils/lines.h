@@ -1,10 +1,11 @@
+#pragma once
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <err.h>
 #include "../utils/linked_list.h"
 #include "../utils/utils.h"
 
-#pragma once
 typedef struct Line
 {
   int x1, y1, x2, y2;

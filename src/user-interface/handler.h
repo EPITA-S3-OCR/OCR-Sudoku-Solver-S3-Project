@@ -21,7 +21,7 @@
 void onImportButtonClicked(GtkButton *button, gpointer user_data);
 
 /**
- * @brief Handler for the OCR Sudoku Rotate Slider 
+ * @brief Handler for the OCR Sudoku Rotate Slider
  * @param range The Range for the slider
  * @param user_data The user interface
  */

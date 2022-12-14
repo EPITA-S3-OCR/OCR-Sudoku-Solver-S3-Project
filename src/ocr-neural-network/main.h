@@ -17,9 +17,7 @@
 #define OUTPUT_SIZE 9
 #define TRAINING_SIZE 9
 #define MAX_PATH_LENGTH 100
-// #define LEARNING_RATE 0.2
 #define LEARNING_RATE 0.02
-// #define LEARNING_RATE 0.8
 
 /// @brief Main function of the OCR neural network
 /// @param argc The number of arguments

@@ -5,8 +5,6 @@
 #include "main.h"
 #include "utils.h"
 
-// void  launchExpensiveCalculation(GtkButton *button, gpointer data);
-
 /**
  * @brief The Thread to train the neural network
  * @param user_data The Data of the User Interface

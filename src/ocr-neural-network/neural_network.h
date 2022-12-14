@@ -1,3 +1,5 @@
+#pragma once
+
 #include <err.h>
 #include <math.h>
 #include <stdio.h>
@@ -8,10 +10,10 @@
 #include "image.h"
 #include "math_nn.h"
 
-#ifndef NEURAL_NETWORK_H
-
-#  define NEURAL_NETWORK_H
-
+/**
+ * @brief The Neural Network structure
+ *
+ */
 typedef struct NeuralNetwork
 {
   size_t nbInputNeurons;
@@ -109,4 +111,3 @@ int neuralNetworkCompute(NeuralNetwork *nn, double *pixels);
 /// @brief Frees a neural network.
 /// @param nn The neural network to free.
 void neuralNetworkFree(NeuralNetwork *nn);
-#endif

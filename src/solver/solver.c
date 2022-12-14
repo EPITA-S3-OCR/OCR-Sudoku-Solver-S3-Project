@@ -1,6 +1,7 @@
 #include "solver.h"
 
-int possiblePlacement(int row, int col, char num, char grid[][16], size_t length)
+int possiblePlacement(int row, int col, char num, char grid[][16],
+                      size_t length)
 {
 
   // Lets check if there is a possible placement on a row
@@ -18,22 +19,22 @@ int possiblePlacement(int row, int col, char num, char grid[][16], size_t length
 
   // Little trick to find which subsquare we are on.
 
-  int subrow; 
-  int subcol; 
+  int    subrow;
+  int    subcol;
   size_t boxSize;
 
   if (length == 9)
   {
-      subrow = (row / 3) * 3;
-      subcol = (col / 3) * 3;
-      boxSize = 3;
+    subrow  = (row / 3) * 3;
+    subcol  = (col / 3) * 3;
+    boxSize = 3;
   }
 
-  else 
+  else
   {
-      subrow = (row / 4) * 4;
-      subcol = (col / 4) * 4;
-      boxSize = 4;
+    subrow  = (row / 4) * 4;
+    subcol  = (col / 4) * 4;
+    boxSize = 4;
   }
 
   for (size_t i = 0; i < boxSize; i++)
@@ -83,9 +84,11 @@ int Solve(char grid[][16], size_t length)
   {
 
     // If you cant place the value continue
-    
+
     int offset = i > 9 ? 7 : 0;
-    if (possiblePlacement(row_current, coll_current, '0' + i + offset, grid, length) == 1)
+    if (possiblePlacement(row_current, coll_current, '0' + i + offset, grid,
+                          length)
+        == 1)
     {
 
       grid[row_current][coll_current] = '0' + i + offset;
@@ -121,34 +124,34 @@ int createFile(char grid[][16], char *path, size_t length)
 
   if (length == 9)
   {
-      for (size_t i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
+    {
+      if (i == 3 || i == 6)
+        fputc('\n', fPtr);
+      for (size_t j = 0; j < length; j++)
       {
-          if (i == 3 || i == 6)
-              fputc('\n', fPtr);
-          for (size_t j = 0; j < length; j++)
-          {
-              fputc(grid[i][j], fPtr);
-              if (j == 2 || j == 5)
-                  fputc(' ', fPtr);
-          }
-          fputc('\n', fPtr);
+        fputc(grid[i][j], fPtr);
+        if (j == 2 || j == 5)
+          fputc(' ', fPtr);
       }
+      fputc('\n', fPtr);
+    }
   }
-  
-  else 
+
+  else
   {
-      for (size_t i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
+    {
+      if (i == 4 || i == 8 || i == 12)
+        fputc('\n', fPtr);
+      for (size_t j = 0; j < length; j++)
       {
-          if (i == 4 || i == 8 || i == 12)
-              fputc('\n', fPtr);
-          for (size_t j = 0; j < length; j++)
-          {
-              fputc(grid[i][j], fPtr);
-              if (j == 3 || j == 7 || j == 11)
-                  fputc(' ', fPtr);
-          }
-          fputc('\n', fPtr);
+        fputc(grid[i][j], fPtr);
+        if (j == 3 || j == 7 || j == 11)
+          fputc(' ', fPtr);
       }
+      fputc('\n', fPtr);
+    }
   }
 
   /* Close file to save file data */
@@ -163,10 +166,10 @@ char *loadSudoku(char sudoku[][16], char path[], size_t length)
 
   // initialize a 2 dimensional matrix
 
-  size_t i       = 0;
-  size_t j       = 0;
-  int    counter = 0;
-  int maxCounter = length == 9 ? 11 : 19;
+  size_t i          = 0;
+  size_t j          = 0;
+  int    counter    = 0;
+  int    maxCounter = length == 9 ? 11 : 19;
 
   // the file and the character that will be read
   FILE *file;
