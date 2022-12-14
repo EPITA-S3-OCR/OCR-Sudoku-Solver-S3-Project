@@ -4,7 +4,7 @@ OCR software that outputs a solved grid of sudoku from an image of an unsolved o
 
 > [First report](rapport_1.pdf)
 
-> [Final report](rapport_1.pdf)
+> [Final report](rapport_2.pdf)
 
 **Team members:**  
 • Eliott FLECHTNER  
